@@ -1,6 +1,6 @@
 # Iris
 
-An free, open-source and fully customisable status page and monitoring service.
+A free, open-source and fully customisable status page and monitoring service.
 
 ## Tech stack
 
