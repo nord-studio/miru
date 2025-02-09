@@ -30,16 +30,18 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body
-				className={`${inter.variable} ${manrope.variable} antialiased bg-neutral-100 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 font-sans`}
+				className={`${inter.variable} ${manrope.variable} antialiased bg-neutral-100 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 font-sans flex flex-col items-center`}
 			>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-					disableTransitionOnChange
-				>
-					{children}
-				</ThemeProvider>
+				<div className="w-full max-w-[1200px]">
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="system"
+						enableSystem
+						disableTransitionOnChange
+					>
+						{children}
+					</ThemeProvider>
+				</div>
 			</body>
 		</html>
 	);

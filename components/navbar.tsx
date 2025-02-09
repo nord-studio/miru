@@ -13,10 +13,21 @@ export default async function Navbar() {
 
 	return (
 		<nav className="flex flex-row gap-2 items-center justify-between p-4">
-			<p className="text-neutral-500 dark:text-neutral-400">Iris</p>
 			<div className="flex flex-row items-center justify-start w-full">
-				<Link href="/dashboard">
-					<Button variant="link">Dashboard</Button>
+				<Link href="/dashboard/monitors">
+					<Button variant="link">Monitors</Button>
+				</Link>
+				<Link href="/dashboard/incidents">
+					<Button variant="link">Incidents</Button>
+				</Link>
+				<Link href="/dashboard/status-page">
+					<Button variant="link">Status Page</Button>
+				</Link>
+				<Link href="/dashboard/notifications">
+					<Button variant="link">Notifications</Button>
+				</Link>
+				<Link href="/dashboard/settings">
+					<Button variant="link">Settings</Button>
 				</Link>
 			</div>
 			<div className="flex flex-row gap-2 items-center justify-end">
