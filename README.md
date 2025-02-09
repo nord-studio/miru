@@ -12,6 +12,11 @@ A free, open-source and fully customisable status page and monitoring service.
 -   ORM: [Drizzle](https://orm.drizzle.team/)
 -   Hotel? [Travago](https://youtu.be/fkFzrww5dW8?si=WdqnjqMgqI1dXm6b&t=1)
 
+## Project Structure
+
+-   [@iris/web](./apps/web) - The NextJS powered dashboard.
+-   [@iris/monitor](./apps/monitor/) - The Rust powered monitoring service.
+
 ## Contact
 
 If you need to contact me, please send inquires via email: **hi at tygr dot dev**.

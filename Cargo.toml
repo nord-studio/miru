@@ -1,0 +1,3 @@
+[workspace]
+members = ["./apps/monitor"]
+resolver = "2"

@@ -1,0 +1,8 @@
+{
+	"name": "@iris/monitor",
+	"version": "0.1.0",
+	"scripts": {
+		"dev": "watchexec -e rs -r cargo run",
+		"build": "cargo build --release"
+	}
+}
