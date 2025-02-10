@@ -14,8 +14,9 @@ A free, open-source and fully customisable status page and monitoring service.
 
 ## Project Structure
 
--   [@iris/web](./apps/web) - The NextJS powered dashboard.
--   [@iris/monitor](./apps/monitor/) - The Rust powered monitoring service.
+-   [@iris/web](./apps/web) - The control plane, powered by [NextJS](https://nextjs.org/).
+-   [@iris/monitor](./apps/monitor/) - The service monitoring service, powered by [Rust](https://www.rust-lang.org/).
+-   [@iris/docs](./apps/docs/) - The documentation site, powered by [Astro](https://astro.build/) using the [Starlight](https://starlight.astro.build/) template.
 
 ## Contact
 

@@ -1,7 +1,7 @@
 {
 	"name": "iris",
 	"scripts": {
-		"dev": "dotenv-run -- turbo dev",
+		"dev": "turbo dev",
 		"build": "turbo build"
 	},
 	"devDependencies": {
