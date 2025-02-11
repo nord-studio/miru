@@ -1,7 +1,9 @@
 import AuthMenu from "@/components/auth/auth-dialog";
 import UserDropdown from "@/components/auth/user-dropdown";
+import MobileNavbar from "@/components/nav/mobile";
 import { ThemeDropdown } from "@/components/theme/dropdown";
 import { Button } from "@/components/ui/button";
+
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Link from "next/link";
@@ -13,7 +15,7 @@ export default async function Navbar() {
 
 	return (
 		<nav className="flex flex-row gap-2 items-center justify-between p-2 border border-black/10 dark:border-white/10 rounded-lg">
-			<div className="flex flex-row items-center justify-start w-full">
+			<div className="sm:flex flex-row items-center justify-start w-full hidden">
 				<Link href="/dashboard/monitors">
 					<Button variant="link">Monitors</Button>
 				</Link>
@@ -30,8 +32,15 @@ export default async function Navbar() {
 					<Button variant="link">Settings</Button>
 				</Link>
 			</div>
-			<div className="flex flex-row gap-2 items-center justify-end">
+			<div className="sm:hidden flex-row items-center justify-start w-full flex">
+				<h2 className="px-2 text-lg font-black font-display text-neutral-500 dark:text-neutral-400">
+					Iris
+				</h2>
+			</div>
+			<div className="hidden sm:flex">
 				<ThemeDropdown />
+			</div>
+			<div className="flex flex-row gap-2 items-center justify-end">
 				{session ? (
 					<>
 						<UserDropdown user={session.user} />
@@ -41,6 +50,10 @@ export default async function Navbar() {
 						<AuthMenu />
 					</>
 				)}
+
+				<div className="flex sm:hidden">
+					<MobileNavbar />
+				</div>
 			</div>
 		</nav>
 	);

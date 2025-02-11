@@ -1,14 +1,18 @@
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
+// ----------------------------------------
+// --------------- Auth -------------------
+// ----------------------------------------
+
 export const user = sqliteTable("user", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull(),
 	email: text("email").notNull().unique(),
 	emailVerified: integer("email_verified", { mode: "boolean" }).notNull(),
+	username: text("username").notNull().unique(),
 	image: text("image"),
 	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
 	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
-	username: text("username").notNull().unique(),
 });
 
 export const session = sqliteTable("session", {
@@ -55,22 +59,41 @@ export const verification = sqliteTable("verification", {
 	updatedAt: integer("updated_at", { mode: "timestamp" }),
 });
 
+// ----------------------------------------
+// -------------- Monitors ----------------
+// ----------------------------------------
+
 export const monitors = sqliteTable("monitors", {
+	/// The unique identifier for the monitor
 	id: text("id").primaryKey(),
+	/// The name of the monitor
 	name: text("name").notNull(),
+	/// The type of monitor (e.g. HTTP, TCP, etc)
 	type: text("type").notNull(),
+	/// The URL to monitor
 	url: text("url").notNull(),
+	/// The interval in seconds to check the monitor
 	interval: integer("interval").notNull(),
+	/// When the monitor was created
 	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+	/// When the monitor was last updated
 	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+	/// A percentage with two decimal places (e.g. 99.99)
 	uptime: integer("uptime"),
 })
 
 export const pings = sqliteTable("pings", {
+	/// The unique identifier for the ping
 	id: text("id").primaryKey(),
+	/// A reference to what monitor this ping belongs to
 	monitorId: text("monitor_id").notNull().references(() => monitors.id),
-	status: integer("status").notNull(),
+	/// The status code of the ping. true = success, false = failure
+	status: integer("status", { mode: "boolean" }).notNull(),
+	/// The latency of the DNS, TCP, TLS, TTFB, and transfer
+	latency: text("latency", { mode: "json" }).notNull(),
+	/// The headers of the response
+	headers: text("headers", { mode: "json" }),
+	/// The response time of the ping
 	createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-	updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 })
 

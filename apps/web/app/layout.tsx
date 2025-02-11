@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/components/theme/provider";
 import { Metadata } from "next";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "sonner";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -39,7 +40,10 @@ export default function RootLayout({
 						enableSystem
 						disableTransitionOnChange
 					>
-						<TooltipProvider>{children}</TooltipProvider>
+						<TooltipProvider>
+							{children}
+							<Toaster />
+						</TooltipProvider>
 					</ThemeProvider>
 				</div>
 			</body>
