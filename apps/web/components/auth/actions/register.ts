@@ -2,11 +2,20 @@
 
 import { ActionResult } from "@/components/form";
 import { auth } from "@/lib/auth";
+import db from "@/lib/db";
+import { user } from "@/lib/db/schema";
 import { verifyEmailInput } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
 export async function register(prevState: ActionResult, formData: FormData) {
 	"use server";
+	const fresh = await db.select().from(user).limit(1).then((res) => res.length === 0);
+	if (!fresh) {
+		return {
+			error: true,
+			message: "You have already registered an account. Please sign in."
+		};
+	}
 
 	const name = formData.get("name");
 	if (typeof name !== "string" || name.length < 2 || name.length > 32) {
@@ -62,11 +71,12 @@ export async function register(prevState: ActionResult, formData: FormData) {
 				password: password
 			}
 		})
-	} catch (err: any) {
+	} catch (err) {
 		console.log(err)
 		return {
 			error: true,
-			message: err.body.message
+			// @ts-expect-error - body is not defined in the type
+			message: err?.body?.message || "An unexpected error occurred."
 		};
 	}
 

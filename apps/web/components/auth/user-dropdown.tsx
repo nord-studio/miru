@@ -17,7 +17,7 @@ import {
 	UserIcon,
 } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Drawer,
 	DrawerClose,
@@ -34,21 +34,28 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function UserDropdown({ user }: { user: User }) {
+	const [mounted, setMounted] = useState(false);
 	const [open, setOpen] = useState(false);
 	const [signOutOpen, setSignOutOpen] = useState(false);
 	const isDesktop = useMediaQuery("(min-width: 768px)");
 
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
 	function SignOutConfirmation() {
 		return (
 			<>
-				<Alert
-					title="Are you sure?"
-					description="You are about to sign out of your account. Any unsaved changes you may have made will be lost."
-					onSubmit={logOut}
-					onCancel={() => setOpen(!open)}
-					open={signOutOpen}
-					setOpen={setSignOutOpen}
-				/>
+				{mounted && (
+					<Alert
+						title="Are you sure?"
+						description="You are about to sign out of your account. Any unsaved changes you may have made will be lost."
+						onSubmit={logOut}
+						onCancel={() => setOpen(!open)}
+						open={signOutOpen}
+						setOpen={setSignOutOpen}
+					/>
+				)}
 			</>
 		);
 	}
@@ -57,7 +64,7 @@ export default function UserDropdown({ user }: { user: User }) {
 		<>
 			{isDesktop ? (
 				<>
-					{user && (
+					{user && mounted && (
 						<>
 							<DropdownMenu open={open} onOpenChange={setOpen}>
 								<DropdownMenuTrigger
@@ -137,7 +144,7 @@ export default function UserDropdown({ user }: { user: User }) {
 				</>
 			) : (
 				<>
-					{user && (
+					{user && mounted && (
 						<>
 							<Drawer open={open} onOpenChange={setOpen}>
 								<DrawerTrigger

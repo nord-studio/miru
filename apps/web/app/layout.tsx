@@ -1,9 +1,11 @@
 import { Inter, Manrope } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/provider";
 import { Metadata } from "next";
-import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "sonner";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+
+import "./globals.css";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -41,7 +43,7 @@ export default function RootLayout({
 						disableTransitionOnChange
 					>
 						<TooltipProvider>
-							{children}
+							<NuqsAdapter>{children}</NuqsAdapter>
 							<Toaster />
 						</TooltipProvider>
 					</ThemeProvider>

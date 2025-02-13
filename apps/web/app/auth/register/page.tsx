@@ -1,21 +1,19 @@
-"use client";
-
 import RegisterForm from "@/components/auth/forms/register-form";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import React from "react";
 
 export default function RegisterPage() {
 	return (
 		<>
-			<div className="absolute left-1/2 top-1/2 w-3/4 -translate-x-1/2 -translate-y-1/2 sm:w-1/2 md:w-auto">
+			<div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[400px]">
 				<div className="flex flex-col items-center justify-center gap-6 text-center">
 					<div className="flex w-full flex-col items-center justify-center gap-2">
 						<h1 className="text-center font-display text-3xl font-bold sm:text-4xl">
-							Sign up for Iris
+							Create an Iris account
 						</h1>
-
 						<p className="text-sm text-neutral-500 sm:text-base">
-							Create an account today to get started.
+							Fill out your details below to get started.
 						</p>
 					</div>
 					<div className="flex w-full flex-col items-center justify-center gap-4">
