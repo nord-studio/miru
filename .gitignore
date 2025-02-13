@@ -10,3 +10,5 @@ target
 
 # database
 data.db
+
+.env
