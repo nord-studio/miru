@@ -35,7 +35,7 @@ export default function RootLayout({
 			<body
 				className={`${inter.variable} ${manrope.variable} antialiased bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-sans flex flex-col items-center`}
 			>
-				<div className="w-full max-w-[1200px] p-4">
+				<div className="flex flex-col w-full max-w-[1200px]">
 					<ThemeProvider
 						attribute="class"
 						defaultTheme="system"

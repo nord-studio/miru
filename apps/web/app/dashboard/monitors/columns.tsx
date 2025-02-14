@@ -15,13 +15,40 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
+import Alert from "@/components/ui/alert";
+import { deleteMonitor } from "@/app/dashboard/monitors/actions";
+import React from "react";
 
-interface MonitorRow extends Monitor {
-	/// How long ago (in seconds) the last ping was.
-	lastPing: number;
+// interface MonitorRow extends Monitor {
+// 	/// How long ago (in seconds) the last ping was.
+// 	lastPing: number;
+// }
+
+function DeleteMonitor({
+	open,
+	setOpen,
+	id,
+}: {
+	open: boolean;
+	setOpen: (open: boolean) => void;
+	id: string;
+}) {
+	return (
+		<Alert
+			title="Delete Monitor"
+			description="Are you sure you want to delete this monitor?"
+			open={open}
+			setOpen={setOpen}
+			footer="This action cannot be undone."
+			onCancel={() => setOpen(false)}
+			onSubmit={() => {
+				return deleteMonitor(id);
+			}}
+		/>
+	);
 }
 
-export const columns: ColumnDef<MonitorRow>[] = [
+export const columns: ColumnDef<Monitor>[] = [
 	{
 		id: "select",
 		header: ({ table }) => (
@@ -83,7 +110,11 @@ export const columns: ColumnDef<MonitorRow>[] = [
 		accessorKey: "type",
 		header: "Type",
 		cell: ({ row }) => {
-			return <span className="font-medium">{row.original.type}</span>;
+			return (
+				<span className="font-medium">
+					{row.original.type.toUpperCase()}
+				</span>
+			);
 		},
 	},
 	{
@@ -104,27 +135,34 @@ export const columns: ColumnDef<MonitorRow>[] = [
 			);
 		},
 	},
-	{
-		accessorKey: "lastPing",
-		header: "Last Ping",
-		cell: ({ row }) => {
-			return (
-				<span className="font-medium">
-					{Math.floor(
-						(Date.now() -
-							new Date(row.original.lastPing).getTime()) /
-							60000
-					)}
-					m ago
-				</span>
-			);
-		},
-	},
+	// {
+	// 	accessorKey: "lastPing",
+	// 	header: "Last Ping",
+	// 	cell: ({ row }) => {
+	// 		return (
+	// 			<span className="font-medium">
+	// 				{Math.floor(
+	// 					(Date.now() -
+	// 						new Date(row.original.lastPing).getTime()) /
+	// 						60000
+	// 				)}
+	// 				m ago
+	// 			</span>
+	// 		);
+	// 	},
+	// },
 	{
 		id: "actions",
 		cell: ({ row }) => {
+			// eslint-disable-next-line react-hooks/rules-of-hooks
+			const [open, setOpen] = React.useState(false);
 			return (
 				<div className="w-full flex-row flex justify-end">
+					<DeleteMonitor
+						open={open}
+						setOpen={setOpen}
+						id={row.original.id}
+					/>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild className="">
 							<Button variant="ghost" className="h-8 w-8 p-0">
@@ -150,7 +188,12 @@ export const columns: ColumnDef<MonitorRow>[] = [
 								Copy ID
 							</DropdownMenuItem>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem className="text-red-500 hover:text-black dark:hover:text-white hover:bg-red-500 dark:hover:bg-red-600">
+							<DropdownMenuItem
+								className="text-red-500 hover:text-black dark:hover:text-white hover:bg-red-500 dark:hover:bg-red-600"
+								onClick={() => {
+									setOpen(true);
+								}}
+							>
 								Delete
 							</DropdownMenuItem>
 						</DropdownMenuContent>

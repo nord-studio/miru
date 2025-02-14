@@ -31,9 +31,10 @@ const logIn = async (prevState: ActionResult, formData: FormData) => {
 				password: password
 			}
 		})
-	} catch (err: any) {
+	} catch (err: unknown) {
 		return {
 			error: true,
+			// @ts-expect-error typescript won't let me define the damn error
 			message: err.body.message
 		};
 	}

@@ -4,7 +4,7 @@ export type Monitor = {
 	type: string;
 	url: string;
 	interval: number;
-	createdAt: number;
-	updatedAt: number;
-	uptime: number;
+	createdAt: Date;
+	updatedAt: Date;
+	uptime: number | null;
 }
