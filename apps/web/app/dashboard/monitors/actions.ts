@@ -47,6 +47,55 @@ export async function createMonitor(prevState: ActionResult, formData: FormData)
 	return { error: false, message: "Monitor created successfully" };
 }
 
+export async function editMonitor(id: string, data: FormData): Promise<ActionResult> {
+	"use server"
+	const mon = await db.select().from(monitors).where(eq(monitors.id, id)).limit(1).then((res) => { return res[0] });
+
+	if (!mon) {
+		return { error: true, message: "Monitor not found" };
+	}
+
+	const name = data.get("name");
+	const type = data.get("type");
+	const url = data.get("url");
+	const interval = data.get("interval");
+
+	const chunks = [];
+
+	if (name) {
+		chunks.push({ name: name });
+	}
+
+	if (type) {
+		chunks.push({ type: type });
+	}
+
+	if (url) {
+		chunks.push({ url: url });
+	}
+
+	if (interval) {
+		chunks.push({ interval: parseInt(interval.toString()) });
+	}
+
+	if (chunks.length === 0) {
+		return { error: true, message: "No changes detected" };
+	}
+
+	const newData = chunks.reduce((acc, chunk) => {
+		return { ...acc, ...chunk };
+	}, {});
+
+	await db.update(monitors).set(newData).where(eq(monitors.id, id)).then(() => {
+		revalidatePath("/dashboard/monitors");
+	}).catch((err) => {
+		return { error: true, message: err };
+	});
+
+	revalidatePath("/dashboard/monitors");
+	return { error: false, message: "Monitor updated successfully" };
+}
+
 export async function deleteMonitor(id: string): Promise<ActionResult> {
 	"use server"
 	await db.delete(monitors).where(eq(monitors.id, id)).then(() => {

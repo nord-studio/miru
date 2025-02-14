@@ -18,6 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Alert from "@/components/ui/alert";
 import { deleteMonitor } from "@/app/dashboard/monitors/actions";
 import React from "react";
+import EditMonitor from "@/app/dashboard/monitors/edit-monitor";
 
 // interface MonitorRow extends Monitor {
 // 	/// How long ago (in seconds) the last ping was.
@@ -129,9 +130,7 @@ export const columns: ColumnDef<Monitor>[] = [
 		header: "Interval",
 		cell: ({ row }) => {
 			return (
-				<span className="font-medium">
-					{Math.floor(row.original.interval / 60)}m
-				</span>
+				<span className="font-medium">{row.original.interval}m</span>
 			);
 		},
 	},
@@ -156,12 +155,19 @@ export const columns: ColumnDef<Monitor>[] = [
 		cell: ({ row }) => {
 			// eslint-disable-next-line react-hooks/rules-of-hooks
 			const [open, setOpen] = React.useState(false);
+			// eslint-disable-next-line react-hooks/rules-of-hooks
+			const [editOpen, setEditOpen] = React.useState(false);
 			return (
 				<div className="w-full flex-row flex justify-end">
 					<DeleteMonitor
 						open={open}
 						setOpen={setOpen}
 						id={row.original.id}
+					/>
+					<EditMonitor
+						monitor={row.original}
+						open={editOpen}
+						setOpen={setEditOpen}
 					/>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild className="">
@@ -172,7 +178,10 @@ export const columns: ColumnDef<Monitor>[] = [
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-							<DropdownMenuItem>Edit</DropdownMenuItem>
+
+							<DropdownMenuItem onClick={() => setEditOpen(true)}>
+								Edit
+							</DropdownMenuItem>
 							<Link href={`/monitors/${row.original.id}`}>
 								<DropdownMenuItem>Details</DropdownMenuItem>
 							</Link>
