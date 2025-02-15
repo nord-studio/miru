@@ -19,11 +19,29 @@ import Alert from "@/components/ui/alert";
 import { deleteMonitor } from "@/app/dashboard/monitors/actions";
 import React from "react";
 import EditMonitor from "@/app/dashboard/monitors/edit-monitor";
+import TestEndpoint from "@/types/monitor-service/test";
 
 // interface MonitorRow extends Monitor {
 // 	/// How long ago (in seconds) the last ping was.
 // 	lastPing: number;
 // }
+
+async function testUrl(method: string, url: string) {
+	await fetch(`http://localhost:8080/test/${method}/${url}`, {
+		headers: {
+			"Content-Type": "application/json",
+			"Access-Control-Allow-Origin": "*",
+		},
+	}).then(async (res) => {
+		const json: TestEndpoint = await res.json();
+
+		if (json.status === 200) {
+			return json;
+		} else {
+			throw new Error(`${url} didn't return a 200 status code.`);
+		}
+	});
+}
 
 function DeleteMonitor({
 	open,
@@ -178,14 +196,29 @@ export const columns: ColumnDef<Monitor>[] = [
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-
 							<DropdownMenuItem onClick={() => setEditOpen(true)}>
 								Edit
 							</DropdownMenuItem>
 							<Link href={`/monitors/${row.original.id}`}>
 								<DropdownMenuItem>Details</DropdownMenuItem>
 							</Link>
-							<DropdownMenuItem>Test</DropdownMenuItem>
+							<DropdownMenuItem
+								onClick={() =>
+									toast.promise(
+										testUrl(
+											row.original.type,
+											row.original.url
+										),
+										{
+											loading: `Pinging ${row.original.url}`,
+											success: `Recieved a 200 from ${row.original.url}!`,
+											error: `Failed to ping ${row.original.url}. Is the domain correct?`,
+										}
+									)
+								}
+							>
+								Test
+							</DropdownMenuItem>
 							<DropdownMenuItem
 								onClick={() => {
 									navigator.clipboard.writeText(

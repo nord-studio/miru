@@ -1,11 +1,12 @@
 mod routes;
 
+use actix_cors::Cors;
 use actix_web::{App, HttpServer};
 use dotenvy::dotenv;
 use dotenvy_macro::dotenv;
 use log::info;
 use once_cell::sync::Lazy;
-use routes::hello::hello;
+use routes::{hello::hello, test::test};
 use sqlx::{sqlite::SqlitePoolOptions, SqlitePool};
 
 pub static POOL: Lazy<SqlitePool> = Lazy::new(|| {
@@ -35,10 +36,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Err(e.into());
     }
 
-    match HttpServer::new(|| App::new().service(hello))
-        .bind(("127.0.0.1", 8080))?
-        .run()
-        .await
+    match HttpServer::new(|| {
+        let cors = Cors::default()
+            .allow_any_origin()
+            .allow_any_method()
+            .allow_any_header();
+
+        App::new().wrap(cors).service(hello).service(test)
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
     {
         Ok(_) => {
             info!("Shutting down...");

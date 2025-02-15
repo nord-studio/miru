@@ -35,17 +35,48 @@ import { Label } from "@/components/ui/label";
 import { createMonitor } from "@/app/dashboard/monitors/actions";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
+import TestEndpoint from "@/types/monitor-service/test";
+import React from "react";
+import Alert from "@/components/ui/alert";
 
 export default function CreateMonitor() {
 	const [open, setOpen] = useState(false);
+	const [brokenWarning, setBrokenWarning] = useState(false);
 	const isDesktop = useMediaQuery("(min-width: 768px)");
 	const [loading, setLoading] = useState(false);
 
-	function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+	const [name, setName] = useState("");
+	const [url, setUrl] = useState("");
+	const [type, setType] = useState("http");
+	const [interval, setInterval] = useState("5");
+
+	async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setLoading(true);
 
-		const data = new FormData(e.currentTarget);
+		// test ping the domain
+		const t = toast.loading(`Test pinging ${url}...`);
+
+		// if the ping fails, show a warning
+		testUrl(type, url)
+			.then(() => {
+				toast.dismiss(t);
+				handleMonitorCreate();
+			})
+			.catch(() => {
+				toast.dismiss(t);
+				setBrokenWarning(true);
+				return;
+			});
+	}
+
+	function handleMonitorCreate() {
+		const data = new FormData();
+		data.append("name", name);
+		data.append("url", url);
+		data.append("type", type);
+		data.append("interval", interval);
+
 		createMonitor({ error: false, message: "" }, data).then((res) => {
 			setLoading(false);
 			if (res.error) {
@@ -57,9 +88,59 @@ export default function CreateMonitor() {
 		});
 	}
 
+	async function testUrl(method: string, url: string) {
+		await fetch(`http://localhost:8080/test/${method}/${url}`, {
+			headers: {
+				"Content-Type": "application/json",
+				"Access-Control-Allow-Origin": "*",
+			},
+		}).then(async (res) => {
+			const json: TestEndpoint = await res.json();
+
+			if (json.status === 200) {
+				return json;
+			} else {
+				throw new Error(`${url} didn't return a 200 status code.`);
+			}
+		});
+	}
+
+	function handleMonitorTest() {
+		if (!url || url.length < 1) {
+			toast.error("Please enter a domain before testing.");
+			return;
+		}
+
+		if (!type || type.length < 1) {
+			toast.error("Please select a monitor type before testing.");
+			return;
+		}
+
+		toast.promise(testUrl(type, url), {
+			loading: `Pinging ${url}...`,
+			success: `Recieved a 200 from ${url}!`,
+			error: `Failed to ping ${url}. Is the domain correct?`,
+		});
+	}
+
 	if (isDesktop) {
 		return (
 			<>
+				<Alert
+					title="Are you sure?"
+					description={`The test ping to ${url} failed. Do you want to save anyway?`}
+					open={brokenWarning}
+					setOpen={setBrokenWarning}
+					onCancel={() => {
+						setBrokenWarning(false);
+						setLoading(false);
+					}}
+					onSubmit={() => {
+						handleMonitorCreate();
+						setLoading(false);
+						setBrokenWarning(false);
+					}}
+				/>
 				<Dialog open={open} onOpenChange={setOpen}>
 					<DialogTrigger asChild>
 						<Button>
@@ -80,17 +161,19 @@ export default function CreateMonitor() {
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Name</Label>
 									<Input
+										value={name}
+										onChange={(e) =>
+											setName(e.target.value)
+										}
 										placeholder="Website"
-										name="name"
-										id="name"
 										disabled={loading}
 									/>
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Type</Label>
 									<Select
-										defaultValue="http"
-										name="type"
+										value={type}
+										onValueChange={(v) => setType(v)}
 										disabled={loading}
 									>
 										<SelectTrigger className="w-full">
@@ -107,13 +190,19 @@ export default function CreateMonitor() {
 									</Select>
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>URL</Label>
+									<Label>Domain / URL</Label>
 									<Input
-										placeholder="https://tygr.dev"
+										placeholder="tygr.dev"
 										disabled={loading}
-										name="url"
-										id="url"
+										value={url}
+										onChange={(e) => setUrl(e.target.value)}
 									/>
+									<Button
+										type="button"
+										onClick={handleMonitorTest}
+									>
+										Test
+									</Button>
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Interval</Label>
@@ -121,6 +210,8 @@ export default function CreateMonitor() {
 										defaultValue="5"
 										name="interval"
 										disabled={loading}
+										value={interval}
+										onValueChange={(v) => setInterval(v)}
 									>
 										<SelectTrigger className="w-full">
 											<SelectValue placeholder="1 Minute" />
