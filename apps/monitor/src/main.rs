@@ -1,16 +1,17 @@
+mod ping;
 mod routes;
 
 use actix_cors::Cors;
-use actix_web::{App, HttpServer};
+use actix_web::{web, App, HttpServer};
 use dotenvy::dotenv;
 use dotenvy_macro::dotenv;
 use log::info;
 use once_cell::sync::Lazy;
-use routes::{hello::hello, test::test};
-use sqlx::{sqlite::SqlitePoolOptions, SqlitePool};
+use routes::{hello_service, not_found_service, ping_service, test_service};
+use sqlx::{postgres::PgPoolOptions, PgPool};
 
-pub static POOL: Lazy<SqlitePool> = Lazy::new(|| {
-    let pool_config = SqlitePoolOptions::new();
+pub static POOL: Lazy<PgPool> = Lazy::new(|| {
+    let pool_config = PgPoolOptions::new();
     pool_config.connect_lazy(dotenv!("DATABASE_URL")).unwrap()
 });
 
@@ -42,9 +43,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .allow_any_method()
             .allow_any_header();
 
-        App::new().wrap(cors).service(hello).service(test)
+        App::new()
+            .wrap(cors)
+            .service(hello_service)
+            .service(test_service)
+            .service(ping_service)
+            .default_service(web::to(not_found_service))
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("0.0.0.0", 8080))?
     .run()
     .await
     {

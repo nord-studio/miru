@@ -1,9 +1,11 @@
 "use server"
 import { ActionResult } from "@/components/form";
-import { monitors } from "@/lib/db/schema";
+import { monitors } from "@/lib/db/schema/monitors";
 import db from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
+import { generateId } from "@/lib/utils";
+import { env } from "@/lib/env.mjs";
 
 export async function createMonitor(prevState: ActionResult, formData: FormData): Promise<ActionResult> {
 	"use server"
@@ -28,23 +30,59 @@ export async function createMonitor(prevState: ActionResult, formData: FormData)
 		return { error: true, message: "Monitor interval is required" };
 	}
 
+	const id = generateId();
+
 	const monitor = await db.insert(monitors).values({
-		id: crypto.randomUUID(),
+		id,
 		name: name as string,
 		type: type as string,
 		url: url as string,
 		interval: parseInt(interval?.toString() || "0"),
 		createdAt: new Date(),
 		updatedAt: new Date(),
-		uptime: null,
 	}).returning();
 
 	if (!monitor) {
 		return { error: true, message: "Failed to create monitor" };
 	}
 
+	// Ping the monitor to get the initial status
+	const res = await pingMonitor(id);
+	console.log(res);
+
 	revalidatePath("/dashboard/monitors");
 	return { error: false, message: "Monitor created successfully" };
+}
+
+export async function pingMonitor(id: string): Promise<ActionResult> {
+	"use server"
+
+	const res = await fetch(`${env.NEXT_PUBLIC_MONITOR_URL}/ping/${id}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"Access-Control-Allow-Origin": "*",
+		}
+	}).then(async (res) => {
+		if (res.status === 200) {
+			revalidatePath("/dashboard/monitors");
+			return { error: false, message: "Monitor pinged successfully" };
+		} else {
+			const json = await res.json();
+			if (json.error) {
+				revalidatePath("/dashboard/monitors");
+				return { error: true, message: json.error };
+			} else {
+				revalidatePath("/dashboard/monitors");
+				return { error: true, message: "Failed to ping monitor" };
+			}
+		}
+	}).catch((e) => {
+		console.error(e);
+		return { error: true, message: "Couldn't reach the monitor service. Is it running?" };
+	})
+
+	return res;
 }
 
 export async function editMonitor(id: string, data: FormData): Promise<ActionResult> {
@@ -101,6 +139,7 @@ export async function deleteMonitor(id: string): Promise<ActionResult> {
 	await db.delete(monitors).where(eq(monitors.id, id)).then(() => {
 		revalidatePath("/dashboard/monitors");
 	}).catch((err) => {
+		console.error(err);
 		return { error: true, message: err };
 	});
 

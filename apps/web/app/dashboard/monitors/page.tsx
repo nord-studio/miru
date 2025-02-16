@@ -1,11 +1,27 @@
 import { columns } from "@/app/dashboard/monitors/columns";
 import CreateMonitor from "@/app/dashboard/monitors/create-monitor";
 import { DataTable } from "@/components/ui/data-table";
-import { monitors } from "@/lib/db/schema";
+import { monitors } from "@/lib/db/schema/monitors";
 import db from "@/lib/db";
+import { getAllMonitorUptime } from "@/lib/db/utils";
+import { Monitor } from "@/types/monitor";
+
+interface MonitorRow extends Monitor {
+	uptime: number;
+}
 
 export default async function MonitorsPage() {
-	const data = await db.select().from(monitors).limit(50);
+	const raw = await db.select().from(monitors).limit(50);
+	const allUptimes = await getAllMonitorUptime(7);
+
+	const data: MonitorRow[] = raw.map((monitor) => {
+		const uptime = allUptimes.find((u) => u.monitor_id === monitor.id);
+
+		return {
+			...monitor,
+			uptime: uptime?.uptime_percentage || 0,
+		};
+	});
 
 	return (
 		<>

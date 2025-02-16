@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import "./globals.css";
+import ResponsiveToaster from "@/components/responsive-toaster";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -44,7 +45,7 @@ export default function RootLayout({
 					>
 						<TooltipProvider>
 							<NuqsAdapter>{children}</NuqsAdapter>
-							<Toaster />
+							<ResponsiveToaster />
 						</TooltipProvider>
 					</ThemeProvider>
 				</div>
