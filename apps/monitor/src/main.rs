@@ -1,5 +1,8 @@
+mod cron;
 mod ping;
 mod routes;
+
+use std::sync::OnceLock;
 
 use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
@@ -9,11 +12,14 @@ use log::info;
 use once_cell::sync::Lazy;
 use routes::{hello_service, not_found_service, ping_service, test_service};
 use sqlx::{postgres::PgPoolOptions, PgPool};
+use tokio_cron_scheduler::JobScheduler;
 
 pub static POOL: Lazy<PgPool> = Lazy::new(|| {
     let pool_config = PgPoolOptions::new();
     pool_config.connect_lazy(dotenv!("DATABASE_URL")).unwrap()
 });
+
+pub static SCHEDULER: OnceLock<JobScheduler> = OnceLock::new();
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -37,6 +43,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Err(e.into());
     }
 
+    info!("Starting cron worker...");
+    let sched = JobScheduler::new().await?;
+    match SCHEDULER.set(sched) {
+        Ok(_) => {
+            cron::worker::start().await?;
+        }
+        Err(_) => {
+            return Err("Failed to set scheduler".into());
+        }
+    }
+
+    cron::worker::load_jobs().await?;
+
+    info!("Starting server...");
     match HttpServer::new(|| {
         let cors = Cors::default()
             .allow_any_origin()
