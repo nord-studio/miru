@@ -4,7 +4,7 @@ use serde_json::json;
 use tokio::net::TcpStream;
 
 #[get("/test/{type}/{url}")]
-pub async fn test(path: web::Path<(String, String)>) -> impl Responder {
+pub async fn test_service(path: web::Path<(String, String)>) -> impl Responder {
     let (req_type, url) = path.into_inner();
 
     match req_type.as_str() {

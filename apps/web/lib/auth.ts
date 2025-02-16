@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import db from "@/lib/db";
+import db from "../lib/db";
 import { nextCookies } from "better-auth/next-js";
 
 export const auth = betterAuth({
@@ -29,8 +29,8 @@ export const auth = betterAuth({
 		cookiePrefix: "iris",
 	},
 	database: drizzleAdapter(db, {
-		provider: "sqlite",
-		schema: require("@/lib/db/schema")
+		provider: "pg",
+		schema: await import("@/lib/db/schema/auth")
 	}),
 	plugins: [nextCookies()]
 })

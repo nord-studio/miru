@@ -14,7 +14,7 @@ export default async function Navbar() {
 	});
 
 	return (
-		<nav className="flex flex-row gap-2 items-center justify-between p-2 mt-2 border border-black/10 dark:border-white/10 rounded-lg">
+		<nav className="flex flex-row gap-2 items-center justify-between p-2 border border-black/10 dark:border-white/10 rounded-lg">
 			<div className="sm:flex flex-row items-center justify-start w-full hidden">
 				<Link href="/dashboard/monitors">
 					<Button variant="link">Monitors</Button>

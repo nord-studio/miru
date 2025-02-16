@@ -16,18 +16,16 @@ import {
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import Alert from "@/components/ui/alert";
-import { deleteMonitor } from "@/app/dashboard/monitors/actions";
+import { deleteMonitor, pingMonitor } from "@/app/dashboard/monitors/actions";
 import React from "react";
 import EditMonitor from "@/app/dashboard/monitors/edit-monitor";
 import TestEndpoint from "@/types/monitor-service/test";
-
-// interface MonitorRow extends Monitor {
-// 	/// How long ago (in seconds) the last ping was.
-// 	lastPing: number;
-// }
+import { env } from "@/lib/env.mjs";
+import { revalidatePath } from "next/cache";
 
 async function testUrl(method: string, url: string) {
-	await fetch(`http://localhost:8080/test/${method}/${url}`, {
+	await fetch(`${env.NEXT_PUBLIC_MONITOR_URL}/test/${method}/${url}`, {
+		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
 			"Access-Control-Allow-Origin": "*",
@@ -99,7 +97,10 @@ export const columns: ColumnDef<Monitor>[] = [
 		header: "Name",
 		cell: ({ row }) => {
 			return (
-				<Link href={`/monitors/${row.original.id}`} className="w-fit">
+				<Link
+					href={`/dashboard/monitors/${row.original.id}`}
+					className="w-fit"
+				>
 					<p className="font-medium hover:underline w-fit">
 						{row.original.name}
 					</p>
@@ -111,18 +112,28 @@ export const columns: ColumnDef<Monitor>[] = [
 		accessorKey: "url",
 		header: "URL",
 		cell: ({ row }) => {
-			return (
-				<Link
-					href={row.original.url}
-					className="w-fit flex flex-row gap-1 items-center"
-					target="_blank"
-				>
-					<p className="font-medium hover:underline w-fit">
-						{row.original.url}
-					</p>
-					<ArrowUpRightIcon size={16} />
-				</Link>
-			);
+			if (row.original.type === "http") {
+				return (
+					<>
+						<Link
+							href={`https://${row.original.url}`}
+							className="w-fit flex flex-row gap-1 items-center"
+							target="_blank"
+						>
+							<p className="font-medium hover:underline w-fit">
+								{row.original.url}
+							</p>
+							<ArrowUpRightIcon size={16} />
+						</Link>
+					</>
+				);
+			} else {
+				return (
+					<>
+						<p className="font-medium w-fit">{row.original.url}</p>
+					</>
+				);
+			}
 		},
 	},
 	{
@@ -210,14 +221,43 @@ export const columns: ColumnDef<Monitor>[] = [
 											row.original.url
 										),
 										{
-											loading: `Pinging ${row.original.url}`,
-											success: `Recieved a 200 from ${row.original.url}!`,
+											loading: `Test Pinging ${row.original.url}`,
+											success: `Connection established to ${row.original.url}!`,
 											error: `Failed to ping ${row.original.url}. Is the domain correct?`,
 										}
 									)
 								}
 							>
 								Test
+							</DropdownMenuItem>
+							<DropdownMenuItem
+								onClick={async () => {
+									const t = toast.loading(
+										`Pinging ${row.original.url}...`
+									);
+
+									const res = await pingMonitor(
+										row.original.id
+									);
+
+									console.log(res);
+
+									await pingMonitor(row.original.id).then(
+										(res) => {
+											if (res.error) {
+												toast.error(res.message, {
+													id: t,
+												});
+											} else {
+												toast.success(res.message, {
+													id: t,
+												});
+											}
+										}
+									);
+								}}
+							>
+								Ping
 							</DropdownMenuItem>
 							<DropdownMenuItem
 								onClick={() => {

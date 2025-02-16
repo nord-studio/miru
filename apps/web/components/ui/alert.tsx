@@ -52,7 +52,7 @@ export default function Alert({
 	if (isDesktop) {
 		return (
 			<>
-				<Dialog open={open} onOpenChange={setOpen}>
+				<Dialog open={open} onOpenChange={cancel}>
 					<DialogContent className="gap-0 p-0 sm:max-w-[425px]">
 						<DialogHeader className="p-6">
 							<DialogTitle>{title}</DialogTitle>
@@ -87,7 +87,7 @@ export default function Alert({
 
 	return (
 		<>
-			<Drawer open={open} onOpenChange={setOpen}>
+			<Drawer open={open} onOpenChange={cancel}>
 				<DrawerContent>
 					<DrawerHeader>
 						<DrawerTitle>{title}</DrawerTitle>

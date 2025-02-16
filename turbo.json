@@ -11,7 +11,8 @@
 			],
 			"outputs": [
 				".next/**",
-				"!.next/cache/**"
+				"!.next/cache/**",
+				"target/**"
 			]
 		},
 		"dev": {
@@ -20,6 +21,10 @@
 			"inputs": [
 				".env"
 			]
+		},
+		"drizzle": {
+			"persistent": false,
+			"cache": false
 		}
 	}
 }

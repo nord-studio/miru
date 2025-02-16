@@ -1,12 +1,14 @@
-import { drizzle } from 'drizzle-orm/libsql/node';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import { env } from '../env.mjs';
-import * as schema from './schema';
+import { Pool } from 'pg';
+
+const pool = new Pool({
+	connectionString: env.DATABASE_URL,
+	ssl: env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
+});
 
 const db = drizzle({
-	connection: {
-		url: env.DATABASE_URL,
-	},
-	schema
+	client: pool,
 });
 
 export default db;

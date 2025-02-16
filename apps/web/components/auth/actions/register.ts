@@ -3,7 +3,7 @@
 import { ActionResult } from "@/components/form";
 import { auth } from "@/lib/auth";
 import db from "@/lib/db";
-import { user } from "@/lib/db/schema";
+import { user } from "@/lib/db/schema/auth";
 import { verifyEmailInput } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
