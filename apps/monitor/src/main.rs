@@ -12,6 +12,7 @@ use log::info;
 use once_cell::sync::Lazy;
 use routes::{hello_service, not_found_service, ping_service, test_service};
 use sqlx::{postgres::PgPoolOptions, PgPool};
+use tokio::sync::Mutex;
 use tokio_cron_scheduler::JobScheduler;
 
 pub static POOL: Lazy<PgPool> = Lazy::new(|| {
@@ -19,14 +20,19 @@ pub static POOL: Lazy<PgPool> = Lazy::new(|| {
     pool_config.connect_lazy(dotenv!("DATABASE_URL")).unwrap()
 });
 
-pub static SCHEDULER: OnceLock<JobScheduler> = OnceLock::new();
+pub static SCHEDULER: OnceLock<Mutex<JobScheduler>> = OnceLock::new();
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
 
     pretty_env_logger::formatted_builder()
-        .filter_level(log::LevelFilter::Info)
+        .filter_level(
+            std::env::var("RUST_LOG")
+                .unwrap_or_else(|_| "info".to_string())
+                .parse()
+                .unwrap(),
+        )
         .init();
 
     info!("Starting monitor...");
@@ -44,16 +50,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     info!("Starting cron worker...");
-    let sched = JobScheduler::new().await?;
-    match SCHEDULER.set(sched) {
-        Ok(_) => {
-            cron::worker::start().await?;
-        }
-        Err(_) => {
-            return Err("Failed to set scheduler".into());
-        }
-    }
-
+    cron::worker::init().await?;
+    cron::worker::start().await?;
     cron::worker::load_jobs().await?;
 
     info!("Starting server...");
@@ -76,6 +74,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     {
         Ok(_) => {
             info!("Shutting down...");
+            // Shutdown the scheduler
+            let sched = SCHEDULER.get().unwrap();
+            let _ = sched.lock().await.shutdown().await;
             Ok(())
         }
         Err(e) => Err(e.into()),
