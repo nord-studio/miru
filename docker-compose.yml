@@ -11,3 +11,4 @@ services:
       POSTGRES_USER: iris
       POSTGRES_DB: iris
       POSTGRES_HOST_AUTH_METHOD: trust
+

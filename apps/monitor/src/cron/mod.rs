@@ -1,1 +1,2 @@
-pub mod worker;
+pub mod jobs;
+pub mod manager;

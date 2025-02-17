@@ -1,10 +1,12 @@
 use tokio::net::TcpStream;
 
+#[derive(Debug)]
 pub struct TcpPingResponse {
     pub success: bool,
     pub latency: i32,
 }
 
+#[derive(Debug)]
 pub struct TcpPingErrorResponse {
     pub error: String,
 }

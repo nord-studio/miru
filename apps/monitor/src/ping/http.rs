@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct HttpPingResponse {
     pub success: bool,
     pub status: i32,
@@ -5,6 +6,7 @@ pub struct HttpPingResponse {
     pub headers: std::collections::HashMap<String, String>,
 }
 
+#[derive(Debug)]
 pub struct HttpPingErrorResponse {
     pub response: HttpPingResponse,
     pub error: String,
