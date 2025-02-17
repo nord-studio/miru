@@ -4,11 +4,12 @@ use std::{
 };
 
 use log::{error, info, warn};
+use sqlx::query;
 use tokio::{sync::Mutex, task::JoinHandle};
 use tokio_cron_scheduler::JobScheduler;
 use uuid::Uuid;
 
-use crate::{REGISTRY, SCHED};
+use crate::{POOL, REGISTRY, SCHED};
 
 #[derive(Debug, Clone)]
 pub struct JobMetadata {
@@ -19,6 +20,7 @@ pub struct JobMetadata {
 
 pub static HANDLE: OnceLock<JoinHandle<()>> = OnceLock::new();
 
+/// Start the cron worker
 pub async fn start() {
     let scheduler = Arc::new(Mutex::new(JobScheduler::new().await.unwrap()));
     let registry = Arc::new(Mutex::new(Vec::<JobMetadata>::new()));
@@ -44,8 +46,8 @@ pub async fn start() {
     }
 }
 
+/// Load all the monitors from the database and create a ping cron job for them
 pub async fn load_jobs() {
-    // normally we will call the database to load all the monitors but for now we can use dummy data
     let reg = match REGISTRY.get() {
         Some(reg) => reg,
         None => {
@@ -62,29 +64,42 @@ pub async fn load_jobs() {
         }
     };
 
-    match crate::cron::create_job(
-        "tygr.dev".to_string(),
-        "http".to_string(),
-        "1/5 * * * * *".to_string(),
-        sched.clone(),
-        reg.clone(),
-    )
-    .await
+    let pool = POOL.clone();
+    let tasks = match query!("SELECT * FROM monitors ORDER BY created_at DESC")
+        .fetch_all(&pool)
+        .await
     {
-        Ok(_) => info!("Created job"),
-        Err(e) => error!("Failed to create job: {:?}", e),
-    }
+        Ok(query) => query.into_iter().map(|row| {
+            info!("Creating job for {:?}", row);
+            tokio::spawn(async move {
+                match crate::cron::create_job(
+                    row.url.to_string(),
+                    row.r#type.to_string(),
+                    match row.interval.to_string().as_str() {
+                        "1" => "1 * * * * *".to_string(),
+                        "5" => "1/5 * * * * *".to_string(),
+                        "10" => "1/10 * * * * *".to_string(),
+                        "30" => "1/30 * * * * *".to_string(),
+                        "60" => "1/60 * * * * *".to_string(),
+                        _ => "1/10 * * * * *".to_string(), // default case
+                    },
+                    sched.clone(),
+                    reg.clone(),
+                )
+                .await
+                {
+                    Ok(_) => info!("Created job"),
+                    Err(e) => error!("Failed to create job: {:?}", e),
+                }
+            })
+        }),
+        Err(e) => {
+            error!("Failed to fetch monitors: {:?}", e);
+            return;
+        }
+    };
 
-    match crate::cron::create_job(
-        "gateway.campsite.chat:443".to_string(),
-        "tcp".to_string(),
-        "1/5 * * * * *".to_string(),
-        sched.clone(),
-        reg.clone(),
-    )
-    .await
-    {
-        Ok(_) => info!("Created job"),
-        Err(e) => error!("Failed to create job: {:?}", e),
+    for task in tasks {
+        task.await.unwrap();
     }
 }
