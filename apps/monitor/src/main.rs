@@ -2,11 +2,11 @@ mod cron;
 mod ping;
 mod routes;
 
-use std::sync::OnceLock;
+use std::sync::{Arc, OnceLock};
 
 use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
-use cron::manager::AsyncScheduler;
+use cron::worker::JobMetadata;
 use dotenvy::dotenv;
 use dotenvy_macro::dotenv;
 use log::info;
@@ -14,13 +14,15 @@ use once_cell::sync::Lazy;
 use routes::{hello_service, not_found_service, ping_service, test_service};
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use tokio::sync::Mutex;
+use tokio_cron_scheduler::JobScheduler;
 
 pub static POOL: Lazy<PgPool> = Lazy::new(|| {
     let pool_config = PgPoolOptions::new();
     pool_config.connect_lazy(dotenv!("DATABASE_URL")).unwrap()
 });
 
-pub static SCHED: OnceLock<Mutex<AsyncScheduler>> = OnceLock::new();
+pub static SCHED: OnceLock<Arc<Mutex<JobScheduler>>> = OnceLock::new();
+pub static REGISTRY: OnceLock<Arc<Mutex<Vec<JobMetadata>>>> = OnceLock::new();
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -50,9 +52,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     info!("Starting cron worker...");
-    cron::jobs::worker::init().await.map_err(|e| e)?;
-    cron::jobs::worker::load_jobs().await.map_err(|e| e)?;
-    cron::jobs::worker::start().await.map_err(|e| e)?;
+    cron::worker::start().await;
+    cron::worker::load_jobs().await;
 
     info!("Starting server...");
     match HttpServer::new(|| {
