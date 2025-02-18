@@ -47,8 +47,32 @@ export async function createMonitor(prevState: ActionResult, formData: FormData)
 	}
 
 	// Ping the monitor to get the initial status
-	const res = await pingMonitor(id);
-	console.log(res);
+	await pingMonitor(id);
+
+	// Start cron job
+	await fetch(`${env.NEXT_PUBLIC_MONITOR_URL}/cron/create/${id}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"Access-Control-Allow-Origin": "*",
+		}
+	}).then(async (res) => {
+		if (res.status === 200) {
+			revalidatePath("/dashboard/monitors");
+		} else {
+			const json = await res.json();
+			if (json.error) {
+				revalidatePath("/dashboard/monitors");
+				return { error: true, message: json.error };
+			} else {
+				revalidatePath("/dashboard/monitors");
+				return { error: true, message: "Failed to start cron job" };
+			}
+		}
+	}).catch((e) => {
+		console.error(e);
+		return { error: true, message: "Couldn't reach the monitor service. Is it running?" };
+	})
 
 	revalidatePath("/dashboard/monitors");
 	return { error: false, message: "Monitor created successfully" };
@@ -124,7 +148,30 @@ export async function editMonitor(id: string, data: FormData): Promise<ActionRes
 		return { ...acc, ...chunk };
 	}, {});
 
-	await db.update(monitors).set(newData).where(eq(monitors.id, id)).then(() => {
+	await db.update(monitors).set(newData).where(eq(monitors.id, id)).then(async () => {
+		await fetch(`${env.NEXT_PUBLIC_MONITOR_URL}/cron/update/${id}`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"Access-Control-Allow-Origin": "*",
+			}
+		}).then(async (res) => {
+			if (res.status === 200) {
+				revalidatePath("/dashboard/monitors");
+			} else {
+				const json = await res.json();
+				if (json.error) {
+					revalidatePath("/dashboard/monitors");
+					return { error: true, message: json.error };
+				} else {
+					revalidatePath("/dashboard/monitors");
+					return { error: true, message: "Failed to update cron job" };
+				}
+			}
+		}).catch((e) => {
+			console.error(e);
+			return { error: true, message: "Couldn't reach the monitor service. Is it running?" };
+		})
 		revalidatePath("/dashboard/monitors");
 	}).catch((err) => {
 		return { error: true, message: err };
@@ -136,7 +183,30 @@ export async function editMonitor(id: string, data: FormData): Promise<ActionRes
 
 export async function deleteMonitor(id: string): Promise<ActionResult> {
 	"use server"
-	await db.delete(monitors).where(eq(monitors.id, id)).then(() => {
+	await db.delete(monitors).where(eq(monitors.id, id)).then(async () => {
+		await fetch(`${env.NEXT_PUBLIC_MONITOR_URL}/cron/remove/${id}`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"Access-Control-Allow-Origin": "*",
+			}
+		}).then(async (res) => {
+			if (res.status === 200) {
+				revalidatePath("/dashboard/monitors");
+			} else {
+				const json = await res.json();
+				if (json.error) {
+					revalidatePath("/dashboard/monitors");
+					return { error: true, message: json.error };
+				} else {
+					revalidatePath("/dashboard/monitors");
+					return { error: true, message: "Failed to stop cron job" };
+				}
+			}
+		}).catch((e) => {
+			console.error(e);
+			return { error: true, message: "Couldn't reach the monitor service. Is it running?" }
+		})
 		revalidatePath("/dashboard/monitors");
 	}).catch((err) => {
 		console.error(err);

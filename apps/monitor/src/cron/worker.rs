@@ -3,7 +3,7 @@ use std::{
     time::SystemTime,
 };
 
-use log::{error, info, warn};
+use log::{error, info};
 use sqlx::query;
 use tokio::{sync::Mutex, task::JoinHandle};
 use tokio_cron_scheduler::JobScheduler;
@@ -15,6 +15,7 @@ use crate::{POOL, REGISTRY, SCHED};
 pub struct JobMetadata {
     pub id: Uuid,
     pub cron_expr: String,
+    pub monitor_id: String,
     pub created_at: SystemTime,
 }
 
@@ -30,20 +31,20 @@ pub async fn start() {
         sched_clone.lock().await.start().await.unwrap();
     });
 
-    match SCHED.set(scheduler) {
-        Ok(_) => info!("Set scheduler"),
-        Err(_) => warn!("Failed to set scheduler"),
-    }
+    SCHED
+        .set(scheduler)
+        .map_err(|_| error!("Failed to set scheduler"))
+        .ok();
 
-    match REGISTRY.set(registry) {
-        Ok(_) => info!("Set registry"),
-        Err(_) => warn!("Failed to set registry"),
-    }
+    REGISTRY
+        .set(registry)
+        .map_err(|_| error!("Failed to set registry"))
+        .ok();
 
-    match HANDLE.set(handle) {
-        Ok(_) => info!("Set handle"),
-        Err(_) => warn!("Failed to set handle"),
-    }
+    HANDLE
+        .set(handle)
+        .map_err(|_| error!("Failed to set handle"))
+        .ok();
 }
 
 /// Load all the monitors from the database and create a ping cron job for them
@@ -70,24 +71,8 @@ pub async fn load_jobs() {
         .await
     {
         Ok(query) => query.into_iter().map(|row| {
-            info!("Creating job for {:?}", row);
             tokio::spawn(async move {
-                match crate::cron::create_job(
-                    row.url.to_string(),
-                    row.r#type.to_string(),
-                    match row.interval.to_string().as_str() {
-                        "1" => "1 * * * * *".to_string(),
-                        "5" => "1/5 * * * * *".to_string(),
-                        "10" => "1/10 * * * * *".to_string(),
-                        "30" => "1/30 * * * * *".to_string(),
-                        "60" => "1/60 * * * * *".to_string(),
-                        _ => "1/10 * * * * *".to_string(), // default case
-                    },
-                    sched.clone(),
-                    reg.clone(),
-                )
-                .await
-                {
+                match crate::cron::create_job(row.id, sched.lock().await, reg.lock().await).await {
                     Ok(_) => info!("Created job"),
                     Err(e) => error!("Failed to create job: {:?}", e),
                 }
@@ -100,6 +85,8 @@ pub async fn load_jobs() {
     };
 
     for task in tasks {
-        task.await.unwrap();
+        task.await
+            .map_err(|e| error!("Failed to await cron task: {:?}", e))
+            .ok();
     }
 }

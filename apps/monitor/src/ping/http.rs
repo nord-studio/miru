@@ -80,7 +80,7 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                     })
                 }
                 Err(err) => {
-                    return Err(HttpPingErrorResponse {
+                    Err(HttpPingErrorResponse {
                         response: HttpPingResponse {
                             // Set default status code to 503 if it's not available
                             status: err.status().map_or(503, |s| s.as_u16() as i32),
@@ -92,7 +92,7 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                             headers: std::collections::HashMap::new(),
                         },
                         error: format!("{}", err),
-                    });
+                    })
                 }
             }
         }
