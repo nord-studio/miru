@@ -72,7 +72,6 @@ export async function register(prevState: ActionResult, formData: FormData) {
 			}
 		})
 	} catch (err) {
-		console.log(err)
 		return {
 			error: true,
 			// @ts-expect-error - body is not defined in the type

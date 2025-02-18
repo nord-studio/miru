@@ -240,8 +240,6 @@ export const columns: ColumnDef<Monitor>[] = [
 										row.original.id
 									);
 
-									console.log(res);
-
 									await pingMonitor(row.original.id).then(
 										(res) => {
 											if (res.error) {

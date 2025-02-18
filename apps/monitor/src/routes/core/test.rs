@@ -37,11 +37,11 @@ pub async fn test_service(path: web::Path<(String, String)>) -> impl Responder {
                             )
                         })
                         .collect::<std::collections::HashMap<String, String>>();
-                    return HttpResponse::Ok().json(json!({
+                    HttpResponse::Ok().json(json!({
                         "status": status.as_u16(),
                         "latency": (chrono::Utc::now() - now).num_milliseconds(),
                         "headers": headers
-                    }));
+                    }))
                 }
                 Err(_) => {
                     let url = url.replace("http://", "https://");
@@ -61,16 +61,14 @@ pub async fn test_service(path: web::Path<(String, String)>) -> impl Responder {
                                     )
                                 })
                                 .collect::<std::collections::HashMap<String, String>>();
-                            return HttpResponse::Ok().json(json!({
+                            HttpResponse::Ok().json(json!({
                                 "status": status.as_u16(),
                                 "latency": (chrono::Utc::now() - now).num_milliseconds(),
                                 "headers": headers
-                            }));
+                            }))
                         }
-                        Err(err) => {
-                            return HttpResponse::InternalServerError()
-                                .json(json!({ "error": format!("{}", err) }));
-                        }
+                        Err(err) => HttpResponse::InternalServerError()
+                            .json(json!({ "error": format!("{}", err) })),
                     }
                 }
             }
@@ -88,22 +86,17 @@ pub async fn test_service(path: web::Path<(String, String)>) -> impl Responder {
                         500
                     };
 
-                    return HttpResponse::Ok().json(json!({
+                    HttpResponse::Ok().json(json!({
                         "status": status,
                         "latency": (chrono::Utc::now() - now).num_milliseconds(),
                         "time": now.to_rfc3339(),
-                    }));
+                    }))
                 }
-                Err(err) => {
-                    return HttpResponse::InternalServerError().json(json!({
-                        "error": format!("TCP Error: {}", err),
-                    }));
-                }
+                Err(err) => HttpResponse::InternalServerError().json(json!({
+                    "error": format!("TCP Error: {}", err),
+                })),
             }
         }
-        _ => {
-            return HttpResponse::BadRequest()
-                .body("Invalid type. Must be 'http' or 'tcp'".to_string());
-        }
+        _ => HttpResponse::BadRequest().body("Invalid type. Must be 'http' or 'tcp'".to_string()),
     }
 }

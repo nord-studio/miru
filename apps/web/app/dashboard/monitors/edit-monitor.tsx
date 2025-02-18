@@ -50,6 +50,7 @@ export default function EditMonitor({
 		e.preventDefault();
 		setLoading(true);
 
+		// TODO: only pass data that has changed
 		const data = new FormData(e.currentTarget);
 		editMonitor(monitor.id, data).then((res) => {
 			setLoading(false);
