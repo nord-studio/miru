@@ -16,10 +16,10 @@ export default async function Home() {
 				<>
 					<div className="flex flex-col items-center">
 						<h1 className="text-3xl font-display font-black text-neutral-900 dark:text-neutral-100">
-							Welcome to Iris!
+							Welcome to Miru!
 						</h1>
 						<p>
-							It looks like you haven&apos;t setup Iris yet. Click
+							It looks like you haven&apos;t setup Miru yet. Click
 							the button below to get started.
 						</p>
 					</div>

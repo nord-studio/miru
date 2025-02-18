@@ -1,4 +1,4 @@
-# Iris
+# miru
 
 A free, open-source and fully customisable status page and monitoring service.
 
@@ -14,17 +14,17 @@ A free, open-source and fully customisable status page and monitoring service.
 
 ## Project Structure
 
--   [@iris/web](./apps/web) - The control plane, powered by [NextJS](https://nextjs.org/).
--   [@iris/monitor](./apps/monitor/) - The service monitoring service, powered by [Rust](https://www.rust-lang.org/).
--   [@iris/docs](./apps/docs/) - The documentation site, powered by [Astro](https://astro.build/) using the [Starlight](https://starlight.astro.build/) template.
+-   [@miru/web](./apps/web) - The control plane, powered by [NextJS](https://nextjs.org/).
+-   [@miru/monitor](./apps/monitor/) - The service monitoring service, powered by [Rust](https://www.rust-lang.org/).
+-   [@miru/docs](./apps/docs/) - The documentation site, powered by [Astro](https://astro.build/) using the [Starlight](https://starlight.astro.build/) template.
 
 ## Running locally
 
 You need to have [NodeJS](https://nodejs.org/en), [pnpm](https://pnpm.io/), [Rust](https://www.rust-lang.org/), and [watchexec](https://github.com/watchexec/watchexec) installed as prerequisites.
 
 ```bash
-git clone https://github.com/nord-studio/iris
-cd iris
+git clone https://github.com/nord-studio/miru
+cd miru
 pnpm install
 # Create and setup your .env file using the .env.example file before this command
 pnpm dev

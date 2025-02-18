@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export default async function MonitorDetailPage({
+export default async function MonitorSingletonPage({
 	params,
 }: {
 	params: Promise<{ id: string }>;

@@ -12,10 +12,10 @@ export default function LoginPage() {
 				<div className="flex flex-col items-center justify-center gap-6 text-center">
 					<div className="flex w-full flex-col items-center justify-center gap-2">
 						<h1 className="text-center font-display text-3xl font-bold sm:text-4xl">
-							Sign in to Iris
+							Sign in to Miru
 						</h1>
 						<p className="text-sm text-neutral-500 sm:text-base">
-							Please log in with your Iris account to continue.
+							Please log in with your Miru account to continue.
 						</p>
 					</div>
 					<div className="flex w-full flex-col items-center justify-center gap-4">

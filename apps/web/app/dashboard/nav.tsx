@@ -14,7 +14,10 @@ export default async function Navbar() {
 	});
 
 	return (
-		<nav className="flex flex-row gap-2 items-center justify-between p-2 border border-black/10 dark:border-white/10 rounded-lg">
+		<nav className="flex flex-row gap-2 items-center">
+			<Link href="/dashboard">
+				<span className="text-nowrap font-bold text-lg pr-1">見る</span>
+			</Link>
 			<div className="sm:flex flex-row items-center justify-start w-full hidden">
 				<Link href="/dashboard/monitors">
 					<Button variant="link">Monitors</Button>
@@ -32,11 +35,7 @@ export default async function Navbar() {
 					<Button variant="link">Settings</Button>
 				</Link>
 			</div>
-			<div className="sm:hidden flex-row items-center justify-start w-full flex">
-				<h2 className="px-2 text-lg font-black font-display text-neutral-500 dark:text-neutral-400">
-					Iris
-				</h2>
-			</div>
+			<div className="sm:hidden w-full" />
 			<div className="hidden sm:flex">
 				<ThemeDropdown />
 			</div>

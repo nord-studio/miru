@@ -1,11 +1,12 @@
 {
-	"name": "iris",
+	"name": "miru",
 	"scripts": {
 		"dev": "turbo dev",
 		"build": "turbo build"
 	},
 	"devDependencies": {
-		"turbo": "latest"
+		"turbo": "latest",
+		"typescript": "^5.7.3"
 	},
 	"packageManager": "pnpm@9.0.0"
 }

@@ -147,7 +147,9 @@ export default function CreateMonitor() {
 					<DialogTrigger asChild>
 						<Button>
 							<PlusIcon />
-							Create Monitor
+							<span className="hidden sm:block">
+								Create Monitor
+							</span>
 						</Button>
 					</DialogTrigger>
 					<DialogContent className="p-0 sm:max-w-[425px]">
@@ -287,9 +289,8 @@ export default function CreateMonitor() {
 				/>
 				<Drawer open={open} onOpenChange={setOpen}>
 					<DrawerTrigger asChild>
-						<Button>
+						<Button size="icon">
 							<PlusIcon />
-							Create Monitor
 						</Button>
 					</DrawerTrigger>
 					<DrawerContent>

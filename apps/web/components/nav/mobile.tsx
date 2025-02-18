@@ -24,13 +24,13 @@ export default function MobileNavbar() {
 				</Drawer.Trigger>
 				<Drawer.Portal>
 					<Drawer.Overlay className="fixed inset-0 bg-black/50" />
-					<Drawer.Content className="bg-neutral-200 dark:bg-neutral-800 rounded-l-md flex flex-col rounded-t-[10px] h-full w-[200px] mt-24 fixed bottom-0 right-0">
-						<div className="flex-1 h-full p-4 bg-neutral-200 dark:bg-neutral-900">
+					<Drawer.Content className="flex flex-col rounded-t-[10px] h-full w-[200px] mt-24 fixed bottom-0 right-0">
+						<div className="flex-1 h-full p-4 bg-neutral-50 dark:bg-neutral-950 rounded-l-md ">
 							<div className="max-w-md mx-auto">
 								<div className="flex flex-row items-center justify-between">
 									<Link href="/" passHref>
 										<h2 className="text-lg font-black font-display text-neutral-500 dark:text-neutral-400">
-											Iris
+											見る
 										</h2>
 									</Link>
 									<Drawer.Close>

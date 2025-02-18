@@ -4,7 +4,7 @@ import db from "../lib/db";
 import { nextCookies } from "better-auth/next-js";
 
 export const auth = betterAuth({
-	appName: "Iris",
+	appName: "miru",
 	baseURL: process.env.NEXT_PUBLIC_URL,
 	emailAndPassword: {
 		enabled: true,
@@ -26,7 +26,7 @@ export const auth = betterAuth({
 		updateAge: 60 * 60 * 24
 	},
 	advanced: {
-		cookiePrefix: "iris",
+		cookiePrefix: "miru",
 	},
 	database: drizzleAdapter(db, {
 		provider: "pg",

@@ -105,7 +105,7 @@ export default function UserDropdown({ user }: { user: User }) {
 									</DropdownMenuGroup>
 									<DropdownMenuSeparator />
 									<Link
-										href="https://github.com/nord-studio/iris"
+										href="https://github.com/nord-studio/miru"
 										target="_blank"
 									>
 										<DropdownMenuItem>
@@ -114,7 +114,7 @@ export default function UserDropdown({ user }: { user: User }) {
 										</DropdownMenuItem>
 									</Link>
 									<Link
-										href="https://iris.nordstud.io/docs"
+										href="https://miru.nordstud.io/docs"
 										target="_blank"
 									>
 										<DropdownMenuItem>
@@ -196,7 +196,7 @@ export default function UserDropdown({ user }: { user: User }) {
 										</Link>
 										<hr className="w-full border-b border-black/10 dark:border-white/10" />
 										<Link
-											href="https://github.com/nord-studio/iris"
+											href="https://github.com/nord-studio/miru"
 											className="w-full"
 											target="_blank"
 										>
@@ -208,7 +208,7 @@ export default function UserDropdown({ user }: { user: User }) {
 											</DrawerClose>
 										</Link>
 										<Link
-											href="https://iris.nordstud.io/docs"
+											href="https://miru.nordstud.io/docs"
 											className="w-full"
 											target="_blank"
 										>

@@ -15,7 +15,7 @@ export default function SettingsLayout({
 
 	return (
 		<>
-			<div className="flex flex-col gap-4 sm:gap-6 md:gap-8 sm:flex-row">
+			<div className="flex flex-col gap-4 sm:gap-6 md:gap-8 sm:flex-row mt-4 sm:mt-0">
 				<div className="flex w-full flex-col gap-2 sm:w-1/4">
 					<Link href="/dashboard/settings" className="w-full">
 						<Button

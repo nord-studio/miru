@@ -10,7 +10,7 @@ export default function RegisterPage() {
 				<div className="flex flex-col items-center justify-center gap-6 text-center">
 					<div className="flex w-full flex-col items-center justify-center gap-2">
 						<h1 className="text-center font-display text-3xl font-bold sm:text-4xl">
-							Create an Iris account
+							Create an Miru account
 						</h1>
 						<p className="text-sm text-neutral-500 sm:text-base">
 							Fill out your details below to get started.

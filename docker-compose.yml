@@ -8,6 +8,6 @@ services:
       - ./.docker/database/:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: VerySecurePassword123
-      POSTGRES_USER: iris
-      POSTGRES_DB: iris
+      POSTGRES_USER: miru
+      POSTGRES_DB: miru
 

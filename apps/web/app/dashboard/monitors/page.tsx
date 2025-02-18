@@ -25,7 +25,7 @@ export default async function MonitorsPage() {
 
 	return (
 		<>
-			<div>
+			<div className="flex flex-col w-full h-full">
 				<div className="w-full flex flex-row gap-2 items-center justify-between">
 					<div className="flex flex-col">
 						<h1 className="text-3xl font-black font-display">
