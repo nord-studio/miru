@@ -21,7 +21,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-	title: "miru",
+	title: "Miru",
 	description:
 		"A free, open-source and self hostable status and monitoring service.",
 };
