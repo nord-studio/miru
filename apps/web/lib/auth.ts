@@ -1,14 +1,19 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import db from "../lib/db";
 import { nextCookies } from "better-auth/next-js";
+import { emailOTP } from "better-auth/plugins"
+import db from "../lib/db";
+import sendResetPasswordEmail from "@/lib/email/reset-password";
 
 export const auth = betterAuth({
 	appName: "miru",
 	baseURL: process.env.NEXT_PUBLIC_URL,
 	emailAndPassword: {
 		enabled: true,
-		autoSignIn: true
+		autoSignIn: true,
+		sendResetPassword: async ({ user, url }) => {
+			await sendResetPasswordEmail(user.email, url)
+		}
 	},
 	user: {
 		additionalFields: {
@@ -32,7 +37,16 @@ export const auth = betterAuth({
 		provider: "pg",
 		schema: await import("@/lib/db/schema/auth")
 	}),
-	plugins: [nextCookies()]
+	plugins: [
+		nextCookies(),
+		emailOTP({
+			async sendVerificationOTP({ email, otp, type }) {
+				if (type === "forget-password") {
+					await sendResetPasswordEmail(email, otp);
+				}
+			},
+		})
+	]
 })
 
 export type Session = typeof auth.$Infer.Session;

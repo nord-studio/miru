@@ -1,6 +1,6 @@
 "use client";
 
-import LoginForm from "@/components/auth/forms/login-form";
+import LoginForm from "@/components/auth/forms/login";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
@@ -34,7 +34,7 @@ export default function LoginPage() {
 									variant={"link"}
 									className="p-0 text-blue-500 dark:text-blue-500"
 								>
-									Reset
+									Well, that sucks.
 								</Button>
 							</Link>
 						</span>

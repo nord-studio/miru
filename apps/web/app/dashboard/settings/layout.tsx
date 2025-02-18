@@ -15,8 +15,8 @@ export default function SettingsLayout({
 
 	return (
 		<>
-			<div className="flex flex-col gap-4 sm:gap-6 md:gap-8 sm:flex-row mt-4 sm:mt-0">
-				<div className="flex w-full flex-col gap-2 sm:w-1/4">
+			<div className="flex flex-col gap-4 sm:gap-6 md:gap-8 sm:flex-row mt-4 sm:mt-0 w-full">
+				<div className="flex w-full flex-col gap-2 sm:max-w-[200px]">
 					<Link href="/dashboard/settings" className="w-full">
 						<Button
 							variant="ghost"
@@ -83,7 +83,7 @@ export default function SettingsLayout({
 					</Link>
 				</div>
 				<hr className="w-full border border-black/10 dark:border-white/10 sm:hidden" />
-				<div className="w-full sm:w-3/4">{children}</div>
+				<div className="w-full">{children}</div>
 			</div>
 		</>
 	);

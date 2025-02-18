@@ -20,8 +20,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useMediaQuery } from "usehooks-ts";
 import React, { useState } from "react";
-import LoginForm from "@/components/auth/forms/login-form";
-import RegisterForm from "@/components/auth/forms/register-form";
+import LoginForm from "@/components/auth/forms/login";
+import RegisterForm from "@/components/auth/forms/register";
 
 export default function AuthMenu() {
 	const [open, setOpen] = useState(false);
