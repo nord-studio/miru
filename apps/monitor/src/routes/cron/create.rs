@@ -1,7 +1,8 @@
 use actix_web::{post, web, HttpResponse, Responder};
 use serde_json::json;
+use sqlx::query;
 
-use crate::{cron, REGISTRY, SCHED};
+use crate::{cron, POOL, REGISTRY, SCHED};
 
 #[post("/cron/create/{monitor_id}")]
 pub async fn create_job_service(path: web::Path<String>) -> impl Responder {
@@ -25,8 +26,25 @@ pub async fn create_job_service(path: web::Path<String>) -> impl Responder {
         }
     };
 
+    let pool = POOL.clone();
+
+    let monitor = match query!("SELECT * FROM monitors WHERE id = $1", monitor_id)
+        .fetch_one(&pool)
+        .await
+    {
+        Ok(monitor) => monitor,
+        Err(_) => {
+            return HttpResponse::NotFound().json(json!({
+                    "error": "Monitor not found"
+            }))
+        }
+    };
+
     match cron::create_job(
         monitor_id,
+        monitor.url,
+        monitor.r#type,
+        monitor.interval.to_string(),
         sched.clone().lock().await,
         reg.clone().lock().await,
     )

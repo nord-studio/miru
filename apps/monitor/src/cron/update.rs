@@ -1,8 +1,9 @@
 use log::info;
+use sqlx::query;
 use tokio::sync::MutexGuard;
 use tokio_cron_scheduler::JobScheduler;
 
-use crate::{cron::create_job, REGISTRY, SCHED};
+use crate::{cron::create_job, POOL, REGISTRY, SCHED};
 
 use super::worker::JobMetadata;
 
@@ -13,8 +14,26 @@ pub async fn update_job(
 ) -> Result<(), Box<dyn std::error::Error>> {
     info!("Updating job with monitor id {}", monitor_id);
 
+    let pool = POOL.clone();
+
+    let monitor = match query!("SELECT * FROM monitors WHERE id = $1", monitor_id)
+        .fetch_one(&pool)
+        .await
+    {
+        Ok(monitor) => monitor,
+        Err(_) => return Err("Monitor not found".into()),
+    };
+
     // create new job
-    create_job(monitor_id.clone(), sched, registry).await?;
+    create_job(
+        monitor_id.clone(),
+        monitor.url,
+        monitor.r#type,
+        monitor.interval.to_string(),
+        sched,
+        registry,
+    )
+    .await?;
 
     let sched = match SCHED.get() {
         Some(sched) => sched,

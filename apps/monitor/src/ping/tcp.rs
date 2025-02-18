@@ -9,6 +9,7 @@ pub struct TcpPingResponse {
 #[derive(Debug)]
 pub struct TcpPingErrorResponse {
     pub error: String,
+    pub response: TcpPingResponse,
 }
 
 pub async fn tcp_ping(url: String) -> Result<TcpPingResponse, TcpPingErrorResponse> {
@@ -23,6 +24,13 @@ pub async fn tcp_ping(url: String) -> Result<TcpPingResponse, TcpPingErrorRespon
         }),
         Err(err) => Err(TcpPingErrorResponse {
             error: format!("TCP Error: {}", err),
+            response: TcpPingResponse {
+                success: false,
+                latency: (chrono::Utc::now() - now)
+                    .num_milliseconds()
+                    .try_into()
+                    .unwrap_or(i32::MAX),
+            },
         }),
     }
 }

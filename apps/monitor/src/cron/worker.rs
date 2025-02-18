@@ -72,7 +72,16 @@ pub async fn load_jobs() {
     {
         Ok(query) => query.into_iter().map(|row| {
             tokio::spawn(async move {
-                match crate::cron::create_job(row.id, sched.lock().await, reg.lock().await).await {
+                match crate::cron::create_job(
+                    row.id,
+                    row.url,
+                    row.r#type,
+                    row.interval.to_string(),
+                    sched.lock().await,
+                    reg.lock().await,
+                )
+                .await
+                {
                     Ok(_) => info!("Created job"),
                     Err(e) => error!("Failed to create job: {:?}", e),
                 }

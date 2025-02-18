@@ -144,34 +144,36 @@ export async function editMonitor(id: string, data: FormData): Promise<ActionRes
 		return { error: true, message: "No changes detected" };
 	}
 
-	const newData = chunks.reduce((acc, chunk) => {
+	const newData: { name?: string; type?: string; url?: string; interval?: number } = chunks.reduce((acc, chunk) => {
 		return { ...acc, ...chunk };
 	}, {});
 
 	await db.update(monitors).set(newData).where(eq(monitors.id, id)).then(async () => {
-		await fetch(`${env.NEXT_PUBLIC_MONITOR_URL}/cron/update/${id}`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"Access-Control-Allow-Origin": "*",
-			}
-		}).then(async (res) => {
-			if (res.status === 200) {
-				revalidatePath("/dashboard/monitors");
-			} else {
-				const json = await res.json();
-				if (json.error) {
-					revalidatePath("/dashboard/monitors");
-					return { error: true, message: json.error };
-				} else {
-					revalidatePath("/dashboard/monitors");
-					return { error: true, message: "Failed to update cron job" };
+		if (newData.interval || newData.url || newData.type) {
+			await fetch(`${env.NEXT_PUBLIC_MONITOR_URL}/cron/update/${id}`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Access-Control-Allow-Origin": "*",
 				}
-			}
-		}).catch((e) => {
-			console.error(e);
-			return { error: true, message: "Couldn't reach the monitor service. Is it running?" };
-		})
+			}).then(async (res) => {
+				if (res.status === 200) {
+					revalidatePath("/dashboard/monitors");
+				} else {
+					const json = await res.json();
+					if (json.error) {
+						revalidatePath("/dashboard/monitors");
+						return { error: true, message: json.error };
+					} else {
+						revalidatePath("/dashboard/monitors");
+						return { error: true, message: "Failed to update cron job" };
+					}
+				}
+			}).catch((e) => {
+				console.error(e);
+				return { error: true, message: "Couldn't reach the monitor service. Is it running?" };
+			})
+		}
 		revalidatePath("/dashboard/monitors");
 	}).catch((err) => {
 		return { error: true, message: err };
