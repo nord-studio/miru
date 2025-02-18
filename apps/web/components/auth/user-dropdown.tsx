@@ -23,6 +23,7 @@ import {
 	DrawerClose,
 	DrawerContent,
 	DrawerHeader,
+	DrawerTitle,
 	DrawerTrigger,
 } from "@/components/ui/drawer";
 import Alert from "@/components/ui/alert";
@@ -32,6 +33,7 @@ import Link from "next/link";
 import { SiGithub } from "@icons-pack/react-simple-icons";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UserDropdown({ user }: { user: User }) {
 	const [mounted, setMounted] = useState(false);
@@ -60,11 +62,18 @@ export default function UserDropdown({ user }: { user: User }) {
 		);
 	}
 
+	if (!mounted)
+		return (
+			<>
+				<Skeleton className="size-8 rounded-full" />
+			</>
+		);
+
 	return (
 		<>
 			{isDesktop ? (
 				<>
-					{user && mounted && (
+					{user && (
 						<>
 							<DropdownMenu open={open} onOpenChange={setOpen}>
 								<DropdownMenuTrigger
@@ -144,7 +153,7 @@ export default function UserDropdown({ user }: { user: User }) {
 				</>
 			) : (
 				<>
-					{user && mounted && (
+					{user && (
 						<>
 							<Drawer open={open} onOpenChange={setOpen}>
 								<DrawerTrigger
@@ -166,9 +175,9 @@ export default function UserDropdown({ user }: { user: User }) {
 								</DrawerTrigger>
 								<DrawerContent className="border-0 p-0">
 									<DrawerHeader>
-										<h1 className="text-xl font-black font-display">
-											Welcome back, {user.username}
-										</h1>
+										<DrawerTitle className="text-xl font-bold font-display">
+											Welcome Back, {user.username}
+										</DrawerTitle>
 									</DrawerHeader>
 									<hr className="w-full border-b border-black/10 dark:border-white/10" />
 									<div className="flex flex-col items-start">
@@ -177,7 +186,7 @@ export default function UserDropdown({ user }: { user: User }) {
 											className="w-full"
 										>
 											<DrawerClose className="w-full">
-												<div className="text-md flex w-full cursor-default select-none items-center p-4 outline-none transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50">
+												<div className="text-md flex w-full cursor-default select-none items-center p-4 outline-hidden transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-disabled:pointer-events-none data-disabled:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50">
 													<UserIcon className="mr-3 h-4 w-4" />
 													<span>Profile</span>
 												</div>
@@ -188,7 +197,7 @@ export default function UserDropdown({ user }: { user: User }) {
 											className="w-full"
 										>
 											<DrawerClose className="w-full">
-												<div className="text-md flex w-full cursor-default select-none items-center p-4 outline-none transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50">
+												<div className="text-md flex w-full cursor-default select-none items-center p-4 outline-hidden transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-disabled:pointer-events-none data-disabled:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50">
 													<CogIcon className="mr-3 h-4 w-4" />
 													<span>Settings</span>
 												</div>
@@ -201,7 +210,7 @@ export default function UserDropdown({ user }: { user: User }) {
 											target="_blank"
 										>
 											<DrawerClose className="w-full">
-												<div className="text-md flex w-full cursor-default select-none items-center p-4 outline-none transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50">
+												<div className="text-md flex w-full cursor-default select-none items-center p-4 outline-hidden transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-disabled:pointer-events-none data-disabled:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50">
 													<SiGithub className="mr-3 h-4 w-4" />
 													<span>GitHub</span>
 												</div>
@@ -213,14 +222,14 @@ export default function UserDropdown({ user }: { user: User }) {
 											target="_blank"
 										>
 											<DrawerClose className="w-full">
-												<div className="text-md flex w-full cursor-default select-none items-center p-4 outline-none transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50">
+												<div className="text-md flex w-full cursor-default select-none items-center p-4 outline-hidden transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-disabled:pointer-events-none data-disabled:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50">
 													<BookTextIcon className="mr-3 h-4 w-4" />
 													<span>Docs</span>
 												</div>
 											</DrawerClose>
 										</Link>
 										<div
-											className="text-md flex w-full cursor-default select-none items-center p-4 outline-none transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50"
+											className="text-md flex w-full cursor-default select-none items-center p-4 outline-hidden transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-disabled:pointer-events-none data-disabled:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50"
 											data-disabled={true}
 										>
 											<CodeIcon className="mr-3 h-4 w-4" />
@@ -229,7 +238,7 @@ export default function UserDropdown({ user }: { user: User }) {
 										<hr className="w-full border-b border-black/10 dark:border-white/10" />
 										<DrawerClose className="w-full">
 											<div
-												className="text-md flex cursor-default select-none items-center p-4 outline-none transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50"
+												className="text-md flex cursor-default select-none items-center p-4 outline-hidden transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-disabled:pointer-events-none data-disabled:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50"
 												onClick={() =>
 													setSignOutOpen(!signOutOpen)
 												}

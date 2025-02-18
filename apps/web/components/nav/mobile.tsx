@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 export default function MobileNavbar() {
 	return (
@@ -25,6 +26,8 @@ export default function MobileNavbar() {
 				<Drawer.Portal>
 					<Drawer.Overlay className="fixed inset-0 bg-black/50" />
 					<Drawer.Content className="flex flex-col rounded-t-[10px] h-full w-[200px] mt-24 fixed bottom-0 right-0">
+						{/* Primative doesn't include this */}
+						<DialogTitle />
 						<div className="flex-1 h-full p-4 bg-neutral-50 dark:bg-neutral-950 rounded-l-md ">
 							<div className="max-w-md mx-auto">
 								<div className="flex flex-row items-center justify-between">
@@ -33,7 +36,7 @@ export default function MobileNavbar() {
 											見る
 										</h2>
 									</Link>
-									<Drawer.Close>
+									<Drawer.Close asChild>
 										<Button size="icon" variant="ghost">
 											<XIcon className="w-6 h-6" />
 										</Button>
@@ -46,7 +49,10 @@ export default function MobileNavbar() {
 										passHref
 										className="w-full"
 									>
-										<Drawer.Close className="w-full">
+										<Drawer.Close
+											className="w-full"
+											asChild
+										>
 											<Button
 												variant="ghost"
 												className="flex flex-row w-full gap-2 justify-start"
@@ -61,7 +67,10 @@ export default function MobileNavbar() {
 										passHref
 										className="w-full"
 									>
-										<Drawer.Close className="w-full">
+										<Drawer.Close
+											className="w-full"
+											asChild
+										>
 											<Button
 												variant="ghost"
 												className="flex flex-row w-full gap-2 justify-start"
@@ -76,7 +85,10 @@ export default function MobileNavbar() {
 										passHref
 										className="w-full"
 									>
-										<Drawer.Close className="w-full">
+										<Drawer.Close
+											className="w-full"
+											asChild
+										>
 											<Button
 												variant="ghost"
 												className="flex flex-row w-full gap-2 justify-start"
@@ -91,7 +103,10 @@ export default function MobileNavbar() {
 										passHref
 										className="w-full"
 									>
-										<Drawer.Close className="w-full">
+										<Drawer.Close
+											className="w-full"
+											asChild
+										>
 											<Button
 												variant="ghost"
 												className="flex flex-row w-full gap-2 justify-start"
@@ -106,7 +121,10 @@ export default function MobileNavbar() {
 										passHref
 										className="w-full"
 									>
-										<Drawer.Close className="w-full">
+										<Drawer.Close
+											className="w-full"
+											asChild
+										>
 											<Button
 												variant="ghost"
 												className="flex flex-row w-full gap-2 justify-start"

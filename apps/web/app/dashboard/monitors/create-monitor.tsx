@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 import {
@@ -40,17 +40,23 @@ import TestEndpoint from "@/types/monitor-service/test";
 import React from "react";
 import Alert from "@/components/ui/alert";
 import { env } from "@/lib/env.mjs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CreateMonitor() {
 	const [open, setOpen] = useState(false);
 	const [brokenWarning, setBrokenWarning] = useState(false);
 	const isDesktop = useMediaQuery("(min-width: 768px)");
 	const [loading, setLoading] = useState(false);
+	const [mounted, setMounted] = useState(false);
 
 	const [name, setName] = useState("");
 	const [url, setUrl] = useState("");
 	const [type, setType] = useState("http");
 	const [interval, setInterval] = useState("5");
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
 
 	async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -124,6 +130,16 @@ export default function CreateMonitor() {
 			error: `Failed to ping ${url}. Is the domain correct?`,
 		});
 	}
+
+	if (!mounted)
+		return (
+			<>
+				<Button>
+					<PlusIcon />
+					<span className="hidden sm:block">Create Monitor</span>
+				</Button>
+			</>
+		);
 
 	if (isDesktop) {
 		return (
