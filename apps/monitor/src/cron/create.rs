@@ -24,10 +24,7 @@ pub async fn create_job<'a>(
     mut registry: MutexGuard<'a, Vec<JobMetadata>>,
 ) -> Result<Uuid, Box<dyn std::error::Error>> {
     let interval = match interval.to_string().as_str() {
-        #[cfg(not(debug_assertions))]
         "1" => cron::ONE_MINUTE_CRON.to_string(),
-        #[cfg(debug_assertions)]
-        "1" => cron::THIRTY_SECONDS_CRON.to_string(),
         "5" => cron::FIVE_MINUTE_CRON.to_string(),
         "10" => cron::TEN_MINUTE_CRON.to_string(),
         "30" => cron::THIRTY_MINUTE_CRON.to_string(),
@@ -36,7 +33,7 @@ pub async fn create_job<'a>(
     };
 
     info!(
-        "Creating job for {} with type {} that will run {:?}",
+        "Creating job for {} with type {} and schedule {:?}",
         url, r#type, interval
     );
 

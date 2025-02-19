@@ -12,12 +12,20 @@
 			"outputs": [
 				".next/**",
 				"!.next/cache/**",
-				"target/**"
+				"./../../target/release/**"
 			]
 		},
 		"dev": {
 			"persistent": true,
 			"cache": false,
+			"inputs": [
+				".env"
+			]
+		},
+		"start": {
+			"dependsOn": [
+				"^start"
+			],
 			"inputs": [
 				".env"
 			]
