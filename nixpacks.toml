@@ -1,0 +1,11 @@
+[phases.setup]
+providers = ["...", "node", "rust"]
+
+[phases.install]
+cmds = ["pnpm install"]
+
+[phases.build]
+cmds = ["pnpm build"]
+
+[phases.start]
+cmds = ["pnpm start"]
