@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 import {
@@ -26,20 +26,58 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { editMonitor } from "@/app/dashboard/monitors/actions";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
 import { Monitor } from "@/types/monitor";
+import { Pen } from "lucide-react";
+import { VariantProps } from "class-variance-authority";
+
+export function EditMonitorButton({
+	monitor,
+	...props
+}: {
+	monitor: Omit<Monitor, "uptime">;
+} & React.ComponentProps<"button"> &
+	VariantProps<typeof buttonVariants>) {
+	const [open, setOpen] = useState(false);
+	const [moutned, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	if (!moutned) {
+		return (
+			<>
+				<Button {...props}>
+					<Pen />
+					Edit Monitor
+				</Button>
+			</>
+		);
+	}
+
+	return (
+		<>
+			<Button onClick={() => setOpen(!open)} {...props}>
+				<Pen />
+				Edit Monitor
+			</Button>
+			<EditMonitor open={open} setOpen={setOpen} monitor={monitor} />
+		</>
+	);
+}
 
 export default function EditMonitor({
 	monitor,
 	open,
 	setOpen,
 }: {
-	monitor: Monitor;
+	monitor: Omit<Monitor, "uptime">;
 	open: boolean;
 	setOpen: (open: boolean) => void;
 }) {

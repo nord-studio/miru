@@ -40,7 +40,6 @@ import TestEndpoint from "@/types/monitor-service/test";
 import React from "react";
 import Alert from "@/components/ui/alert";
 import { env } from "@/lib/env.mjs";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CreateMonitor() {
 	const [open, setOpen] = useState(false);

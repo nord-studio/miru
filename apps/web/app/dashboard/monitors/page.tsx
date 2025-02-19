@@ -1,5 +1,5 @@
 import { columns } from "@/app/dashboard/monitors/columns";
-import CreateMonitor from "@/app/dashboard/monitors/create-monitor";
+import CreateMonitor from "@/components/monitors/create-menu";
 import { DataTable } from "@/components/ui/data-table";
 import { monitors } from "@/lib/db/schema/monitors";
 import db from "@/lib/db";

@@ -4,7 +4,7 @@ import { Pool } from 'pg';
 
 const pool = new Pool({
 	connectionString: env.DATABASE_URL,
-	ssl: env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
+	ssl: env.DATABASE_SSL ? { rejectUnauthorized: false } : false,
 });
 
 const db = drizzle({
