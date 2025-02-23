@@ -40,6 +40,7 @@ import TestEndpoint from "@/types/monitor-service/test";
 import React from "react";
 import Alert from "@/components/ui/alert";
 import { env } from "@/lib/env.mjs";
+import { testUrl } from "@/components/monitors/helpers";
 
 export default function CreateMonitor() {
 	const [open, setOpen] = useState(false);
@@ -91,23 +92,6 @@ export default function CreateMonitor() {
 			} else {
 				toast.success("Monitor created successfully.");
 				setOpen(!open);
-			}
-		});
-	}
-
-	async function testUrl(method: string, url: string) {
-		await fetch(`${env.NEXT_PUBLIC_MONITOR_URL}/test/${method}/${url}`, {
-			headers: {
-				"Content-Type": "application/json",
-				"Access-Control-Allow-Origin": "*",
-			},
-		}).then(async (res) => {
-			const json: TestEndpoint = await res.json();
-
-			if (json.status === 200) {
-				return json;
-			} else {
-				throw new Error(`${url} didn't return a 200 status code.`);
 			}
 		});
 	}
