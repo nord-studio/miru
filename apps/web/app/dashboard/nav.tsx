@@ -3,7 +3,6 @@ import UserDropdown from "@/components/auth/user-dropdown";
 import MobileNavbar from "@/components/nav/mobile";
 import { ThemeDropdown } from "@/components/theme/dropdown";
 import { Button } from "@/components/ui/button";
-
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Link from "next/link";
@@ -15,7 +14,7 @@ export default async function Navbar() {
 
 	return (
 		<nav className="flex flex-row gap-2 items-center">
-			<Link href="/dashboard">
+			<Link href="/dashboard" className="sm:hidden inline md:inline">
 				<span className="text-nowrap font-bold text-lg pr-1">見る</span>
 			</Link>
 			<div className="sm:flex flex-row items-center justify-start w-full hidden">

@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
-const statChipVariant = cva("flex flex-col px-3 py-2 border rounded-lg", {
+const StatChipVariant = cva("flex flex-col px-3 py-2 border rounded-lg", {
 	variants: {
 		variant: {
 			green: "border-green-500/20 bg-green-500/10 [&>p]:text-green-600 dark:[&>p]:text-green-400",
@@ -28,7 +28,7 @@ function StatChip({
 	asChild = false,
 	...props
 }: React.ComponentProps<"div"> &
-	VariantProps<typeof statChipVariant> & {
+	VariantProps<typeof StatChipVariant> & {
 		title: string;
 		value: string;
 		measurement: string;
@@ -39,7 +39,7 @@ function StatChip({
 	return (
 		<Comp
 			data-slot="div"
-			className={cn(statChipVariant({ variant, className }))}
+			className={cn(StatChipVariant({ variant, className }))}
 			{...props}
 		>
 			<p className="font-medium text-muted-foreground text-sm uppercase">
@@ -65,4 +65,4 @@ function StatChip({
 	);
 }
 
-export { StatChip, statChipVariant };
+export { StatChip, StatChipVariant };

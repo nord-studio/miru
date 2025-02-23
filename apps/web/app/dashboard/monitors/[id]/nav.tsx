@@ -11,7 +11,7 @@ export default function MonitorSingletonNavbar() {
 
 	return (
 		<>
-			<div className="flex w-full sm:max-w-[200px] flex-col gap-2">
+			<div className="flex w-full md:max-w-[200px] flex-col gap-2">
 				<Link
 					href={`/dashboard/monitors/${params.id}`}
 					className="w-full"

@@ -1,12 +1,16 @@
-#[derive(Debug)]
+use log::info;
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct HttpPingResponse {
     pub success: bool,
     pub status: i32,
+    pub body: Option<String>,
     pub latency: i32,
     pub headers: std::collections::HashMap<String, String>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct HttpPingErrorResponse {
     pub response: HttpPingResponse,
     pub error: String,
@@ -40,6 +44,13 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                 })
                 .collect::<std::collections::HashMap<String, String>>();
 
+            let body = match resp.text().await {
+                Ok(body) => Some(body),
+                Err(_) => None,
+            };
+
+            info!("Response: {:?}", body);
+
             Ok(HttpPingResponse {
                 status,
                 success: status == 200,
@@ -47,6 +58,7 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                     .num_milliseconds()
                     .try_into()
                     .unwrap_or(i32::MAX),
+                body,
                 headers,
             })
         }
@@ -68,6 +80,12 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                             )
                         })
                         .collect::<std::collections::HashMap<String, String>>();
+                    let body = match resp.text().await {
+                        Ok(body) => Some(body),
+                        Err(_) => None,
+                    };
+
+                    info!("Response: {:?}", body);
 
                     Ok(HttpPingResponse {
                         status: status.as_u16() as i32,
@@ -76,6 +94,7 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                             .num_milliseconds()
                             .try_into()
                             .unwrap_or(i32::MAX),
+                        body,
                         headers,
                     })
                 }
@@ -90,6 +109,7 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                                 .try_into()
                                 .unwrap_or(i32::MAX),
                             headers: std::collections::HashMap::new(),
+                            body: None,
                         },
                         error: format!("{}", err),
                     })

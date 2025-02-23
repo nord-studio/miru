@@ -1,16 +1,11 @@
-export type ping = {
+export type Ping = {
 	id: string;
 	monitorId: string;
-	status: boolean;
-	latency: {
-		dns: number;
-		tcp: number;
-		tls: number;
-		ttfb: number;
-		transfer: number;
-	},
-	headers?: {
-		[key: string]: string;
-	},
-	createdAt: number;
+	type: string;
+	success: boolean;
+	status: number | null;
+	latency: number;
+	headers: unknown;
+	body: string | null;
+	createdAt: Date;
 }

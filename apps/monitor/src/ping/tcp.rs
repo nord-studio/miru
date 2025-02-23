@@ -1,12 +1,13 @@
+use serde::{Deserialize, Serialize};
 use tokio::net::TcpStream;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct TcpPingResponse {
     pub success: bool,
     pub latency: i32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct TcpPingErrorResponse {
     pub error: String,
     pub response: TcpPingResponse,

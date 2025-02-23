@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteMonitor } from "@/app/dashboard/monitors/actions";
+import { deleteMonitor } from "@/components/monitors/actions";
 import Alert from "@/components/ui/alert";
 import { usePathname, useRouter } from "next/navigation";
 

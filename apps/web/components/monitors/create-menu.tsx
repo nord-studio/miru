@@ -33,7 +33,7 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createMonitor } from "@/app/dashboard/monitors/actions";
+import { createMonitor } from "@/components/monitors/actions";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
 import TestEndpoint from "@/types/monitor-service/test";

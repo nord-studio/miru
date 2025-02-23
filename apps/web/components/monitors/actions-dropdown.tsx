@@ -12,7 +12,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
-import { pingMonitor } from "@/app/dashboard/monitors/actions";
+import { pingMonitor } from "@/components/monitors/actions";
 import React from "react";
 import EditMonitor from "@/components/monitors/edit-menu";
 import DeleteMonitor from "@/components/monitors/delete-menu";
@@ -77,8 +77,6 @@ export default function MonitorActionsDropdown({
 								const t = toast.loading(
 									`Pinging ${monitor.url}...`
 								);
-
-								const res = await pingMonitor(monitor.id);
 
 								await pingMonitor(monitor.id).then((res) => {
 									if (res.error) {

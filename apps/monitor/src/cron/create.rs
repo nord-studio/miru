@@ -73,9 +73,10 @@ pub async fn create_job<'a>(
                                     e.error.to_string()
                                 );
                                 let query = query!(
-                                    "INSERT INTO pings (id, monitor_id, success, status, latency, headers) VALUES ($1, $2, $3, $4, $5, $6)",
+                                    "INSERT INTO pings (id, monitor_id, type, success, status, latency, headers) VALUES ($1, $2, $3, $4, $5, $6, $7)",
                                     generate_id(),
                                     monitor_id.to_string(),
+                                    "http",
                                     false,
                                     e.response.status,
                                     e.response.latency,
@@ -100,9 +101,10 @@ pub async fn create_job<'a>(
                             serde_json::to_value(result.headers).unwrap_or(serde_json::Value::Null);
 
                         let query = query!(
-                            "INSERT INTO pings (id, monitor_id, success, status, latency, headers) VALUES ($1, $2, $3, $4, $5, $6)",
+                            "INSERT INTO pings (id, monitor_id, type, success, status, latency, headers) VALUES ($1, $2, $3, $4, $5, $6, $7)",
                             generate_id(),
                             monitor_id.to_string(),
+                            "http",
                             result.success,
                             result.status,
                             result.latency,
@@ -139,9 +141,10 @@ pub async fn create_job<'a>(
                                 );
 
                                 let query = query!(
-                                    "INSERT INTO pings (id, monitor_id, success, latency) VALUES ($1, $2, $3, $4)",
+                                    "INSERT INTO pings (id, monitor_id, type, success, latency) VALUES ($1, $2, $3, $4, $5)",
                                     generate_id(),
                                     monitor_id.to_string(),
+                                    "tcp",
                                     e.response.success,
                                     e.response.latency
                                 )
@@ -161,9 +164,10 @@ pub async fn create_job<'a>(
                         };
 
                         let query = query!(
-                            "INSERT INTO pings (id, monitor_id, success, latency) VALUES ($1, $2, $3, $4)",
+                            "INSERT INTO pings (id, monitor_id, type, success, latency) VALUES ($1, $2, $3, $4, $5)",
                             generate_id(),
                             monitor_id.to_string(),
+                            "tcp",
                             result.success,
                             result.latency
                         ).execute(&pool).await;

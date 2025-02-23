@@ -23,6 +23,8 @@ export const pings = pgTable("pings", {
 	id: text("id").primaryKey().$defaultFn(generateId),
 	/// A reference to what monitor this ping belongs to
 	monitorId: text("monitor_id").notNull().references(() => monitors.id, { onDelete: "cascade" }),
+	/// The type of the ping (e.g. HTTP, TCP, etc)
+	type: text("type").notNull(),
 	/// If the ping was successful
 	success: boolean("success").notNull().default(false),
 	/// The HTTP status code of the response.
@@ -31,6 +33,8 @@ export const pings = pgTable("pings", {
 	latency: integer("latency").notNull(),
 	/// The headers of the response
 	headers: json("headers"),
+	/// The body of the response
+	body: text("body"),
 	/// When the ping was created
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 })

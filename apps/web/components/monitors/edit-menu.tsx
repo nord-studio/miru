@@ -29,7 +29,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { editMonitor } from "@/app/dashboard/monitors/actions";
+import { editMonitor } from "@/components/monitors/actions";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
 import { Monitor } from "@/types/monitor";
@@ -55,7 +55,7 @@ export function EditMonitorButton({
 			<>
 				<Button {...props}>
 					<Pen />
-					Edit Monitor
+					<span className="hidden sm:inline">Edit Monitor</span>
 				</Button>
 			</>
 		);
@@ -65,7 +65,7 @@ export function EditMonitorButton({
 		<>
 			<Button onClick={() => setOpen(!open)} {...props}>
 				<Pen />
-				Edit Monitor
+				<span className="hidden sm:inline">Edit Monitor</span>
 			</Button>
 			<EditMonitor open={open} setOpen={setOpen} monitor={monitor} />
 		</>

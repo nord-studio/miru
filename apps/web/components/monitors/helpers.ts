@@ -10,11 +10,12 @@ export async function testUrl(method: string, url: string) {
 		},
 	}).then(async (res) => {
 		const json: TestEndpoint = await res.json();
+		console.log(json)
 
-		if (json.status === 200) {
+		if (json.success === true) {
 			return json;
 		} else {
-			throw new Error(`${url} didn't return a 200 status code.`);
+			throw new Error(`Couldn't establish a connection to ${url}.`);
 		}
 	});
 }
