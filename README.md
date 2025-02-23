@@ -1,4 +1,4 @@
-# miru
+# 見る (Miru)
 
 A free, open-source and fully customisable status page and monitoring service.
 
@@ -8,9 +8,8 @@ A free, open-source and fully customisable status page and monitoring service.
 -   Deployment: [Hetzner](https://www.hetzner.com/cloud/)
 -   UI: [shadcn/ui](https://ui.shadcn.com/)
 -   Styling: [TailwindCSS](https://tailwindcss.com/)
--   Database: [LibSQL](https://github.com/tursodatabase/libsql)
+-   Database: [PostgreSQL](https://www.postgresql.org/)
 -   ORM: [Drizzle](https://orm.drizzle.team/)
--   Hotel? [Travago](https://youtu.be/fkFzrww5dW8?t=1)
 
 ## Project Structure
 
