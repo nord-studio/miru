@@ -7,7 +7,7 @@ export const monitors = pgTable("monitors", {
 	/// The name of the monitor
 	name: text("name").notNull(),
 	/// The type of monitor (e.g. HTTP, TCP, etc)
-	type: text("type").notNull(),
+	type: text("type", { enum: ["http", "tcp"] }).notNull(),
 	/// The URL to monitor
 	url: text("url").notNull(),
 	/// The interval in seconds to check the monitor
@@ -24,7 +24,7 @@ export const pings = pgTable("pings", {
 	/// A reference to what monitor this ping belongs to
 	monitorId: text("monitor_id").notNull().references(() => monitors.id, { onDelete: "cascade" }),
 	/// The type of the ping (e.g. HTTP, TCP, etc)
-	type: text("type").notNull(),
+	type: text("type", { enum: ["http", "tcp"] }).notNull(),
 	/// If the ping was successful
 	success: boolean("success").notNull().default(false),
 	/// The HTTP status code of the response.

@@ -22,6 +22,13 @@
       "when": 1740279746115,
       "tag": "0002_add_ping_type",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1740360646279,
+      "tag": "0003_incidents",
+      "breakpoints": true
     }
   ]
 }
