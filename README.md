@@ -2,6 +2,30 @@
 
 A free, open-source and fully customisable status page and monitoring service.
 
+## TODO:
+
+-   [x] Monitors
+    -   [x] CRUD Operations
+    -   [x] Cron Jobs
+-   [ ] Incidents
+    -   [x] CRUD Operations
+    -   [ ] Auto create on monitor downtime
+    -   [ ] RSS Feed
+    -   [ ] Atom Feed
+-   [ ] Status Pages
+    -   [ ] CRUD Operations
+    -   [ ] Multiple domain assignment
+    -   [ ] Brand Theming
+-   [ ] Notification Channels
+    -   [ ] CRUD Operations
+    -   [ ] Discord
+    -   [ ] Email
+    -   [ ] Slack
+-   [ ] Settings
+    -   [ ] General Settings
+    -   [ ] Team
+    -   [ ] API Tokens
+
 ## Tech stack
 
 -   Framework: [NextJS](https://nextjs.org/)

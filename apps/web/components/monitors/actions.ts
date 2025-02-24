@@ -10,7 +10,7 @@ import { env } from "@/lib/env.mjs";
 export async function createMonitor(prevState: ActionResult, formData: FormData): Promise<ActionResult> {
 	"use server"
 	const name = formData.get("name");
-	const type = formData.get("type");
+	const type = formData.get("type") as "http" | "tcp";
 	const url = formData.get("url");
 	const interval = formData.get("interval");
 
@@ -20,6 +20,10 @@ export async function createMonitor(prevState: ActionResult, formData: FormData)
 
 	if (!type) {
 		return { error: true, message: "Monitor type is required" };
+	}
+
+	if (type !== "http" && type !== "tcp") {
+		return { error: true, message: "Invalid monitor type" };
 	}
 
 	if (!url) {
@@ -35,7 +39,7 @@ export async function createMonitor(prevState: ActionResult, formData: FormData)
 	const monitor = await db.insert(monitors).values({
 		id,
 		name: name as string,
-		type: type as string,
+		type: type as "http" | "tcp",
 		url: url as string,
 		interval: parseInt(interval?.toString() || "0"),
 		createdAt: new Date(),
@@ -144,7 +148,7 @@ export async function editMonitor(id: string, data: FormData): Promise<ActionRes
 		return { error: true, message: "No changes detected" };
 	}
 
-	const newData: { name?: string; type?: string; url?: string; interval?: number } = chunks.reduce((acc, chunk) => {
+	const newData: { name?: string; type?: "http" | "tcp"; url?: string; interval?: number } = chunks.reduce((acc, chunk) => {
 		return { ...acc, ...chunk };
 	}, {});
 
@@ -216,4 +220,10 @@ export async function deleteMonitor(id: string): Promise<ActionResult> {
 	});
 
 	return { error: false, message: "Monitor deleted successfully" };
+}
+
+export async function getAllMonitors() {
+	"use server"
+	const mons = await db.select().from(monitors);
+	return mons;
 }

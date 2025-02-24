@@ -3,9 +3,13 @@
 	"scripts": {
 		"dev": "turbo dev",
 		"build": "turbo build",
-		"start": "turbo start"
+		"start": "turbo start",
+		"drizzle": "cd apps/web && pnpm exec drizzle-kit",
+		"knip": "knip"
 	},
 	"devDependencies": {
+		"@types/node": "^22.13.4",
+		"knip": "^5.44.5",
 		"turbo": "latest",
 		"typescript": "^5.7.3"
 	},

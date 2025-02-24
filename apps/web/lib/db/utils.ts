@@ -1,5 +1,7 @@
 import db from "@/lib/db";
-import { sql } from "drizzle-orm";
+import { monitorsToIncidents } from "@/lib/db/schema";
+import { IncidentWithMonitor } from "@/types/incident";
+import { eq, sql } from "drizzle-orm";
 
 export type UptimePercentageRow = {
 	monitor_id: string;
@@ -117,4 +119,53 @@ export async function getAllMonitorLatency(percentage: number, days: number) {
 			latency: parseInt(Number(row.latency).toFixed(2)),
 		};
 	});
+}
+
+/// Get all incidents with the monitors they belong to
+export async function getAllIncidentsWithMonitors() {
+	const data = await db.query.monitorsToIncidents.findMany({
+		with: {
+			monitor: true,
+			incident: true,
+		},
+	});
+
+	// group together incidents with their monitors as a list
+	// oh my god this is so ugly 😭
+	const incids = data.reduce((acc: IncidentWithMonitor[], curr) => {
+		const found = acc.find((a) => a.id === curr.incident.id);
+		if (!found) {
+			acc.push({
+				...curr.incident,
+				monitors: [curr.monitor],
+			});
+		} else {
+			found.monitors.push(curr.monitor);
+		}
+		return acc;
+	}, [] as IncidentWithMonitor[]);
+
+	return incids;
+}
+
+/// Get a single incidents with the monitors they belong to
+export async function getIncidentsWithMonitors(id: string): Promise<IncidentWithMonitor | null> {
+	const data = await db.query.monitorsToIncidents.findMany({
+		where: eq(monitorsToIncidents.incidentId, id),
+		with: {
+			monitor: true,
+			incident: true,
+		},
+	});
+
+	if (!data[0]) {
+		return null;
+	}
+
+	const incid = {
+		...data[0].incident,
+		monitors: data.map((d) => d.monitor),
+	}
+
+	return incid;
 }

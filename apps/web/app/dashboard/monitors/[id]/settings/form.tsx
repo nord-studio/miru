@@ -15,7 +15,7 @@ import React, { useEffect, useState } from "react";
 import { editMonitor } from "@/components/monitors/actions";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
-import { testUrl } from "@/components/monitors/helpers";
+import { testUrl } from "@/components/monitors/utils";
 import Alert from "@/components/ui/alert";
 
 export default function MonitorSingletonSettingsForm({
@@ -201,7 +201,7 @@ export default function MonitorSingletonSettingsForm({
 								setInterval(monitor.interval.toString());
 							}}
 						>
-							Cancel
+							Reset
 						</Button>
 						<Button disabled={loading} type="submit">
 							{loading ? <Spinner /> : "Update"}

@@ -33,7 +33,7 @@ export default function SettingsLayout({
 							General
 						</Button>
 					</Link>
-					<Link href="/dashboard/settings/team" className="w-full">
+					{/* <Link href="/dashboard/settings/team" className="w-full">
 						<Button
 							variant="ghost"
 							className={cn(
@@ -48,8 +48,8 @@ export default function SettingsLayout({
 							<Users />
 							Team
 						</Button>
-					</Link>
-					<Link href="/dashboard/settings/tokens" className="w-full">
+					</Link> */}
+					{/* <Link href="/dashboard/settings/tokens" className="w-full">
 						<Button
 							variant="ghost"
 							className={cn(
@@ -64,7 +64,7 @@ export default function SettingsLayout({
 							<Code />
 							<span>API Tokens</span>
 						</Button>
-					</Link>
+					</Link> */}
 					<Link href="/dashboard/settings/profile" className="w-full">
 						<Button
 							variant="ghost"

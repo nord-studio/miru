@@ -14,10 +14,10 @@ import {
 import { toast } from "sonner";
 import { pingMonitor } from "@/components/monitors/actions";
 import React from "react";
-import EditMonitor from "@/components/monitors/edit-menu";
-import DeleteMonitor from "@/components/monitors/delete-menu";
+import EditMonitor from "@/components/monitors/edit-monitor";
+import DeleteMonitor from "@/components/monitors/delete-monitor";
 import { Monitor } from "@/types/monitor";
-import { testUrl } from "@/components/monitors/helpers";
+import { testUrl } from "@/components/monitors/utils";
 import { VariantProps } from "class-variance-authority";
 
 export default function MonitorActionsDropdown({

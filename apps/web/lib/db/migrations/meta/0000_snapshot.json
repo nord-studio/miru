@@ -1,6 +1,6 @@
 {
-  "id": "8e56e25c-b243-44c3-b7b5-f4c192f12d9a",
-  "prevId": "369dc846-091f-4cc8-a605-6bc74ba14463",
+  "id": "55b58953-ac18-4ea9-817f-5182f45b49b4",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -317,19 +317,19 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.incident_updates": {
-      "name": "incident_updates",
+    "public.incident_reports": {
+      "name": "incident_reports",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "varchar(16)",
           "primaryKey": true,
           "notNull": true
         },
         "incident_id": {
           "name": "incident_id",
-          "type": "text",
+          "type": "varchar(16)",
           "primaryKey": false,
           "notNull": true
         },
@@ -354,21 +354,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "incident_updates_incident_id_incidents_id_fk": {
-          "name": "incident_updates_incident_id_incidents_id_fk",
-          "tableFrom": "incident_updates",
-          "tableTo": "incidents",
-          "columnsFrom": [
-            "incident_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -381,14 +367,8 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "varchar(16)",
           "primaryKey": true,
-          "notNull": true
-        },
-        "monitor_ids": {
-          "name": "monitor_ids",
-          "type": "text",
-          "primaryKey": false,
           "notNull": true
         },
         "title": {
@@ -425,21 +405,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "incidents_monitor_ids_monitors_id_fk": {
-          "name": "incidents_monitor_ids_monitors_id_fk",
-          "tableFrom": "incidents",
-          "tableTo": "monitors",
-          "columnsFrom": [
-            "monitor_ids"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -452,7 +418,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "varchar(16)",
           "primaryKey": true,
           "notNull": true
         },
@@ -503,19 +469,79 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.monitors_to_incidents": {
+      "name": "monitors_to_incidents",
+      "schema": "",
+      "columns": {
+        "monitor_id": {
+          "name": "monitor_id",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "incident_id\t": {
+          "name": "incident_id\t",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "monitors_to_incidents_monitor_id_monitors_id_fk": {
+          "name": "monitors_to_incidents_monitor_id_monitors_id_fk",
+          "tableFrom": "monitors_to_incidents",
+          "tableTo": "monitors",
+          "columnsFrom": [
+            "monitor_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "monitors_to_incidents_incident_id\t_incidents_id_fk": {
+          "name": "monitors_to_incidents_incident_id\t_incidents_id_fk",
+          "tableFrom": "monitors_to_incidents",
+          "tableTo": "incidents",
+          "columnsFrom": [
+            "incident_id\t"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "monitors_to_incidents_monitor_id_incident_id\t_pk": {
+          "name": "monitors_to_incidents_monitor_id_incident_id\t_pk",
+          "columns": [
+            "monitor_id",
+            "incident_id\t"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.pings": {
       "name": "pings",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "varchar(16)",
           "primaryKey": true,
           "notNull": true
         },
         "monitor_id": {
           "name": "monitor_id",
-          "type": "text",
+          "type": "varchar(16)",
           "primaryKey": false,
           "notNull": true
         },

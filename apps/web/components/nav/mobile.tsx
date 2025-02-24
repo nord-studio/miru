@@ -81,7 +81,7 @@ export default function MobileNavbar() {
 										</Drawer.Close>
 									</Link>
 									<Link
-										href="/dashboard/status-page"
+										href="/dashboard/status-pages"
 										passHref
 										className="w-full"
 									>
@@ -94,7 +94,7 @@ export default function MobileNavbar() {
 												className="flex flex-row w-full gap-2 justify-start"
 											>
 												<Code className="w-6 h-6" />{" "}
-												Status Page
+												Status Pages
 											</Button>
 										</Drawer.Close>
 									</Link>

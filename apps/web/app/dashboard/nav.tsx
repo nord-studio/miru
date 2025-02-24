@@ -24,8 +24,8 @@ export default async function Navbar() {
 				<Link href="/dashboard/incidents">
 					<Button variant="link">Incidents</Button>
 				</Link>
-				<Link href="/dashboard/status-page">
-					<Button variant="link">Status Page</Button>
+				<Link href="/dashboard/status-pages">
+					<Button variant="link">Status Pages</Button>
 				</Link>
 				<Link href="/dashboard/notifications">
 					<Button variant="link">Notifications</Button>

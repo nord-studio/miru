@@ -1,9 +1,11 @@
+import { incidents } from "@/lib/db/schema";
 import { generateId } from "@/lib/utils";
-import { pgTable, text, timestamp, integer, json, boolean } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { pgTable, text, timestamp, boolean, varchar, integer, primaryKey, json } from "drizzle-orm/pg-core";
 
 export const monitors = pgTable("monitors", {
 	/// The unique identifier for the monitor
-	id: text("id").primaryKey().$defaultFn(generateId),
+	id: varchar("id", { length: 16 }).primaryKey().$defaultFn(generateId),
 	/// The name of the monitor
 	name: text("name").notNull(),
 	/// The type of monitor (e.g. HTTP, TCP, etc)
@@ -18,11 +20,36 @@ export const monitors = pgTable("monitors", {
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 })
 
+// Many (Monitors) to many (Incidents) relationship
+export const monitorRelations = relations(monitors, ({ many }) => ({
+	monitorsToIncidents: many(monitorsToIncidents)
+}))
+
+// Join table for the many to many relationship between monitors and incidents
+export const monitorsToIncidents = pgTable("monitors_to_incidents", {
+	monitorId: varchar("monitor_id", { length: 16 }).notNull().references(() => monitors.id, { onDelete: "cascade" }),
+	incidentId: varchar("incident_id", { length: 16 }).notNull().references(() => incidents.id, { onDelete: "cascade" }),
+}, (t) => [
+	primaryKey({ columns: [t.monitorId, t.incidentId] })
+])
+
+// Many to many relationship between monitors and incidents
+export const monitorsToIncidentsRelations = relations(monitorsToIncidents, ({ one }) => ({
+	monitor: one(monitors, {
+		fields: [monitorsToIncidents.monitorId],
+		references: [monitors.id]
+	}),
+	incident: one(incidents, {
+		fields: [monitorsToIncidents.incidentId],
+		references: [incidents.id]
+	})
+}))
+
 export const pings = pgTable("pings", {
 	/// The unique identifier for the ping
-	id: text("id").primaryKey().$defaultFn(generateId),
+	id: varchar("id", { length: 16 }).primaryKey().$defaultFn(generateId),
 	/// A reference to what monitor this ping belongs to
-	monitorId: text("monitor_id").notNull().references(() => monitors.id, { onDelete: "cascade" }),
+	monitorId: varchar("monitor_id", { length: 16 }).notNull().references(() => monitors.id, { onDelete: "cascade" }),
 	/// The type of the ping (e.g. HTTP, TCP, etc)
 	type: text("type", { enum: ["http", "tcp"] }).notNull(),
 	/// If the ping was successful

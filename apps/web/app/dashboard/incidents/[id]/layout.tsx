@@ -1,10 +1,15 @@
 import MonitorDetailNav from "@/app/dashboard/monitors/[id]/nav";
+import { EditIncidentButton } from "@/components/incidents/edit-incident";
+import IncidentActionsDropdown from "@/components/incidents/incidents-dropdown";
 import MonitorActionsDropdown from "@/components/monitors/monitor-dropdown";
 import { EditMonitorButton } from "@/components/monitors/edit-monitor";
 import db from "@/lib/db";
+import { incidentReports } from "@/lib/db/schema";
 import { monitors } from "@/lib/db/schema/monitors";
-import { eq } from "drizzle-orm";
+import { getIncidentsWithMonitors } from "@/lib/db/utils";
+import { desc, eq } from "drizzle-orm";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import React from "react";
 
 export default async function MonitorSingletonLayout({
@@ -14,38 +19,44 @@ export default async function MonitorSingletonLayout({
 	children: React.ReactNode;
 	params: Promise<{ id: string }>;
 }) {
-	const id = (await params).id;
-	const monitor = await db
+	const { id } = await params;
+	const incident = await getIncidentsWithMonitors(id);
+
+	const latestReport = await db
 		.select()
-		.from(monitors)
-		.where(eq(monitors.id, id))
+		.from(incidentReports)
+		.where(eq(incidentReports.incidentId, id))
+		.orderBy(desc(incidentReports.timestamp))
 		.limit(1)
 		.then((res) => res[0]);
+
+	const allMonitors = await db.select().from(monitors);
+
+	if (!incident) {
+		return notFound();
+	}
+
 	return (
 		<>
-			<MonitorDetailNav />
 			<div className="w-full">
 				<div className="w-full flex flex-row gap-2 items-center justify-between">
 					<div className="flex flex-col">
 						<h1 className="text-3xl font-black font-display">
-							{monitor.name}
+							{incident.title}
 						</h1>
 						<p className="text-neutral-500 dark:text-neutral-400">
-							<Link
-								href={`https://${monitor.url}`}
-								target="_blank"
-							>
-								{monitor.type === "http" && "https://"}
-								{monitor.url}
-							</Link>{" "}
-							• {monitor.type.toUpperCase()} • every{" "}
-							{monitor.interval}m
+							Currently {latestReport.status} • Started at{" "}
+							{new Date(incident.started_at).toLocaleString()}
 						</p>
 					</div>
 					<div className="flex flex-row gap-3 items-center">
-						<EditMonitorButton monitor={monitor} />
-						<MonitorActionsDropdown
-							monitor={monitor}
+						<EditIncidentButton
+							incident={incident}
+							monitors={allMonitors}
+						/>
+						<IncidentActionsDropdown
+							incident={incident}
+							monitors={allMonitors}
 							variant="outline"
 							size="icon"
 						/>

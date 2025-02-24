@@ -1,0 +1,1 @@
+ALTER TABLE "incidents" RENAME COLUMN "resolve_at" TO "resolved_at";

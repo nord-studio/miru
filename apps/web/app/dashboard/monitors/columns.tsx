@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowUpRightIcon } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import React from "react";
-import MonitorActionsDropdown from "@/components/monitors/actions-dropdown";
+import MonitorActionsDropdown from "@/components/monitors/monitor-dropdown";
 
 export const columns: ColumnDef<Monitor>[] = [
 	{

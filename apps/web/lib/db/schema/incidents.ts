@@ -1,12 +1,11 @@
-import { monitors } from "@/lib/db/schema/monitors";
+import { monitorsToIncidents } from "@/lib/db/schema";
 import { generateId } from "@/lib/utils";
-import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { pgTable, text, timestamp, boolean, varchar, integer, primaryKey, json } from "drizzle-orm/pg-core";
 
 export const incidents = pgTable("incidents", {
 	/// The unique identifier for the incident
-	id: text("id").primaryKey().$defaultFn(generateId),
-	/// A list of monitors that are affected by the incident
-	monitorIds: text("monitor_ids").notNull().references(() => monitors.id, { onDelete: "cascade" }),
+	id: varchar("id", { length: 16 }).primaryKey().$defaultFn(generateId),
 	// The title of the incident
 	title: text("title").notNull(),
 	/// When the incident was started
@@ -14,20 +13,35 @@ export const incidents = pgTable("incidents", {
 	/// When the incident was acknowledged
 	acknowledged_at: timestamp("acknowledged_at"),
 	/// When the incident was resolved
-	resolve_at: timestamp("resolve_at"),
+	resolved_at: timestamp("resolved_at"),
 	/// If the incident was auto-resolved
 	auto_resolved: boolean("auto_resolved").notNull().default(false),
 })
 
-export const incident_updates = pgTable("incident_updates", {
-	/// The unique identifier for the incident update
-	id: text("id").primaryKey().$defaultFn(generateId),
-	/// A reference to what incident this update belongs to
-	incidentId: text("incident_id").notNull().references(() => incidents.id, { onDelete: "cascade" }),
-	/// The message of the incident update
+export const incidentRelations = relations(incidents, ({ many }) => ({
+	// Many (Monitors) to many (Incidents) relationship
+	monitorsToIncidents: many(monitorsToIncidents),
+	// One (Incident) to many (IncidentReports) relationship
+	reports: many(incidentReports)
+}));
+
+export const incidentReports = pgTable("incident_reports", {
+	/// The unique identifier for the incident report
+	id: varchar("id", { length: 16 }).primaryKey().$defaultFn(generateId),
+	/// The incident Id the report belongs to
+	incidentId: varchar("incident_id", { length: 16 }).notNull(),
+	/// The message of the incident report
 	message: text("message").notNull(),
-	/// The status of the incident update
+	/// The status of the incident report
 	status: text("status", { enum: ["investigating", "identified", "monitoring", "resolved"] }).notNull(),
-	/// When the incident update took place
+	/// When the incident report took place
 	timestamp: timestamp("timestamp").notNull().defaultNow(),
 })
+
+// One (IncidentReport) to one (Incident) relationship
+export const incidentReportsRelations = relations(incidentReports, ({ one }) => ({
+	incidentId: one(incidents, {
+		fields: [incidentReports.incidentId],
+		references: [incidents.id],
+	})
+}))
