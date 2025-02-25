@@ -43,7 +43,7 @@ export default function IncidentActionsDropdown({
 				setAllMonitors(res);
 			});
 		}
-	}, []);
+	}, [monitors]);
 
 	return (
 		<>

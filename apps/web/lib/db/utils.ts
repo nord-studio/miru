@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import db from "@/lib/db";
 import { monitorsToIncidents } from "@/lib/db/schema";
 import { IncidentWithMonitor } from "@/types/incident";
 import { eq, sql } from "drizzle-orm";
 
-export type UptimePercentageRow = {
+type UptimePercentageRow = {
 	monitor_id: string;
 	uptime_percentage: number;
 };
@@ -14,25 +15,25 @@ export async function getMonitorUptime(monitorId: string, days: number) {
     (COUNT(CASE WHEN success = TRUE THEN 1 END) * 100.0) / COUNT(*)
 		AS uptime_percentage FROM pings WHERE monitor_id = '${monitorId}' AND created_at >= NOW() - INTERVAL '${days} days';`);
 
-	let data = await db.execute(query);
+	const data = await db.execute(query);
 
-	return data.rows.map((row: any) => {
+	return data.rows.map((row: Record<string, unknown>) => {
 		return {
-			monitor_id: row.monitor_id,
+			monitor_id: row.monitor_id as string,
 			uptime_percentage: parseInt(Number(row.uptime_percentage).toFixed(2)),
 		};
 	});
 }
 
 /// Get the percentile latency
-export async function getMonitorLatency(monitorId: string, percentage: number, days: number) {
+async function getMonitorLatency(monitorId: string, percentage: number, days: number) {
 	const query = sql.raw(`SELECT 
 		percentile_cont(${percentage / 100}) WITHIN GROUP (ORDER BY latency) 
 		AS latency FROM pings WHERE monitor_id = '${monitorId}' AND created_at >= NOW() - INTERVAL '${days} days';`);
 
-	let data = await db.execute(query);
+	const data = await db.execute(query);
 
-	return data.rows.map((row: any) => {
+	return data.rows.map((row: Record<string, unknown>) => {
 		return {
 			monitor_id: row.monitor_id,
 			latency: parseInt(Number(row.latency).toFixed(2)),
@@ -41,7 +42,7 @@ export async function getMonitorLatency(monitorId: string, percentage: number, d
 }
 
 /// Get all percentile latencies for all monitors
-export async function getAllMonitorLatencyPercentiles(days: number) {
+async function getAllMonitorLatencyPercentiles(days: number) {
 	const query = sql.raw(`SELECT 
 		monitor_id, 
 		percentile_cont(0.5) WITHIN GROUP (ORDER BY latency) AS p50,
@@ -53,9 +54,9 @@ export async function getAllMonitorLatencyPercentiles(days: number) {
 	WHERE created_at >= NOW() - INTERVAL '${days} days' 
 	GROUP BY monitor_id;`);
 
-	let data = await db.execute(query);
+	const data = await db.execute(query);
 
-	return data.rows.map((row: any) => {
+	return data.rows.map((row: Record<string, unknown>) => {
 		return {
 			monitor_id: row.monitor_id,
 			p50: parseInt(Number(row.p50).toFixed(2)),
@@ -78,9 +79,9 @@ export async function getSingleMonitorLatencyPercentiles(monitorId: string, days
 	FROM pings 
 	WHERE monitor_id = '${monitorId}' AND created_at >= NOW() - INTERVAL '${days} days';`);
 
-	let data = await db.execute(query);
+	const data = await db.execute(query);
 
-	return data.rows.map((row: any) => {
+	return data.rows.map((row: Record<string, unknown>) => {
 		return {
 			monitor_id: monitorId,
 			p50: parseInt(Number(row.p50).toFixed(2)),
@@ -96,24 +97,24 @@ export async function getAllMonitorUptime(days: number): Promise<UptimePercentag
 	const query = sql.raw(`SELECT monitor_id, (COUNT(CASE WHEN success = TRUE THEN 1 END) * 100.0) / COUNT(*) 
 	AS uptime_percentage FROM pings WHERE created_at >= NOW() - INTERVAL '${days} days' GROUP BY monitor_id ORDER BY uptime_percentage DESC;`);
 
-	let data = await db.execute(query);
+	const data = await db.execute(query);
 
-	return data.rows.map((row: any) => {
+	return data.rows.map((row: Record<string, unknown>) => {
 		return {
-			monitor_id: row.monitor_id,
+			monitor_id: row.monitor_id as string,
 			uptime_percentage: parseInt(Number(row.uptime_percentage).toFixed(2)),
 		};
 	});
 }
 
 /// Get all monitor latency percentiles
-export async function getAllMonitorLatency(percentage: number, days: number) {
+async function getAllMonitorLatency(percentage: number, days: number) {
 	const query = sql.raw(`SELECT monitor_id, percentile_cont(${percentage / 100}) WITHIN GROUP (ORDER BY latency) 
 	AS latency FROM pings WHERE created_at >= NOW() - INTERVAL '${days} days' GROUP BY monitor_id;`);
 
-	let data = await db.execute(query);
+	const data = await db.execute(query);
 
-	return data.rows.map((row: any) => {
+	return data.rows.map((row: Record<string, unknown>) => {
 		return {
 			monitor_id: row.monitor_id,
 			latency: parseInt(Number(row.latency).toFixed(2)),
@@ -122,7 +123,7 @@ export async function getAllMonitorLatency(percentage: number, days: number) {
 }
 
 /// Get all incidents with the monitors they belong to
-export async function getAllIncidentsWithMonitors() {
+async function getAllIncidentsWithMonitors() {
 	const data = await db.query.monitorsToIncidents.findMany({
 		with: {
 			monitor: true,

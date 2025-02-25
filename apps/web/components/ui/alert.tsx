@@ -27,7 +27,6 @@ export default function Alert({
 	footer,
 	onSubmit,
 	onCancel,
-	...props
 }: {
 	open: boolean;
 	setOpen: (open: boolean) => void;
@@ -41,12 +40,16 @@ export default function Alert({
 
 	const cancel = () => {
 		setOpen(!open);
-		onCancel && onCancel();
+		if (onCancel) {
+			onCancel();
+		}
 	};
 
 	const submit = () => {
 		setOpen(!open);
-		onSubmit && onSubmit();
+		if (onSubmit) {
+			onSubmit();
+		}
 	};
 
 	if (isDesktop) {

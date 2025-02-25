@@ -30,9 +30,12 @@
 				".env"
 			]
 		},
-		"drizzle": {
-			"persistent": false,
-			"cache": false
+		"lint": {
+			"dependsOn": [
+				"^lint"
+			],
+			"cache": false,
+			"persistent": false
 		}
 	}
 }

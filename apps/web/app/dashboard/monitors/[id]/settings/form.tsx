@@ -38,7 +38,7 @@ export default function MonitorSingletonSettingsForm({
 		const t = toast.loading(`Test pinging ${url}...`);
 
 		testUrl(type, url)
-			.then((res) => {
+			.then(() => {
 				toast.success(`Connection established with ${url}.`, { id: t });
 				handleMonitorEdit();
 			})

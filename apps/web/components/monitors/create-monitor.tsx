@@ -36,10 +36,8 @@ import { Label } from "@/components/ui/label";
 import { createMonitor } from "@/components/monitors/actions";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
-import TestEndpoint from "@/types/monitor-service/test";
 import React from "react";
 import Alert from "@/components/ui/alert";
-import { env } from "@/lib/env.mjs";
 import { testUrl } from "@/components/monitors/utils";
 
 export default function CreateMonitor() {

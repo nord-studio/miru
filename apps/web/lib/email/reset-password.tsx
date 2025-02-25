@@ -65,12 +65,7 @@ export default async function sendResetPasswordEmail(
 		});
 }
 
-const baseUrl =
-	process.env.NODE_ENV === "production"
-		? `https://${env.NEXT_PUBLIC_URL}`
-		: "http://localhost:3000";
-
-export const ResetPasswordEmail = ({ url }: { url: string }) => (
+const ResetPasswordEmail = ({ url }: { url: string }) => (
 	<Html>
 		<Head />
 		<Preview>Password reset request</Preview>

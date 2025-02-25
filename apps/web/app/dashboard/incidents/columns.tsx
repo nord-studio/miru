@@ -1,13 +1,10 @@
 "use client";
 
-import { Monitor } from "@/types/monitor";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { ArrowUpRightIcon } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import React from "react";
-import MonitorActionsDropdown from "@/components/monitors/monitor-dropdown";
-import { Incident, IncidentWithMonitor } from "@/types/incident";
+import { IncidentWithMonitor } from "@/types/incident";
 import { Badge } from "@/components/ui/badge";
 import IncidentActionsDropdown from "@/components/incidents/incidents-dropdown";
 

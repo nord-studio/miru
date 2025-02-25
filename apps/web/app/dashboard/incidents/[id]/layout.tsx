@@ -1,14 +1,10 @@
-import MonitorDetailNav from "@/app/dashboard/monitors/[id]/nav";
 import { EditIncidentButton } from "@/components/incidents/edit-incident";
 import IncidentActionsDropdown from "@/components/incidents/incidents-dropdown";
-import MonitorActionsDropdown from "@/components/monitors/monitor-dropdown";
-import { EditMonitorButton } from "@/components/monitors/edit-monitor";
 import db from "@/lib/db";
 import { incidentReports } from "@/lib/db/schema";
 import { monitors } from "@/lib/db/schema/monitors";
 import { getIncidentsWithMonitors } from "@/lib/db/utils";
 import { desc, eq } from "drizzle-orm";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
 

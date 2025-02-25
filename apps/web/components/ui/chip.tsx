@@ -32,4 +32,4 @@ function Chip({
 	);
 }
 
-export { Chip, ChipVariant };
+export { Chip,  };

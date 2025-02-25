@@ -40,7 +40,7 @@ import { RefreshCcw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DataTableSkeleton } from "@/components/data-table/skeleton";
 
-export const columns: ColumnDef<Ping>[] = [
+const columns: ColumnDef<Ping>[] = [
 	{
 		id: "select",
 		header: ({ table }) => (
@@ -168,6 +168,7 @@ export function PingDataTable({ id }: { id: string }) {
 
 	React.useEffect(() => {
 		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [pagination.pageIndex, timeframe]);
 
 	const table = useReactTable({

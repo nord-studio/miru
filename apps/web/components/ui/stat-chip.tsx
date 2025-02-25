@@ -65,4 +65,4 @@ function StatChip({
 	);
 }
 
-export { StatChip, StatChipVariant };
+export { StatChip,  };

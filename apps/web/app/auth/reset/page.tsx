@@ -70,7 +70,7 @@ export default async function ResetPasswordPage({
 							</h1>
 							<p className="text-sm text-neutral-500 sm:text-base">
 								Please set a new password for your accoumt. Make
-								sure it's secure!
+								sure it&apos;s secure!
 							</p>
 						</div>
 						<div className="flex w-full flex-col items-center justify-center gap-4">

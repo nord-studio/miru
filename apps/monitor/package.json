@@ -4,6 +4,7 @@
 	"scripts": {
 		"dev": "watchexec -e rs -r RUST_LOG=trace cargo run",
 		"build": "cargo build --release",
-		"start": "RUST_LOG=info ./../../target/debug/monitor"
+		"start": "RUST_LOG=info ./../../target/debug/monitor",
+		"lint": "cargo clippy ; cargo fmt"
 	}
 }

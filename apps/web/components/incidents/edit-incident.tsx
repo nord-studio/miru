@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
 import { Pen } from "lucide-react";
 import { VariantProps } from "class-variance-authority";
-import { Incident, IncidentWithMonitor } from "@/types/incident";
+import { IncidentWithMonitor } from "@/types/incident";
 import { editIncident } from "@/components/incidents/actions";
 import MonitorSelection from "@/components/incidents/monitor-select";
 import { Monitor } from "@/types/monitor";

@@ -7,11 +7,14 @@ A free, open-source and fully customisable status page and monitoring service.
 -   [x] Monitors
     -   [x] CRUD Operations
     -   [x] Cron Jobs
+    -   [x] Ping logs
 -   [ ] Incidents
     -   [x] CRUD Operations
     -   [ ] Auto create on monitor downtime
     -   [ ] RSS Feed
     -   [ ] Atom Feed
+-   [ ] Onboarding
+    -   [ ] Standalone / Multi-tenant
 -   [ ] Status Pages
     -   [ ] CRUD Operations
     -   [ ] Multiple domain assignment

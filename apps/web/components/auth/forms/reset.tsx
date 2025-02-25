@@ -80,7 +80,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
 		setLoading(true);
 		const authClient = createAuthClient({ baseURL: env.NEXT_PUBLIC_URL });
 
-		const { data, error } = await authClient.resetPassword({
+		const { error } = await authClient.resetPassword({
 			newPassword: password,
 			token,
 		});

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Code, Cog, User2, Users } from "lucide-react";
+import { Cog, User2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
