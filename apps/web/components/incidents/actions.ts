@@ -1,11 +1,11 @@
 "use server";
 
-import { ActionResult } from "@/components/form";
 import db from "@/lib/db";
 import { incidentReports, incidents } from "@/lib/db/schema/incidents";
 import { monitorsToIncidents } from "@/lib/db/schema/monitors";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
+import { ActionResult } from "@/types/form";
 import { IncidentStatus } from "@/types/incident";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";

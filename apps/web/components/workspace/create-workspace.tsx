@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 import {
@@ -19,108 +19,70 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
-import { Pen } from "lucide-react";
-import { VariantProps } from "class-variance-authority";
-import { IncidentWithMonitor } from "@/types/incident";
-import { editIncident } from "@/components/incidents/actions";
-import MonitorSelection from "@/components/monitors/monitor-select";
-import { Monitor } from "@/types/monitor";
+import UserSelection from "@/components/workspace/user-select";
+import { User } from "better-auth";
+import { createWorkspace } from "@/components/workspace/actions";
+import { toast } from "sonner";
 
-export function EditIncidentButton({
-	incident,
-	monitors,
-	...props
-}: {
-	incident: IncidentWithMonitor;
-	monitors: Omit<Monitor, "uptime">[];
-} & React.ComponentProps<"button"> &
-	VariantProps<typeof buttonVariants>) {
-	const [open, setOpen] = useState(false);
-	const [moutned, setMounted] = useState(false);
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-
-	if (!moutned) {
-		return (
-			<>
-				<Button {...props}>
-					<Pen />
-					<span className="hidden sm:inline">Edit Incident</span>
-				</Button>
-			</>
-		);
-	}
-
-	return (
-		<>
-			<Button onClick={() => setOpen(!open)} {...props}>
-				<Pen />
-				<span className="hidden sm:inline">Edit Incident</span>
-			</Button>
-			<EditIncident
-				open={open}
-				setOpen={setOpen}
-				incident={incident}
-				monitors={monitors}
-			/>
-		</>
-	);
-}
-
-export default function EditIncident({
-	incident,
-	monitors,
+export default function CreateWorkspace({
 	open,
 	setOpen,
 }: {
-	incident: IncidentWithMonitor;
-	monitors: Omit<Monitor, "uptime">[];
 	open: boolean;
 	setOpen: (open: boolean) => void;
 }) {
 	const isDesktop = useMediaQuery("(min-width: 768px)");
 	const [loading, setLoading] = useState(false);
-	const [title, setTitle] = useState(incident.title);
-	const [monitorIds, setMonitorIds] = useState(
-		incident.monitors.map((m) => m.id)
-	);
-
-	console.log(incident.monitors);
+	const [name, setName] = useState("");
+	const [slug, setSlug] = useState("");
+	const [members, setMembers] = useState<User[]>([]);
 
 	async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setLoading(true);
 
-		const res = await editIncident({
-			id: incident.id,
-			data: { title, monitors: monitorIds },
+		const res = await createWorkspace({
+			name,
+			slug,
+			members,
 		});
 
-		if (res?.serverError) {
-			setLoading(false);
-			return toast.error(res.serverError);
+		if (res?.validationErrors) {
+			return toast.error("Failed to create workspace", {
+				description: res.validationErrors._errors
+					?.map((e) => e)
+					.join(", "),
+			});
 		}
 
-		if (res?.validationErrors) {
-			setLoading(false);
-			return toast.error(res.validationErrors._errors?.join(", "));
+		if (res?.serverError) {
+			return toast.error("Failed to create workspace", {
+				description: res.serverError,
+			});
+		}
+
+		if (res?.bindArgsValidationErrors) {
+			return toast.error("Failed to create workspace", {
+				description: res.bindArgsValidationErrors
+					.map((e) => e)
+					.join(", "),
+			});
 		}
 
 		if (res?.data?.error) {
-			setLoading(false);
-			return toast.error(res.data.message);
+			return toast.error("Failed to create workspace", {
+				description: res.data.message,
+			});
+		} else {
+			toast.success("Workspace created successfully", {
+				description: res?.data?.message,
+			});
+			setOpen(false);
 		}
-
-		setLoading(false);
-		setOpen(false);
-		toast.success("Incident updated successfully");
 	}
 
 	if (isDesktop) {
@@ -129,32 +91,84 @@ export default function EditIncident({
 				<Dialog open={open} onOpenChange={setOpen}>
 					<DialogContent className="p-0 sm:max-w-[425px]">
 						<DialogHeader className="px-6 pt-6">
-							<DialogTitle>Edit Incident</DialogTitle>
+							<DialogTitle>Create Workspace</DialogTitle>
 							<DialogDescription>
-								Update the details below to update your monitor.
+								Create a new workspace to seperate your monitors
+								into different groups.
 							</DialogDescription>
 						</DialogHeader>
 						<form onSubmit={onSubmit}>
 							<div className="flex flex-col px-6 pb-4 gap-4">
-								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Title</Label>
+								<div className="flex flex-col gap-3 items-start w-full">
+									<Label>Name</Label>
 									<Input
-										placeholder={incident.title}
-										value={title}
-										onChange={(e) =>
-											setTitle(e.target.value)
-										}
 										disabled={loading}
+										required={true}
+										value={name}
+										onChange={(e) =>
+											setName(e.target.value)
+										}
+									/>
+								</div>
+								<div className="flex flex-col gap-3 items-start w-full">
+									<Label>Slug (Optional)</Label>
+									<Input
+										disabled={loading}
+										value={slug}
+										onChange={(e) =>
+											setSlug(e.target.value)
+										}
 									/>
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Affected Monitors</Label>
-									<MonitorSelection
-										monitors={monitors}
-										setValue={setMonitorIds}
-										value={monitorIds}
-										min={1}
+									<Label>Invite Members</Label>
+									<UserSelection
+										value={members}
+										setValue={setMembers}
 									/>
+								</div>
+							</div>
+							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
+								<span className="text-neutral-400 dark:text-neutral-600 text-sm">
+									Note: You can update this later.
+								</span>
+								<div className="flex flex-row gap-3 items-center">
+									<DialogClose asChild>
+										<Button
+											variant="outline"
+											type="button"
+											disabled={loading}
+										>
+											Cancel
+										</Button>
+									</DialogClose>
+									<Button disabled={loading} type="submit">
+										{loading ? <Spinner /> : "Create"}
+									</Button>
+								</div>
+							</div>
+						</form>
+					</DialogContent>
+				</Dialog>
+			</>
+		);
+	} else {
+		return (
+			<>
+				<Drawer open={open} onOpenChange={setOpen}>
+					<DrawerContent>
+						<DrawerHeader>
+							<DrawerTitle>Create Workspace</DrawerTitle>
+							<DrawerDescription>
+								Create a new workspace to seperate your monitors
+								into different groups.
+							</DrawerDescription>
+						</DrawerHeader>
+						<form onSubmit={onSubmit}>
+							<div className="flex flex-col px-6 pb-4 gap-4">
+								<div className="flex flex-col gap-2 items-start w-full">
+									<Label>Title</Label>
+									<Input disabled={loading} />
 								</div>
 							</div>
 							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
@@ -172,56 +186,7 @@ export default function EditIncident({
 										</Button>
 									</DialogClose>
 									<Button disabled={loading} type="submit">
-										{loading ? <Spinner /> : "Update"}
-									</Button>
-								</div>
-							</div>
-						</form>
-					</DialogContent>
-				</Dialog>
-			</>
-		);
-	} else {
-		return (
-			<>
-				<Drawer open={open} onOpenChange={setOpen}>
-					<DrawerContent>
-						<DrawerHeader>
-							<DrawerTitle>Edit Monitor</DrawerTitle>
-							<DrawerDescription>
-								Update the details below to update your monitor.
-							</DrawerDescription>
-						</DrawerHeader>
-						<form onSubmit={onSubmit}>
-							<div className="flex flex-col px-6 pb-4 gap-4">
-								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Title</Label>
-									<Input
-										placeholder={incident.title}
-										value={title}
-										onChange={(e) =>
-											setTitle(e.target.value)
-										}
-										disabled={loading}
-									/>
-								</div>
-							</div>
-							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
-								<span className="text-neutral-400 dark:text-neutral-600 text-sm">
-									Note: This will not ping your monitor.
-								</span>
-								<div className="flex flex-row gap-2 items-center">
-									<DialogClose asChild>
-										<Button
-											variant="outline"
-											type="button"
-											disabled={loading}
-										>
-											Cancel
-										</Button>
-									</DialogClose>
-									<Button disabled={loading} type="submit">
-										{loading ? <Spinner /> : "Update"}
+										{loading ? <Spinner /> : "Create"}
 									</Button>
 								</div>
 							</div>

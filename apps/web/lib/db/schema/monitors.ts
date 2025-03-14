@@ -1,4 +1,5 @@
 import { incidents } from "@/lib/db/schema";
+import { workspaces } from "@/lib/db/schema/workspaces";
 import { generateId } from "@/lib/utils";
 import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, boolean, varchar, integer, primaryKey, json } from "drizzle-orm/pg-core";
@@ -6,6 +7,8 @@ import { pgTable, text, timestamp, boolean, varchar, integer, primaryKey, json }
 export const monitors = pgTable("monitors", {
 	/// The unique identifier for the monitor
 	id: varchar("id", { length: 16 }).primaryKey().$defaultFn(generateId),
+	/// A reference to the workspace this monitor belongs to
+	workspaceId: varchar("workspace_id", { length: 16 }).references(() => workspaces.id, { onDelete: "cascade" }).notNull(),
 	/// The name of the monitor
 	name: text("name").notNull(),
 	/// The type of monitor (e.g. HTTP, TCP, etc)
@@ -21,8 +24,12 @@ export const monitors = pgTable("monitors", {
 })
 
 // Many (Monitors) to many (Incidents) relationship
-export const monitorRelations = relations(monitors, ({ many }) => ({
-	monitorsToIncidents: many(monitorsToIncidents)
+export const monitorRelations = relations(monitors, ({ many, one }) => ({
+	monitorsToIncidents: many(monitorsToIncidents),
+	workspace: one(workspaces, {
+		fields: [monitors.workspaceId],
+		references: [workspaces.id]
+	})
 }))
 
 // Join table for the many to many relationship between monitors and incidents

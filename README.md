@@ -4,6 +4,9 @@ A free, open-source and fully customisable status page and monitoring service.
 
 ## TODO:
 
+-   [ ] Workspaces
+    -   [x] Create default on register
+    -   [ ] Settings
 -   [x] Monitors
     -   [x] CRUD Operations
     -   [x] Cron Jobs

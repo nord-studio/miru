@@ -1,11 +1,13 @@
 "use server"
-import { ActionResult } from "@/components/form";
+
 import { monitors } from "@/lib/db/schema/monitors";
 import db from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { generateId } from "@/lib/utils";
 import { env } from "@/lib/env.mjs";
+import { ActionResult } from "@/types/form";
+import { workspaces } from "@/lib/db/schema";
 
 export async function createMonitor(prevState: ActionResult, formData: FormData): Promise<ActionResult> {
 	"use server"
@@ -13,6 +15,7 @@ export async function createMonitor(prevState: ActionResult, formData: FormData)
 	const type = formData.get("type") as "http" | "tcp";
 	const url = formData.get("url");
 	const interval = formData.get("interval");
+	const workspaceSlug = formData.get("workspaceSlug");
 
 	if (!name) {
 		return { error: true, message: "Monitor name is required" };
@@ -34,10 +37,21 @@ export async function createMonitor(prevState: ActionResult, formData: FormData)
 		return { error: true, message: "Monitor interval is required" };
 	}
 
+	if (!workspaceSlug) {
+		return { error: true, message: "Workspace slug is required" };
+	}
+
 	const id = generateId();
+
+	const workspace = await db.select().from(workspaces).where(eq(workspaces.slug, workspaceSlug.toString())).limit(1).then((res) => { return res[0] });
+
+	if (!workspace) {
+		return { error: true, message: "Workspace not found" };
+	}
 
 	const monitor = await db.insert(monitors).values({
 		id,
+		workspaceId: workspace.id,
 		name: name as string,
 		type: type as "http" | "tcp",
 		url: url as string,

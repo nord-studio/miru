@@ -19,6 +19,7 @@ import { IncidentWithMonitor } from "@/types/incident";
 import EditIncident from "@/components/incidents/edit-incident";
 import { getAllMonitors } from "@/components/monitors/actions";
 import DeleteIncident from "@/components/incidents/delete-incident";
+import { usePathname } from "next/navigation";
 
 export default function IncidentActionsDropdown({
 	incident,
@@ -29,6 +30,7 @@ export default function IncidentActionsDropdown({
 	monitors?: Omit<Monitor, "uptime">[];
 } & React.ComponentProps<"button"> &
 	VariantProps<typeof buttonVariants>) {
+	const pathname = usePathname();
 	const [deleteOpen, setDeleteOpen] = React.useState(false);
 	const [editOpen, setEditOpen] = React.useState(false);
 	const [allMonitors, setAllMonitors] = React.useState<
@@ -71,7 +73,11 @@ export default function IncidentActionsDropdown({
 						<DropdownMenuItem onClick={() => setEditOpen(true)}>
 							Edit
 						</DropdownMenuItem>
-						<Link href={`/dashboard/incidents/${incident.id}`}>
+						<Link
+							href={`/admin/${pathname.split("/")[2]}/incidents/${
+								incident.id
+							}`}
+						>
 							<DropdownMenuItem>Details</DropdownMenuItem>
 						</Link>
 						<DropdownMenuItem

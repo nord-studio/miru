@@ -22,6 +22,27 @@
       "when": 1740428177883,
       "tag": "0002_fair_peter_quill",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1740510677796,
+      "tag": "0003_round_korath",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1740511683424,
+      "tag": "0004_clumsy_lilandra",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1740842674605,
+      "tag": "0005_mute_otto_octavius",
+      "breakpoints": true
     }
   ]
 }

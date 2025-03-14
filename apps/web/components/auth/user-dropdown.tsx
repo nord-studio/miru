@@ -34,8 +34,10 @@ import { SiGithub } from "@icons-pack/react-simple-icons";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { usePathname } from "next/navigation";
 
 export default function UserDropdown({ user }: { user: User }) {
+	const pathname = usePathname();
 	const [mounted, setMounted] = useState(false);
 	const [open, setOpen] = useState(false);
 	const [signOutOpen, setSignOutOpen] = useState(false);
@@ -99,13 +101,21 @@ export default function UserDropdown({ user }: { user: User }) {
 									</DropdownMenuLabel>
 									<DropdownMenuSeparator />
 									<DropdownMenuGroup>
-										<Link href="/dashboard/settings/profile">
+										<Link
+											href={`/admin/${
+												pathname.split("/")[2]
+											}/settings/profile`}
+										>
 											<DropdownMenuItem>
 												<UserIcon className="mr-2 h-4 w-4" />
 												Profile
 											</DropdownMenuItem>
 										</Link>
-										<Link href="/dashboard/settings">
+										<Link
+											href={`/admin/${
+												pathname.split("/")[2]
+											}/settings`}
+										>
 											<DropdownMenuItem>
 												<CogIcon className="mr-2 h-4 w-4" />
 												Settings
@@ -182,7 +192,9 @@ export default function UserDropdown({ user }: { user: User }) {
 									<hr className="w-full border-b border-black/10 dark:border-white/10" />
 									<div className="flex flex-col items-start">
 										<Link
-											href="/dashboard/settings/profile"
+											href={`/admin/${
+												pathname.split("/")[2]
+											}/settings/profile`}
 											className="w-full"
 										>
 											<DrawerClose className="w-full">
@@ -193,7 +205,9 @@ export default function UserDropdown({ user }: { user: User }) {
 											</DrawerClose>
 										</Link>
 										<Link
-											href="/dashboard/settings"
+											href={`/admin/${
+												pathname.split("/")[2]
+											}/settings`}
 											className="w-full"
 										>
 											<DrawerClose className="w-full">
