@@ -44,23 +44,27 @@ const columns: ColumnDef<Ping>[] = [
 	{
 		id: "select",
 		header: ({ table }) => (
-			<Checkbox
-				checked={
-					table.getIsAllPageRowsSelected() ||
-					(table.getIsSomePageRowsSelected() && "indeterminate")
-				}
-				onCheckedChange={(value) =>
-					table.toggleAllPageRowsSelected(!!value)
-				}
-				aria-label="Select all"
-			/>
+			<div className="flex items-center">
+				<Checkbox
+					checked={
+						table.getIsAllPageRowsSelected() ||
+						(table.getIsSomePageRowsSelected() && "indeterminate")
+					}
+					onCheckedChange={(value) =>
+						table.toggleAllPageRowsSelected(!!value)
+					}
+					aria-label="Select all"
+				/>
+			</div>
 		),
 		cell: ({ row }) => (
-			<Checkbox
-				checked={row.getIsSelected()}
-				onCheckedChange={(value) => row.toggleSelected(!!value)}
-				aria-label="Select row"
-			/>
+			<div className="flex items-center">
+				<Checkbox
+					checked={row.getIsSelected()}
+					onCheckedChange={(value) => row.toggleSelected(!!value)}
+					aria-label="Select row"
+				/>
+			</div>
 		),
 		enableSorting: false,
 		enableHiding: false,
@@ -75,11 +79,10 @@ const columns: ColumnDef<Ping>[] = [
 					</TooltipContent>
 					<TooltipTrigger>
 						<div
-							className={`rounded-full w-3 h-3 ${
-								row.original.success
-									? "bg-green-500"
-									: "bg-red-500"
-							}`}
+							className={`rounded-full w-3 h-3 ${row.original.success
+								? "bg-green-500"
+								: "bg-red-500"
+								}`}
 						/>
 					</TooltipTrigger>
 				</Tooltip>
@@ -244,11 +247,11 @@ export function PingDataTable({ id }: { id: string }) {
 													{header.isPlaceholder
 														? null
 														: flexRender(
-																header.column
-																	.columnDef
-																	.header,
-																header.getContext()
-														  )}
+															header.column
+																.columnDef
+																.header,
+															header.getContext()
+														)}
 												</TableHead>
 											);
 										})}

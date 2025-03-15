@@ -76,14 +76,14 @@ export async function createMonitor(prevState: ActionResult, formData: FormData)
 		}
 	}).then(async (res) => {
 		if (res.status === 200) {
-			revalidatePath("/dashboard/monitors");
+			revalidatePath(`/admin/[workspaceSlug]/monitors`);
 		} else {
 			const json = await res.json();
 			if (json.error) {
-				revalidatePath("/dashboard/monitors");
+				revalidatePath(`/admin/[workspaceSlug]/monitors`);
 				return { error: true, message: json.error };
 			} else {
-				revalidatePath("/dashboard/monitors");
+				revalidatePath(`/admin/[workspaceSlug]/monitors`);
 				return { error: true, message: "Failed to start cron job" };
 			}
 		}
@@ -92,7 +92,7 @@ export async function createMonitor(prevState: ActionResult, formData: FormData)
 		return { error: true, message: "Couldn't reach the monitor service. Is it running?" };
 	})
 
-	revalidatePath("/dashboard/monitors");
+	revalidatePath(`/admin/[workspaceSlug]/monitors`);
 	return { error: false, message: "Monitor created successfully" };
 }
 
@@ -107,15 +107,15 @@ export async function pingMonitor(id: string): Promise<ActionResult> {
 		}
 	}).then(async (res) => {
 		if (res.status === 200) {
-			revalidatePath("/dashboard/monitors");
+			revalidatePath("/admin");
 			return { error: false, message: "Monitor pinged successfully" };
 		} else {
 			const json = await res.json();
 			if (json.error) {
-				revalidatePath("/dashboard/monitors");
+				revalidatePath("/admin/[workspaceSlug]/monitors");
 				return { error: true, message: json.error };
 			} else {
-				revalidatePath("/dashboard/monitors");
+				revalidatePath("/admin/[workspaceSlug]/monitors");
 				return { error: true, message: "Failed to ping monitor" };
 			}
 		}
@@ -176,14 +176,14 @@ export async function editMonitor(id: string, data: FormData): Promise<ActionRes
 				}
 			}).then(async (res) => {
 				if (res.status === 200) {
-					revalidatePath("/dashboard/monitors");
+					revalidatePath("/admin/[workspaceSlug]/monitors");
 				} else {
 					const json = await res.json();
 					if (json.error) {
-						revalidatePath("/dashboard/monitors");
+						revalidatePath("/admin/[workspaceSlug]/monitors");
 						return { error: true, message: json.error };
 					} else {
-						revalidatePath("/dashboard/monitors");
+						revalidatePath("/admin/[workspaceSlug]/monitors");
 						return { error: true, message: "Failed to update cron job" };
 					}
 				}
@@ -192,12 +192,12 @@ export async function editMonitor(id: string, data: FormData): Promise<ActionRes
 				return { error: true, message: "Couldn't reach the monitor service. Is it running?" };
 			})
 		}
-		revalidatePath("/dashboard/monitors");
+		revalidatePath("/admin/[workspaceSlug]/monitors");
 	}).catch((err) => {
 		return { error: true, message: err };
 	});
 
-	revalidatePath("/dashboard/monitors");
+	revalidatePath("/admin/[workspaceSlug]/monitors");
 	return { error: false, message: "Monitor updated successfully" };
 }
 
@@ -212,14 +212,14 @@ export async function deleteMonitor(id: string): Promise<ActionResult> {
 			}
 		}).then(async (res) => {
 			if (res.status === 200) {
-				revalidatePath("/dashboard/monitors");
+				revalidatePath("/admin/[workspaceSlug]/monitors");
 			} else {
 				const json = await res.json();
 				if (json.error) {
-					revalidatePath("/dashboard/monitors");
+					revalidatePath("/admin/[workspaceSlug]/monitors");
 					return { error: true, message: json.error };
 				} else {
-					revalidatePath("/dashboard/monitors");
+					revalidatePath("/admin/[workspaceSlug]/monitors");
 					return { error: true, message: "Failed to stop cron job" };
 				}
 			}
@@ -227,7 +227,7 @@ export async function deleteMonitor(id: string): Promise<ActionResult> {
 			console.error(e);
 			return { error: true, message: "Couldn't reach the monitor service. Is it running?" }
 		})
-		revalidatePath("/dashboard/monitors");
+		revalidatePath("/admin/[workspaceSlug]/monitors");
 	}).catch((err) => {
 		console.error(err);
 		return { error: true, message: err };

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Cog, TriangleAlert, User2 } from "lucide-react";
+import { Cog, TriangleAlert, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -36,40 +36,8 @@ export default function SettingsLayout({
 							General
 						</Button>
 					</Link>
-					{/* <Link href="/admin/settings/team" className="w-full">
-						<Button
-							variant="ghost"
-							className={cn(
-								"w-full justify-start",
-								`${
-									path === "/admin/settings/team"
-										? "bg-neutral-200 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50"
-										: ""
-								}`
-							)}
-						>
-							<Users />
-							Team
-						</Button>
-					</Link> */}
-					{/* <Link href="/admin/settings/tokens" className="w-full">
-						<Button
-							variant="ghost"
-							className={cn(
-								"w-full justify-start flex flex-row gap-2",
-								`${
-									path === "/admin/settings/tokens"
-										? "bg-neutral-200 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50"
-										: ""
-								}`
-							)}
-						>
-							<Code />
-							<span>API Tokens</span>
-						</Button>
-					</Link> */}
 					<Link
-						href={`/admin/${path.split("/")[2]}/settings/profile`}
+						href={`/admin/${path.split("/")[2]}/settings/team`}
 						className="w-full"
 					>
 						<Button
@@ -78,14 +46,14 @@ export default function SettingsLayout({
 								"w-full justify-start flex flex-row gap-2",
 								`${path ===
 									`/admin/${path.split("/")[2]
-									}/settings/profile`
+									}/settings/team`
 									? "bg-neutral-200 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50"
 									: ""
 								}`
 							)}
 						>
-							<User2 />
-							<span>Profile</span>
+							<Users />
+							<span>Team</span>
 						</Button>
 					</Link>
 					<Link

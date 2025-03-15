@@ -31,6 +31,14 @@ export default async function WorkspaceDangerSettingsPage({
 	return (
 		<>
 			<main className="flex flex-col gap-4 item-start w-full">
+				<div className="flex flex-col">
+					<h1 className="text-3xl font-black font-display">
+						Danger Zone
+					</h1>
+					<p className="text-neutral-500 dark:text-neutral-400">
+						Be careful with these settings. Here be dragons!
+					</p>
+				</div>
 				<div className="flex flex-col gap-4 pb-4 sm:gap-8">
 					<div className="flex w-full flex-col rounded-md border border-red-500/40">
 						<div className="flex flex-col gap-4 border-b border-red-500/40 p-6">
@@ -45,7 +53,7 @@ export default async function WorkspaceDangerSettingsPage({
 						</div>
 						<div className="flex flex-row items-center justify-between gap-4 bg-red-500/10 p-4">
 							<div />
-							<DeleteAccountConfirm user={session?.user}>
+							<DeleteAccountConfirm user={session?.user} workspace={workspace}>
 								<Button variant="destructive">Delete Workspace</Button>
 							</DeleteAccountConfirm>
 						</div>

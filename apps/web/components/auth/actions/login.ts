@@ -1,8 +1,8 @@
 "use server";
 
-import { ActionResult } from "@/components/form";
 import { auth } from "@/lib/auth";
 import { verifyEmailInput } from "@/lib/utils";
+import { ActionResult } from "@/types/form";
 import { redirect } from "next/navigation";
 
 const logIn = async (prevState: ActionResult, formData: FormData) => {
@@ -39,7 +39,7 @@ const logIn = async (prevState: ActionResult, formData: FormData) => {
 		};
 	}
 
-	return redirect("/dashboard");
+	return redirect("/admin");
 }
 
 export default logIn;

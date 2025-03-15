@@ -44,9 +44,8 @@ export const columns: ColumnDef<IncidentWithMonitor>[] = [
 			const pathname = usePathname();
 			return (
 				<Link
-					href={`/admin/${pathname.split("/")[2]}/incidents/${
-						row.original.id
-					}`}
+					href={`/admin/${pathname.split("/")[2]}/incidents/${row.original.id
+						}`}
 					className="w-fit"
 				>
 					<p className="font-medium hover:underline w-fit">
@@ -75,8 +74,8 @@ export const columns: ColumnDef<IncidentWithMonitor>[] = [
 				<p className="font-medium" suppressHydrationWarning={true}>
 					{row.original.acknowledged_at
 						? new Date(
-								row.original.acknowledged_at
-						  ).toLocaleString()
+							row.original.acknowledged_at
+						).toLocaleString()
 						: "N/A"}
 				</p>
 			);
@@ -99,12 +98,13 @@ export const columns: ColumnDef<IncidentWithMonitor>[] = [
 		accessorKey: "monitors",
 		header: "Monitor(s)",
 		cell: ({ row }) => {
+			const pathname = usePathname();
 			return (
 				<>
 					{row.original.monitors.map((mon) => {
 						return (
 							<Link
-								href={`/dashboard/monitors/${mon.id}`}
+								href={`/admin/${pathname.split("/")[2]}/monitors/${mon.id}`}
 								key={mon.id}
 							>
 								<Badge className="mx-1 hover:opacity-80 transiot">

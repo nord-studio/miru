@@ -19,31 +19,19 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { WorkspaceWithMembers } from "@/types/workspace";
-import { getAllWorkspacesWithMembers } from "@/components/workspace/actions";
 import CreateWorkspace from "@/components/workspace/create-workspace";
 import { usePathname, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function WorkspaceSwitcher() {
+export function WorkspaceSwitcher({ workspaces }: { workspaces: WorkspaceWithMembers[] }) {
 	const pathname = usePathname();
 	const router = useRouter();
 
 	const [open, setOpen] = React.useState(false);
 	const [openCreate, setOpenCreate] = React.useState(false);
-	const [allWorkspaces, setAllWorkspaces] = React.useState<
-		WorkspaceWithMembers[]
-	>([]);
 	const [currentWorkspace, setCurrentWorkspace] = React.useState<string>();
 
 	React.useEffect(() => {
-		getAllWorkspacesWithMembers().then((wrkspcs) => {
-			if (!wrkspcs?.data) {
-				throw new Error("Failed to fetch workspaces");
-			} else {
-				setAllWorkspaces(wrkspcs.data);
-			}
-		});
-
 		if (pathname.split("/")[2]) {
 			setCurrentWorkspace(pathname.split("/")[2]);
 		}
@@ -58,7 +46,7 @@ export function WorkspaceSwitcher() {
 						variant="outline"
 						role="combobox"
 						aria-expanded={open}
-						className="w-[200px] justify-between"
+						className="w-[150px] lg:w-[200px] justify-between"
 					>
 						{currentWorkspace ? (
 							<span>{currentWorkspace}</span>
@@ -77,7 +65,7 @@ export function WorkspaceSwitcher() {
 						<CommandList>
 							<CommandEmpty>No workspace found.</CommandEmpty>
 							<CommandGroup>
-								{allWorkspaces.map((workspace) => (
+								{workspaces.map((workspace) => (
 									<CommandItem
 										key={workspace.id}
 										value={workspace.id}
@@ -87,8 +75,7 @@ export function WorkspaceSwitcher() {
 											);
 											setOpen(false);
 											router.push(
-												`/admin/${
-													workspace.workspace.slug
+												`/admin/${workspace.workspace.slug
 												}/${pathname.split("/")[3]}`
 											);
 										}}

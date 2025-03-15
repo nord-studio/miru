@@ -28,7 +28,7 @@ A free, open-source and fully customisable status page and monitoring service.
     -   [ ] Email
     -   [ ] Slack
 -   [ ] Settings
-    -   [ ] General Settings
+    -   [x] General Settings
     -   [ ] Team
     -   [ ] API Tokens
 

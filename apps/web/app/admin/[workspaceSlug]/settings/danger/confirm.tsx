@@ -25,12 +25,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User } from "better-auth/types";
 import { TriangleAlertIcon } from "lucide-react";
+import { Workspace } from "@/types/workspace";
+import { deleteWorkspace } from "@/components/workspace/actions";
+import { toast } from "sonner";
 
 export function DeleteAccountConfirm({
 	user,
+	workspace,
 	children,
 }: {
 	user: User;
+	workspace: Workspace;
 	children: React.ReactNode;
 }) {
 	const [open, setOpen] = React.useState(false);
@@ -47,7 +52,7 @@ export function DeleteAccountConfirm({
 
 	React.useEffect(() => {
 		if (user) {
-			if (phrase === "delete my workspace") {
+			if (phrase === workspace.name) {
 				setEnabled(true);
 			} else {
 				setEnabled(false);
@@ -55,17 +60,25 @@ export function DeleteAccountConfirm({
 		} else {
 			toggleOpen();
 		}
-	}, [username, phrase, user, toggleOpen]);
+	}, [username, phrase, user, toggleOpen, workspace.name]);
 
-	// const handleDelete = () => {
-	// 	toast.promise(deleteUser, {
-	// 		loading: "Deleting...",
-	// 		success: () => {
-	// 			return "Your workspace has been deleted."
-	// 		},
-	// 		error: "Something went wrong. Your account couldn't be deleted.",
-	// 	})
-	// }
+	const handleDelete = async () => {
+		const t = toast.loading("Deleting workspace...");
+
+		await deleteWorkspace({ id: workspace.id }).then((res) => {
+			if (res?.data?.error) {
+				return toast.error("Something went wrong!", {
+					id: t,
+					description: res.data.message
+				});
+			} else {
+				toast.success("Workspace deleted successfully!", {
+					id: t,
+				});
+				toggleOpen();
+			}
+		})
+	}
 
 	const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -85,14 +98,15 @@ export function DeleteAccountConfirm({
 									</span>
 								</DialogDescription>
 							</DialogHeader>
-							<div className="flex flex-col items-start gap-4 px-6 pb-4">
-								<div className="flex w-full flex-col gap-1">
+							<div className="flex flex-col items-start gap-4 px-6 pb-2">
+								<div className="flex w-full flex-col gap-4">
 									<Label htmlFor="name" className="text-sm text-neutral-500 gap-1">
-										To verify, type <b>delete my workspace</b> below:
+										To confirm deletion, type your workspace name <b>&quot;{workspace.name}&quot;</b> below:
 									</Label>
 									<Input
 										value={phrase}
 										onChange={(e) => setPhrase(e.target.value)}
+										placeholder={workspace.name}
 									/>
 								</div>
 							</div>
@@ -103,7 +117,7 @@ export function DeleteAccountConfirm({
 								<Button
 									variant="destructive"
 									disabled={!enabled}
-									onClick={() => alert("Your workspace has been deleted!")}
+									onClick={() => handleDelete()}
 								>
 									Confirm Deletion
 								</Button>

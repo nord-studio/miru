@@ -13,8 +13,12 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { DialogTitle } from "@radix-ui/react-dialog";
+import { usePathname } from "next/navigation";
 
 export default function MobileNavbar() {
+	const pathname = usePathname();
+	const currentWorkspace = pathname.split("/")[2];
+
 	return (
 		<>
 			<Drawer.Root direction="right">
@@ -45,7 +49,7 @@ export default function MobileNavbar() {
 								<hr className="my-4 border-b border-black/10 dark:border-white/10" />
 								<div className="flex flex-col items-start w-full gap-4 ">
 									<Link
-										href="/dashboard/monitors"
+										href={`/admin/${currentWorkspace}/monitors`}
 										passHref
 										className="w-full"
 									>
@@ -63,7 +67,7 @@ export default function MobileNavbar() {
 										</Drawer.Close>
 									</Link>
 									<Link
-										href="/dashboard/incidents"
+										href={`/admin/${currentWorkspace}/incidents`}
 										passHref
 										className="w-full"
 									>
@@ -80,44 +84,46 @@ export default function MobileNavbar() {
 											</Button>
 										</Drawer.Close>
 									</Link>
-									<Link
-										href="/dashboard/status-pages"
+									{/* <Link
+										href={`/admin/${currentWorkspace}/status-pages`}
 										passHref
 										className="w-full"
 									>
 										<Drawer.Close
 											className="w-full"
 											asChild
-										>
-											<Button
-												variant="ghost"
-												className="flex flex-row w-full gap-2 justify-start"
-											>
-												<Code className="w-6 h-6" />{" "}
-												Status Pages
-											</Button>
-										</Drawer.Close>
-									</Link>
-									<Link
-										href="/dashboard/notifications"
+										> */}
+									<Button
+										variant="ghost"
+										className="flex flex-row w-full gap-2 justify-start"
+										disabled={true}
+									>
+										<Code className="w-6 h-6" />{" "}
+										Status Pages
+									</Button>
+									{/* </Drawer.Close>
+									</Link> */}
+									{/* <Link
+										href={`/admin/${currentWorkspace}/notifications`}
 										passHref
 										className="w-full"
 									>
 										<Drawer.Close
 											className="w-full"
 											asChild
-										>
-											<Button
-												variant="ghost"
-												className="flex flex-row w-full gap-2 justify-start"
-											>
-												<BellIcon className="w-6 h-6" />{" "}
-												Notifications
-											</Button>
-										</Drawer.Close>
-									</Link>
+										> */}
+									<Button
+										variant="ghost"
+										className="flex flex-row w-full gap-2 justify-start"
+										disabled={true}
+									>
+										<BellIcon className="w-6 h-6" />{" "}
+										Notifications
+									</Button>
+									{/* </Drawer.Close>
+									</Link> */}
 									<Link
-										href="/dashboard/settings"
+										href={`/admin/${currentWorkspace}/settings`}
 										passHref
 										className="w-full"
 									>
@@ -139,7 +145,7 @@ export default function MobileNavbar() {
 						</div>
 					</Drawer.Content>
 				</Drawer.Portal>
-			</Drawer.Root>
+			</Drawer.Root >
 		</>
 	);
 }

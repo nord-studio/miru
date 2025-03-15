@@ -27,6 +27,7 @@ import UserSelection from "@/components/workspace/user-select";
 import { User } from "better-auth";
 import { createWorkspace } from "@/components/workspace/actions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function CreateWorkspace({
 	open,
@@ -36,6 +37,7 @@ export default function CreateWorkspace({
 	setOpen: (open: boolean) => void;
 }) {
 	const isDesktop = useMediaQuery("(min-width: 768px)");
+	const router = useRouter();
 	const [loading, setLoading] = useState(false);
 	const [name, setName] = useState("");
 	const [slug, setSlug] = useState("");
@@ -81,6 +83,7 @@ export default function CreateWorkspace({
 			toast.success("Workspace created successfully", {
 				description: res?.data?.message,
 			});
+			router.push(`/admin/${slug}/monitors`)
 			setOpen(false);
 		}
 	}

@@ -1,5 +1,4 @@
-import SettingsCard from "@/app/admin/[workspaceSlug]/settings/card";
-import { Input } from "@/components/ui/input";
+import WorkspaceGeneralSettingsFields from "@/app/admin/[workspaceSlug]/settings/(general)/fields";
 import db from "@/lib/db";
 import { workspaces } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -30,12 +29,7 @@ export default async function ProfileSettingsPage({
 						All general settings regarding your workspace.
 					</p>
 				</div>
-				<SettingsCard
-					title="Name"
-					description="Your workspace name is purely for organizational purposes."
-				>
-					<Input placeholder={workspace.name} />
-				</SettingsCard>
+				<WorkspaceGeneralSettingsFields workspace={workspace} />
 			</main>
 		</>
 	);

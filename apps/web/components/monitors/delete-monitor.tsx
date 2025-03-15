@@ -25,8 +25,8 @@ export default function DeleteMonitor({
 			onCancel={() => setOpen(false)}
 			onSubmit={() => {
 				deleteMonitor(id);
-				if (pathName !== "/dashboard/monitors") {
-					router.push("/dashboard/monitors");
+				if (pathName !== `/admin/${pathName.split("/")[2]}/monitors`) {
+					router.push(`/admin/${pathName.split("/")[2]}/monitors`);
 				}
 				return;
 			}}

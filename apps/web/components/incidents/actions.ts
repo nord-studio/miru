@@ -70,7 +70,7 @@ export async function createIncident(prevState: ActionResult, formData: FormData
 		return { error: true, message: "Failed to create incident report" };
 	}
 
-	revalidatePath("/dashboard/incidents");
+	revalidatePath("/admin/[workspaceSlug]/incidents");
 	return { error: false, message: "Incident created successfully" };
 }
 
@@ -116,7 +116,7 @@ export const editIncident = actionClient.schema(z.object({
 		})
 	}
 
-	revalidatePath("/dashboard/incidents");
+	revalidatePath("/admin/[workspaceSlug]/incidents");
 	return { error: false, message: "Incident edited successfully" };
 })
 
@@ -141,6 +141,6 @@ export const deleteIncident = actionClient.schema(z.object({
 		return { error: true, message: "Failed to delete incident" };
 	})
 
-	revalidatePath("/dashboard/incidents");
+	revalidatePath("/admin/[workspaceSlug]/incidents");
 	return { error: false, message: "Incident deleted successfully" };
 })
