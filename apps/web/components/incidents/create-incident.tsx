@@ -40,7 +40,7 @@ import { createIncident } from "@/components/incidents/actions";
 import { IncidentStatus } from "@/types/incident";
 import { Textarea } from "@/components/ui/textarea";
 import { Monitor } from "@/types/monitor";
-import MonitorSelection from "@/components/incidents/monitor-select";
+import MonitorSelection from "@/components/monitors/monitor-select";
 
 export default function CreateIncident({
 	monitors,

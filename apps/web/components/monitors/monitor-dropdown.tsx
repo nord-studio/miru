@@ -19,6 +19,7 @@ import DeleteMonitor from "@/components/monitors/delete-monitor";
 import { Monitor } from "@/types/monitor";
 import { testUrl } from "@/components/monitors/utils";
 import { VariantProps } from "class-variance-authority";
+import { usePathname } from "next/navigation";
 
 export default function MonitorActionsDropdown({
 	monitor,
@@ -27,6 +28,7 @@ export default function MonitorActionsDropdown({
 	monitor: Omit<Monitor, "uptime">;
 } & React.ComponentProps<"button"> &
 	VariantProps<typeof buttonVariants>) {
+	const pathname = usePathname();
 	const [deleteOpen, setDeleteOpen] = React.useState(false);
 	const [editOpen, setEditOpen] = React.useState(false);
 
@@ -55,7 +57,11 @@ export default function MonitorActionsDropdown({
 						<DropdownMenuItem onClick={() => setEditOpen(true)}>
 							Edit
 						</DropdownMenuItem>
-						<Link href={`/dashboard/monitors/${monitor.id}`}>
+						<Link
+							href={`/admin/${pathname.split("/")[2]}/monitors/${
+								monitor.id
+							}`}
+						>
 							<DropdownMenuItem>Details</DropdownMenuItem>
 						</Link>
 						<DropdownMenuItem

@@ -28,7 +28,7 @@ import { Pen } from "lucide-react";
 import { VariantProps } from "class-variance-authority";
 import { IncidentWithMonitor } from "@/types/incident";
 import { editIncident } from "@/components/incidents/actions";
-import MonitorSelection from "@/components/incidents/monitor-select";
+import MonitorSelection from "@/components/monitors/monitor-select";
 import { Monitor } from "@/types/monitor";
 
 export function EditIncidentButton({

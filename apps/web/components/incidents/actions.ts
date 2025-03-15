@@ -1,11 +1,11 @@
 "use server";
 
-import { ActionResult } from "@/components/form";
 import db from "@/lib/db";
 import { incidentReports, incidents } from "@/lib/db/schema/incidents";
 import { monitorsToIncidents } from "@/lib/db/schema/monitors";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
+import { ActionResult } from "@/types/form";
 import { IncidentStatus } from "@/types/incident";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -70,7 +70,7 @@ export async function createIncident(prevState: ActionResult, formData: FormData
 		return { error: true, message: "Failed to create incident report" };
 	}
 
-	revalidatePath("/dashboard/incidents");
+	revalidatePath("/admin/[workspaceSlug]/incidents");
 	return { error: false, message: "Incident created successfully" };
 }
 
@@ -116,7 +116,7 @@ export const editIncident = actionClient.schema(z.object({
 		})
 	}
 
-	revalidatePath("/dashboard/incidents");
+	revalidatePath("/admin/[workspaceSlug]/incidents");
 	return { error: false, message: "Incident edited successfully" };
 })
 
@@ -141,6 +141,6 @@ export const deleteIncident = actionClient.schema(z.object({
 		return { error: true, message: "Failed to delete incident" };
 	})
 
-	revalidatePath("/dashboard/incidents");
+	revalidatePath("/admin/[workspaceSlug]/incidents");
 	return { error: false, message: "Incident deleted successfully" };
 })

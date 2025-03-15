@@ -39,8 +39,11 @@ import Spinner from "@/components/ui/spinner";
 import React from "react";
 import Alert from "@/components/ui/alert";
 import { testUrl } from "@/components/monitors/utils";
+import { usePathname } from "next/navigation";
 
 export default function CreateMonitor() {
+	const pathname = usePathname();
+
 	const [open, setOpen] = useState(false);
 	const [brokenWarning, setBrokenWarning] = useState(false);
 	const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -82,6 +85,7 @@ export default function CreateMonitor() {
 		data.append("url", url);
 		data.append("type", type);
 		data.append("interval", interval);
+		data.append("workspaceSlug", pathname.split("/")[2]);
 
 		createMonitor({ error: false, message: "" }, data).then((res) => {
 			setLoading(false);

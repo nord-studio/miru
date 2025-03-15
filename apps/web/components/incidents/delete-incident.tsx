@@ -26,8 +26,8 @@ export default function DeleteIncident({
 			onCancel={() => setOpen(false)}
 			onSubmit={() => {
 				deleteIncident({ id });
-				if (pathName !== "/dashboard/incidents") {
-					router.push("/dashboard/incidents");
+				if (pathName !== `/admin/${pathName.split("/")[2]}/incidents`) {
+					router.push(`/admin/${pathName.split("/")[2]}/incidents`);
 				}
 				return;
 			}}
