@@ -5,7 +5,7 @@ import { incidentReports, incidents } from "@/lib/db/schema/incidents";
 import { monitorsToIncidents } from "@/lib/db/schema/monitors";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
-import { IncidentStatus } from "@/types/incident";
+import { IncidentReportStatus } from "@/types/incident-report";
 import { eq } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
@@ -15,8 +15,8 @@ export const createIncident = actionClient.schema(z.object({
 	monitorIds: z.array(z.string()).min(1),
 	title: z.string().nonempty(),
 	message: z.string().nonempty(),
-	status: z.custom<IncidentStatus>(async (status) => {
-		return Object.values(IncidentStatus).includes(status);
+	status: z.custom<IncidentReportStatus>(async (status) => {
+		return Object.values(IncidentReportStatus).includes(status);
 	})
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).action(async ({ parsedInput: { monitorIds, title, message, status } }) => {
 	const id = generateId();
@@ -37,7 +37,7 @@ export const createIncident = actionClient.schema(z.object({
 		id: generateId(),
 		incidentId: incident[0].id,
 		message: message.toString(),
-		status: status as IncidentStatus,
+		status: status as IncidentReportStatus,
 	});
 
 	if (!incident) {

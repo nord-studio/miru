@@ -1,4 +1,4 @@
-import { EditIncidentButton } from "@/components/incidents/edit-incident";
+import CreateIncidentReport from "@/components/incidents/reports/create-report";
 import IncidentActionsDropdown from "@/components/incidents/incidents-dropdown";
 import db from "@/lib/db";
 import { incidentReports, workspaces } from "@/lib/db/schema";
@@ -58,10 +58,7 @@ export default async function MonitorSingletonLayout({
 						</p>
 					</div>
 					<div className="flex flex-row gap-3 items-center">
-						<EditIncidentButton
-							incident={incident}
-							monitors={allMonitors}
-						/>
+						<CreateIncidentReport incident={incident} />
 						<IncidentActionsDropdown
 							incident={incident}
 							monitors={allMonitors}

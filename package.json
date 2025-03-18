@@ -22,5 +22,8 @@
 			"esbuild",
 			"sharp"
 		]
+	},
+	"dependencies": {
+		"date-fns": "^4.1.0"
 	}
 }

@@ -1,12 +1,5 @@
 import { Monitor } from "@/types/monitor";
 
-export enum IncidentStatus {
-	INVESTIGATING = "investigating",
-	IDENTIFIED = "identified",
-	MONITORING = "monitoring",
-	RESOLVED = "resolved",
-}
-
 export interface Incident {
 	id: string;
 	title: string;

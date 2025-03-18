@@ -21,80 +21,63 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import { Activity, Check, Fingerprint, PlusIcon, Search } from "lucide-react";
 import Spinner from "@/components/ui/spinner";
 import React from "react";
-import { createIncident } from "@/components/incidents/actions";
+import { Incident } from "@/types/incident";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Monitor } from "@/types/monitor";
-import MonitorSelection from "@/components/monitors/monitor-select";
 import { IncidentReportStatus } from "@/types/incident-report";
+import { toast } from "sonner";
+import { createIncidentReport } from "@/components/incidents/reports/actions";
 
-export default function CreateIncident({
-	monitors,
-}: {
-	monitors: Omit<Monitor, "uptime">[];
+export default function CreateIncidentReport({ incident }: {
+	incident: Incident;
 }) {
 	const [open, setOpen] = useState(false);
-	const isDesktop = useMediaQuery("(min-width: 768px)");
-	const [loading, setLoading] = useState(false);
 	const [mounted, setMounted] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const isDesktop = useMediaQuery("(min-width: 1024px)");
 
-	const [title, setTitle] = useState("");
-	const [monitorIds, setMonitorIds] = useState<string[]>([]);
+	const [status, setStatus] = useState<IncidentReportStatus>(IncidentReportStatus.INVESTIGATING);
 	const [message, setMessage] = useState("");
-	const [status, setStatus] = useState<IncidentReportStatus>(
-		IncidentReportStatus.INVESTIGATING
-	);
 
 	useEffect(() => {
 		setMounted(true);
-	}, []);
+	}, [])
 
-	function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+	async function onSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		setLoading(true);
+		const t = toast.loading("Creating report...");
 
-		createIncident({
-			monitorIds,
-			title,
+		createIncidentReport({
+			incidentId: incident.id,
 			message,
-			status,
+			status: status as IncidentReportStatus,
 		}).then((res) => {
 			if (typeof res?.validationErrors !== "undefined") {
 				return toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
-					description: res.validationErrors[Object.keys(res.validationErrors)[0] as keyof typeof res.validationErrors]?.[0],
-				});
-			}
-
-			if (typeof res?.serverError !== "undefined") {
-				return toast.error("Something went wrong!", { description: res.serverError })
-			}
-
-			if (res?.data?.error) {
-				return toast.error("Something went wrong!", {
-					description: res.data.message
+					description: Object.values(res.validationErrors)[0],
+					id: t
 				})
 			}
 
-			toast.success("Success!", {
-				description: res?.data?.message
-			})
-			setOpen(!open)
-		})
-			.finally(() => setLoading(false));
+			if (res?.data?.error) {
+				toast.error("Something went wrong!", {
+					description: res.data.message,
+					id: t
+				})
+			} else {
+				toast.success("Success!", {
+					description: res?.data?.message,
+					id: t
+				})
+				setOpen(!open)
+			}
+		}).finally(() => setLoading(false))
 	}
 
 	if (!mounted)
@@ -102,7 +85,7 @@ export default function CreateIncident({
 			<>
 				<Button>
 					<PlusIcon />
-					<span className="hidden sm:block">Create Incident</span>
+					<span className="hidden sm:block">Create Report</span>
 				</Button>
 			</>
 		);
@@ -115,39 +98,20 @@ export default function CreateIncident({
 						<Button>
 							<PlusIcon />
 							<span className="hidden sm:block">
-								Create Incident
+								Create Report
 							</span>
 						</Button>
 					</DialogTrigger>
 					<DialogContent className="p-0 sm:max-w-[425px]">
 						<DialogHeader className="px-6 pt-6">
-							<DialogTitle>Create Incident</DialogTitle>
+							<DialogTitle>Create Report</DialogTitle>
 							<DialogDescription>
-								Inform your users about what just happened.
+								Please fill in the details below to create a new
+								report.
 							</DialogDescription>
 						</DialogHeader>
 						<form onSubmit={onSubmit}>
 							<div className="flex flex-col px-6 pb-4 gap-4">
-								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Title</Label>
-									<Input
-										value={title}
-										onChange={(e) =>
-											setTitle(e.target.value)
-										}
-										placeholder="Monitoring service won't start"
-										disabled={loading}
-									/>
-								</div>
-								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Affected Monitors</Label>
-									<MonitorSelection
-										monitors={monitors}
-										value={monitorIds}
-										setValue={setMonitorIds}
-										min={1}
-									/>
-								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Status</Label>
 									<Select
@@ -170,6 +134,7 @@ export default function CreateIncident({
 													IncidentReportStatus.INVESTIGATING
 												}
 											>
+												<Search />
 												Investigating
 											</SelectItem>
 											<SelectItem
@@ -177,6 +142,7 @@ export default function CreateIncident({
 													IncidentReportStatus.IDENTIFIED
 												}
 											>
+												<Fingerprint />
 												Identified
 											</SelectItem>
 											<SelectItem
@@ -184,16 +150,19 @@ export default function CreateIncident({
 													IncidentReportStatus.MONITORING
 												}
 											>
+												<Activity />
 												Monitoring
 											</SelectItem>
 											<SelectItem
 												value={IncidentReportStatus.RESOLVED}
 											>
+												<Check />
 												Resolved
 											</SelectItem>
 										</SelectContent>
 									</Select>
 								</div>
+								{/* TODO: Add date and time select here */}
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label htmlFor="message">
 										Your message
@@ -221,8 +190,9 @@ export default function CreateIncident({
 											Cancel
 										</Button>
 									</DialogClose>
-									<Button disabled={loading} type="submit">
-										{loading ? <Spinner /> : "Create"}
+									<Button disabled={loading} type="submit" className="flex flex-row gap-2 items-center">
+										{loading ? "Creating" : "Create"}
+										{loading && <Spinner />}
 									</Button>
 								</div>
 							</div>
@@ -242,91 +212,15 @@ export default function CreateIncident({
 					</DrawerTrigger>
 					<DrawerContent>
 						<DrawerHeader>
-							<DrawerTitle>Create Incident</DrawerTitle>
+							<DrawerTitle>Create Monitor</DrawerTitle>
 							<DrawerDescription>
-								Inform your users about what just happened.
+								Please fill in the details below to create a new
+								monitor.
 							</DrawerDescription>
 						</DrawerHeader>
-						<form onSubmit={onSubmit}>
+						<form>
 							<div className="flex flex-col px-6 pb-4 gap-4">
-								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Title</Label>
-									<Input
-										value={title}
-										onChange={(e) =>
-											setTitle(e.target.value)
-										}
-										placeholder="Website"
-										disabled={loading}
-									/>
-								</div>
-								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Affected Monitors</Label>
-									<MonitorSelection
-										monitors={monitors}
-										value={monitorIds}
-										setValue={setMonitorIds}
-									/>
-								</div>
-								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Status</Label>
-									<Select
-										value={status}
-										onValueChange={(v: IncidentReportStatus) =>
-											setStatus(v)
-										}
-										disabled={loading}
-									>
-										<SelectTrigger className="w-full">
-											<SelectValue
-												placeholder={
-													IncidentReportStatus.INVESTIGATING
-												}
-											/>
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem
-												value={
-													IncidentReportStatus.INVESTIGATING
-												}
-											>
-												Investigating
-											</SelectItem>
-											<SelectItem
-												value={
-													IncidentReportStatus.IDENTIFIED
-												}
-											>
-												Identified
-											</SelectItem>
-											<SelectItem
-												value={
-													IncidentReportStatus.MONITORING
-												}
-											>
-												Monitoring
-											</SelectItem>
-											<SelectItem
-												value={IncidentReportStatus.RESOLVED}
-											>
-												Resolved
-											</SelectItem>
-										</SelectContent>
-									</Select>
-								</div>
-								<div className="flex flex-col gap-2 items-start w-full">
-									<Label htmlFor="message">
-										Your message
-									</Label>
-									<Textarea
-										placeholder="Type your message here."
-										className="h-32"
-										value={message}
-										onChange={(e) =>
-											setMessage(e.target.value)
-										}
-									/>
-								</div>
+
 							</div>
 							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
 								<span className="text-neutral-400 dark:text-neutral-600 text-sm">

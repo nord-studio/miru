@@ -148,7 +148,6 @@ export function PingDataTable({ id }: { id: string }) {
 			limit: parseInt(limit),
 			days: parseInt(days),
 		}).then((res) => {
-			console.log(res)
 			setData(res.data);
 			setCount(res.total);
 			// reset page index if there are no results
