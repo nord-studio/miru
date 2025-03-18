@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 import {
@@ -43,10 +43,10 @@ export function EditMonitorButton({
 	monitor: Omit<Monitor, "uptime">;
 } & React.ComponentProps<"button"> &
 	VariantProps<typeof buttonVariants>) {
-	const [open, setOpen] = useState(false);
-	const [moutned, setMounted] = useState(false);
+	const [open, setOpen] = React.useState(false);
+	const [moutned, setMounted] = React.useState(false);
 
-	useEffect(() => {
+	React.useEffect(() => {
 		setMounted(true);
 	}, []);
 
@@ -82,23 +82,34 @@ export default function EditMonitor({
 	setOpen: (open: boolean) => void;
 }) {
 	const isDesktop = useMediaQuery("(min-width: 768px)");
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = React.useState(false);
+	const [name, setName] = React.useState(monitor.name);
+	const [url, setUrl] = React.useState(monitor.url);
+	const [type, setType] = React.useState<"http" | "tcp">(monitor.type);
+	const [interval, setInterval] = React.useState(monitor.interval.toString());
 
 	function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setLoading(true);
 
-		// TODO: only pass data that has changed
-		const data = new FormData(e.currentTarget);
-		editMonitor(monitor.id, data).then((res) => {
-			setLoading(false);
-			if (res.error) {
-				toast.error(res.message);
-			} else {
-				toast.success("Monitor created successfully.");
-				setOpen(!open);
+		editMonitor({
+			id: monitor.id,
+			data: {
+				name,
+				type,
+				url,
+				interval: parseInt(interval),
 			}
-		});
+		}).then((res) => {
+			if (res?.data?.error) {
+				toast.error("Something went wrong!", {
+					description: res.data.message
+				})
+			} else {
+				toast.success("Monitor updated successfully!");
+				setOpen(false);
+			}
+		}).finally(() => setLoading(false));
 	}
 
 	if (isDesktop) {
@@ -118,16 +129,18 @@ export default function EditMonitor({
 									<Label>Name</Label>
 									<Input
 										placeholder={monitor.name}
-										name="name"
-										id="name"
-										defaultValue={monitor.name}
+										value={name}
+										onChange={(e) => setName(e.target.value)}
 										disabled={loading}
 									/>
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Type</Label>
 									<Select
-										defaultValue={monitor.type}
+										value={type}
+										onValueChange={(value) =>
+											setType(value as "http" | "tcp")
+										}
 										name="type"
 										disabled={loading}
 									>
@@ -149,18 +162,19 @@ export default function EditMonitor({
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>URL</Label>
 									<Input
+										value={url}
+										onChange={(e) => setUrl(e.target.value)}
 										placeholder={monitor.url}
 										disabled={loading}
-										defaultValue={monitor.url}
-										name="url"
-										id="url"
 									/>
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Interval</Label>
 									<Select
-										defaultValue={monitor.interval.toString()}
-										name="interval"
+										value={interval}
+										onValueChange={(value) =>
+											setInterval(value)
+										}
 										disabled={loading}
 									>
 										<SelectTrigger className="w-full">
@@ -228,18 +242,19 @@ export default function EditMonitor({
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Name</Label>
 									<Input
+										value={name}
+										onChange={(e) => setName(e.target.value)}
 										placeholder={monitor.name}
-										name="name"
-										id="name"
-										defaultValue={monitor.name}
 										disabled={loading}
 									/>
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Type</Label>
 									<Select
-										defaultValue={monitor.type}
-										name="type"
+										value={type}
+										onValueChange={(value) =>
+											setType(value as "http" | "tcp")
+										}
 										disabled={loading}
 									>
 										<SelectTrigger className="w-full">
@@ -260,18 +275,19 @@ export default function EditMonitor({
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>URL</Label>
 									<Input
+										value={url}
+										onChange={(e) => setUrl(e.target.value)}
 										placeholder={monitor.url}
 										disabled={loading}
-										defaultValue={monitor.url}
-										name="url"
-										id="url"
 									/>
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Interval</Label>
 									<Select
-										defaultValue={monitor.interval.toString()}
-										name="interval"
+										value={interval}
+										onValueChange={(value) =>
+											setInterval(value)
+										}
 										disabled={loading}
 									>
 										<SelectTrigger className="w-full">

@@ -12,11 +12,11 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import React, { useEffect, useState } from "react";
-import { editMonitor } from "@/components/monitors/actions";
+import { editMonitor, testMonitor } from "@/components/monitors/actions";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
-import { testUrl } from "@/components/monitors/utils";
 import Alert from "@/components/ui/alert";
+import { set } from "zod";
 
 export default function MonitorSingletonSettingsForm({
 	monitor,
@@ -28,8 +28,21 @@ export default function MonitorSingletonSettingsForm({
 	const [brokenWarning, setBrokenWarning] = useState(false);
 	const [name, setName] = useState(monitor.name);
 	const [url, setUrl] = useState(monitor.url);
-	const [type, setType] = useState(monitor.type);
+	const [type, setType] = useState<"http" | "tcp">(monitor.type);
 	const [interval, setInterval] = useState(monitor.interval.toString());
+
+	function testUrl() {
+		const promise = new Promise<string>(async (resolve, reject) => {
+			const res = await testMonitor({ method: type, url });
+			if (res?.data?.error) {
+				reject("Couldn't establish a connection to ${url}.");
+			} else {
+				resolve(`Connection established with ${url}.`);
+			}
+		});
+
+		return promise;
+	}
 
 	function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -37,33 +50,40 @@ export default function MonitorSingletonSettingsForm({
 
 		const t = toast.loading(`Test pinging ${url}...`);
 
-		testUrl(type, url)
-			.then(() => {
-				toast.success(`Connection established with ${url}.`, { id: t });
-				handleMonitorEdit();
-			})
-			.catch(() => {
+		testMonitor({ method: type, url }).then((res) => {
+			if (res?.data?.error) {
 				toast.dismiss(t);
 				setBrokenWarning(true);
 				return;
-			});
+			} else {
+				toast.success(res?.data?.message, { id: t });
+				handleMonitorEdit();
+			}
+		});
 	}
 
 	function handleMonitorEdit() {
-		const data = new FormData();
-		data.append("name", name);
-		data.append("url", url);
-		data.append("type", type);
-		data.append("interval", interval);
-
-		editMonitor(monitor.id, data).then((res) => {
+		editMonitor({
+			id: monitor.id, data: {
+				name,
+				type,
+				url,
+				interval: parseInt(interval),
+			},
+		}).then((res) => {
 			setLoading(false);
-			if (res.error) {
-				toast.error(res.message);
+			if (res?.data?.error) {
+				toast.error("Something went wrong!", {
+					description: res.data.message
+				})
 			} else {
-				toast.success("Monitor created successfully.");
+				toast.success("Success!", {
+					description: res?.data?.message
+				})
 			}
-		});
+		}).finally(() => {
+			setLoading(false);
+		})
 	}
 
 	function handleMonitorTest() {
@@ -77,10 +97,9 @@ export default function MonitorSingletonSettingsForm({
 			return;
 		}
 
-		toast.promise(testUrl(type, url), {
+		toast.promise(testMonitor({ method: type, url }), {
 			loading: `Test Pinging ${url}...`,
-			success: `Connection established to ${url}!`,
-			error: `Failed to ping ${url}. Is the domain correct?`,
+
 		});
 	}
 
@@ -132,7 +151,7 @@ export default function MonitorSingletonSettingsForm({
 						<Label>Type</Label>
 						<Select
 							value={type}
-							onValueChange={(value) => setType(value)}
+							onValueChange={(value) => setType(value as "http" | "tcp")}
 							disabled={loading}
 						>
 							<SelectTrigger className="w-full">

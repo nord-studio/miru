@@ -2,13 +2,15 @@ mod cron;
 mod ping;
 mod routes;
 
-use std::sync::{Arc, OnceLock};
+use std::{
+    env,
+    sync::{Arc, OnceLock},
+};
 
 use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
 use cron::worker::JobMetadata;
 use dotenvy::dotenv;
-use dotenvy_macro::dotenv;
 use log::info;
 use once_cell::sync::Lazy;
 use routes::{
@@ -21,7 +23,11 @@ use tokio_cron_scheduler::JobScheduler;
 
 pub static POOL: Lazy<PgPool> = Lazy::new(|| {
     let pool_config = PgPoolOptions::new();
-    pool_config.connect_lazy(dotenv!("DATABASE_URL")).unwrap()
+    let url = match env::var("DATABASE_URL") {
+        Ok(val) => val,
+        Err(_) => panic!("Environment variable 'DATABASE_URL' not found"),
+    };
+    pool_config.connect_lazy(&url).unwrap()
 });
 
 pub static SCHED: OnceLock<Arc<Mutex<JobScheduler>>> = OnceLock::new();

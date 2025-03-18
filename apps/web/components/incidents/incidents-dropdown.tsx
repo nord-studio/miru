@@ -42,7 +42,7 @@ export default function IncidentActionsDropdown({
 			setAllMonitors(monitors);
 		} else {
 			getAllMonitors().then((res) => {
-				setAllMonitors(res);
+				setAllMonitors(res?.data ?? []);
 			});
 		}
 	}, [monitors]);
@@ -74,9 +74,8 @@ export default function IncidentActionsDropdown({
 							Edit
 						</DropdownMenuItem>
 						<Link
-							href={`/admin/${pathname.split("/")[2]}/incidents/${
-								incident.id
-							}`}
+							href={`/admin/${pathname.split("/")[2]}/incidents/${incident.id
+								}`}
 						>
 							<DropdownMenuItem>Details</DropdownMenuItem>
 						</Link>

@@ -1,0 +1,11 @@
+.docker
+.turbo
+.vscode
+**/node_modules
+out
+target
+.env
+.env.example
+.gitignore
+.git
+docker-compose.yml

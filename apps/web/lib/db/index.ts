@@ -1,11 +1,10 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { env } from '../env.mjs';
 import { Pool } from 'pg';
 import * as schema from "./schema"
 
 const pool = new Pool({
-	connectionString: env.DATABASE_URL,
-	ssl: env.DATABASE_SSL ? { rejectUnauthorized: false } : false,
+	connectionString: process.env.DATABASE_URL,
+	ssl: process.env.DATABASE_SSL === "true" ? true : false,
 });
 
 const db = drizzle({

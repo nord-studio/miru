@@ -92,8 +92,6 @@ export default function EditIncident({
 		incident.monitors.map((m) => m.id)
 	);
 
-	console.log(incident.monitors);
-
 	async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setLoading(true);

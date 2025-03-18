@@ -3,6 +3,9 @@ import db from "@/lib/db";
 import { user } from "@/lib/db/schema/auth";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 export default async function Home() {
 	const fresh = await db
 		.select()

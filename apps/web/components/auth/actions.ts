@@ -2,13 +2,53 @@
 
 import { auth } from "@/lib/auth";
 import db from "@/lib/db";
-import { user } from "@/lib/db/schema/auth";
-import { workspaceMembers, workspaces } from "@/lib/db/schema/workspaces";
+import { user, workspaceMembers, workspaces } from "@/lib/db/schema";
 import { verifyEmailInput } from "@/lib/utils";
+import { ActionResult } from "@/types/form";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+export async function logIn(prevState: ActionResult, formData: FormData) {
+	const email = formData.get("email");
+	if (!email || !verifyEmailInput(email.toString())) {
+		return {
+			error: true,
+			message: "Invalid email or password"
+		};
+	}
+
+	const password = formData.get("password");
+	if (typeof password !== "string" || password.length < 6 || password.length > 255) {
+		return {
+			error: true,
+			message: "Invalid email or password"
+		};
+	}
+
+	try {
+		await auth.api.signInEmail({
+			body: {
+				email: email.toString(),
+				password: password
+			}
+		})
+	} catch (err: unknown) {
+		return {
+			error: true,
+			// @ts-expect-error typescript won't let me define the damn error
+			message: err.body.message
+		};
+	}
+
+	return redirect("/admin");
+}
+
+export async function logOut() {
+	await auth.api.signOut({ headers: await headers() });
+	return redirect("/auth/login");
+}
+
 export async function register(prevState: { error: boolean, message: string }, formData: FormData) {
-	"use server";
 	const fresh = await db.select().from(user).limit(1).then((res) => res.length === 0);
 	if (!fresh) {
 		return {
@@ -96,8 +136,6 @@ export async function register(prevState: { error: boolean, message: string }, f
 		};
 	}
 
-	console.log(userData.id)
-
 	// Add the user to the workspace
 	await db.insert(workspaceMembers).values({
 		workspaceId: workspace[0].id,
@@ -106,4 +144,20 @@ export async function register(prevState: { error: boolean, message: string }, f
 	});
 
 	return redirect("/admin/default-workspace");
+}
+
+export async function requestResetPassword(prevState: ActionResult, formData: FormData) {
+	const email = formData.get("email");
+	if (!email || !verifyEmailInput(email.toString())) {
+		return {
+			error: true,
+			message: "Invalid email"
+		};
+	};
+
+	await auth.api.forgetPassword({
+		body: {
+			email: email.toString(),
+		},
+	})
 }

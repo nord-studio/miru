@@ -1,13 +1,36 @@
 services:
-  database:
-    container_name: database
-    image: postgres:17.3
+  web:
+    container_name: web
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
     ports:
-      - "5432:5432"
-    volumes:
-      - ./.docker/database/:/var/lib/postgresql/data
+      - "3000:3000"
     environment:
-      POSTGRES_PASSWORD: VerySecurePassword123
-      POSTGRES_USER: miru
-      POSTGRES_DB: miru
-
+      - DATABASE_URL=postgresql://miru:VerySecurePassword123@database.miru.orb.local:5432/miru
+      - DATABASE_SSL=false
+      - BETTER_AUTH_SECRET=22PstEUerqAUTTrmSvp6skavetnAXlhv
+      - APP_URL=http://web.miru.orb.local
+      - MONITOR_URL=http://monitor:8080
+      - ENABLE_EMAIL=true
+      - SMTP_HOST=smtp.useplunk.com
+      - SMTP_PORT=465
+      - SMTP_SECURE=true
+      - SMTP_USER=plunk
+      - SMTP_PASSWORD=sk_482a265479915d3befd919e3276362a44933db25ccfc721b
+      - SMTP_FROM=hello@nordstud.io
+    labels:
+      - "dev.orbstack.add-ca-certificates=false"
+  
+  monitor:
+    container_name: monitor
+    build:
+      context: .
+      dockerfile: apps/monitor/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=postgresql://miru:VerySecurePassword123@database.miru.orb.local:5432/miru
+      - DATABASE_SSL=false
+    labels:
+      - "dev.orbstack.add-ca-certificates=false"

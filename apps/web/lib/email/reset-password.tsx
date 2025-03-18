@@ -1,6 +1,5 @@
 import db from "@/lib/db";
 import { user } from "@/lib/db/schema/auth";
-import { env } from "@/lib/env.mjs";
 import { eq } from "drizzle-orm";
 import {
 	Body,
@@ -17,13 +16,14 @@ import {
 	Text,
 } from "jsx-email";
 import { createTransport } from "nodemailer";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
 import * as React from "react";
 
 export default async function sendResetPasswordEmail(
 	email: string,
 	url: string
 ) {
-	if (!env.ENABLE_EMAIL) {
+	if (!process.env.ENABLE_EMAIL) {
 		throw new Error(
 			"Email's are not enabled on this instance. If you are the instance administator, set ENABLE_EMAIL to true in your .env file."
 		);
@@ -41,21 +41,21 @@ export default async function sendResetPasswordEmail(
 	}
 
 	const transporter = createTransport({
-		host: env.SMTP_HOST,
-		secure: env.SMTP_SECURE,
-		port: env.SMTP_PORT,
+		host: process.env.SMTP_HOST,
+		secure: process.env.SMTP_SECURE === 'true',
+		port: Number(process.env.SMTP_PORT),
 		auth: {
-			user: env.SMTP_USER,
-			pass: env.SMTP_PASSWORD,
+			user: process.env.SMTP_USER,
+			pass: process.env.SMTP_PASSWORD,
 		},
 		debug: process.env.NODE_ENV === "development",
-	});
+	} as SMTPTransport.Options);
 
 	const body = await render(<ResetPasswordEmail url={url} />);
 
 	await transporter
 		.sendMail({
-			from: env.SMTP_FROM,
+			from: process.env.SMTP_FROM,
 			to: email,
 			subject: "Password Reset Request",
 			html: body,

@@ -65,23 +65,36 @@ export default function CreateIncident({
 
 	function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
-		const data = new FormData();
-		data.append("title", title);
-		data.append("message", message);
-		data.append("status", status);
-		for (const id of monitorIds) {
-			data.append("monitorIds", id);
-		}
+		setLoading(true);
 
-		createIncident({ error: false, message: "" }, data).then((res) => {
-			setLoading(false);
-			if (res.error) {
-				toast.error(res.message);
-			} else {
-				toast.success("Monitor created successfully.");
-				setOpen(!open);
+		createIncident({
+			monitorIds,
+			title,
+			message,
+			status,
+		}).then((res) => {
+			if (typeof res?.validationErrors !== "undefined") {
+				return toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
+					description: res.validationErrors[Object.keys(res.validationErrors)[0] as keyof typeof res.validationErrors]?.[0],
+				});
 			}
-		});
+
+			if (typeof res?.serverError !== "undefined") {
+				return toast.error("Something went wrong!", { description: res.serverError })
+			}
+
+			if (res?.data?.error) {
+				return toast.error("Something went wrong!", {
+					description: res.data.message
+				})
+			}
+
+			toast.success("Success!", {
+				description: res?.data?.message
+			})
+			setOpen(!open)
+		})
+			.finally(() => setLoading(false));
 	}
 
 	if (!mounted)

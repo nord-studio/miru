@@ -128,10 +128,11 @@ const columns: ColumnDef<Ping>[] = [
 
 export function PingDataTable({ id }: { id: string }) {
 	const [loading, setLoading] = React.useState(true);
-	const [timeframe, setTimeframe] = React.useState("1");
+	const [days, setDays] = React.useState("1");
+	const [limit, setLimit] = React.useState("25");
 	const [pagination, setPagination] = React.useState({
 		pageIndex: 0, //initial page index
-		pageSize: 50, //default page size
+		pageSize: parseInt(limit), //default page size
 	});
 	const [data, setData] = React.useState<Ping[]>([]);
 	const [count, setCount] = React.useState(0);
@@ -144,20 +145,21 @@ export function PingDataTable({ id }: { id: string }) {
 		getMonitorPings({
 			id,
 			offset: pagination.pageIndex,
-			timeframe: parseInt(timeframe),
+			limit: parseInt(limit),
+			days: parseInt(days),
 		}).then((res) => {
-			console.log(res);
+			console.log(res)
 			setData(res.data);
 			setCount(res.total);
-			// reset page index if it exceeds the total number of pages
-			if (pagination.pageIndex >= Math.ceil(res.total / 50)) {
-				setPagination({
-					...pagination,
-					pageIndex: Math.max(Math.ceil(res.total / 50) - 1, 0),
-				});
-			}
 			// reset page index if there are no results
 			if (res.total === 0) {
+				setPagination({
+					...pagination,
+					pageIndex: 0,
+				});
+			}
+			// reset if the current page index is greater than the page count
+			if (pagination.pageIndex > Math.ceil(res.total / parseInt(limit))) {
 				setPagination({
 					...pagination,
 					pageIndex: 0,
@@ -172,7 +174,7 @@ export function PingDataTable({ id }: { id: string }) {
 	React.useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [pagination.pageIndex, timeframe]);
+	}, [pagination.pageIndex, days, limit]);
 
 	const table = useReactTable({
 		data,
@@ -182,6 +184,8 @@ export function PingDataTable({ id }: { id: string }) {
 		manualPagination: true,
 		onPaginationChange: setPagination,
 		rowCount: count,
+		// set the page count to the row limit / count
+		pageCount: Math.ceil(count / parseInt(limit)),
 		state: {
 			pagination,
 			columnVisibility,
@@ -202,8 +206,8 @@ export function PingDataTable({ id }: { id: string }) {
 				) : (
 					<>
 						<Select
-							value={timeframe}
-							onValueChange={(v) => setTimeframe(v)}
+							value={days}
+							onValueChange={(v) => setDays(v)}
 						>
 							<SelectTrigger className="w-[180px]">
 								<SelectValue placeholder="Last Day" />
@@ -329,8 +333,32 @@ export function PingDataTable({ id }: { id: string }) {
 				)}
 			</div>
 			<div className="flex flex-row gap-2 items-center py-4 justify-between">
-				<div className="flex-1 text-sm text-muted-foreground">
-					25 of {count} row(s) displayed.
+				<div className="flex-1 text-sm text-muted-foreground flex flex-row gap-2 items-center">
+					<Select value={limit} onValueChange={(v) => {
+						setLimit(v);
+						setPagination({
+							...pagination,
+							pageIndex: 0,
+						});
+					}}>
+						<SelectTrigger className="w-fit p-2 gap-2">
+							<SelectValue placeholder={limit} />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="25">
+								25
+							</SelectItem>
+							<SelectItem value="50">
+								50
+							</SelectItem>
+							<SelectItem value="100">
+								100
+							</SelectItem>
+							<SelectItem value="500">
+								500
+							</SelectItem>
+						</SelectContent>
+					</Select><span>of {count} row(s) displayed.</span>
 				</div>
 				<div className="flex items-center justify-end space-x-2">
 					<Button

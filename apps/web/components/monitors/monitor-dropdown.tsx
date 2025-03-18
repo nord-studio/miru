@@ -58,9 +58,8 @@ export default function MonitorActionsDropdown({
 							Edit
 						</DropdownMenuItem>
 						<Link
-							href={`/admin/${pathname.split("/")[2]}/monitors/${
-								monitor.id
-							}`}
+							href={`/admin/${pathname.split("/")[2]}/monitors/${monitor.id
+								}`}
 						>
 							<DropdownMenuItem>Details</DropdownMenuItem>
 						</Link>
@@ -85,14 +84,16 @@ export default function MonitorActionsDropdown({
 								);
 
 								await pingMonitor(monitor.id).then((res) => {
-									if (res.error) {
-										toast.error(res.message, {
-											id: t,
-										});
+									if (res?.data?.error) {
+										toast.error("Something went wrong!", {
+											description: res.data.message,
+											id: t
+										})
 									} else {
-										toast.success(res.message, {
-											id: t,
-										});
+										toast.success("Success!", {
+											description: res?.data?.message,
+											id: t
+										})
 									}
 								});
 							}}

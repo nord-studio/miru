@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/drawer";
 import Alert from "@/components/ui/alert";
 import { User } from "@/lib/auth";
-import logOut from "@/components/auth/actions/logout";
+import { logOut } from "@/components/auth/actions";
 import Link from "next/link";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

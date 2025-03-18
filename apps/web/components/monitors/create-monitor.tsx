@@ -52,7 +52,7 @@ export default function CreateMonitor() {
 
 	const [name, setName] = useState("");
 	const [url, setUrl] = useState("");
-	const [type, setType] = useState("http");
+	const [type, setType] = useState<"http" | "tcp">("http");
 	const [interval, setInterval] = useState("5");
 
 	useEffect(() => {
@@ -65,6 +65,12 @@ export default function CreateMonitor() {
 
 		// test ping the domain
 		const t = toast.loading(`Test pinging ${url}...`);
+
+		if (!url || url.length < 1) {
+			toast.error("Please enter a domain.", { id: t });
+			setLoading(false);
+			return;
+		}
 
 		// if the ping fails, show a warning
 		testUrl(type, url)
@@ -80,32 +86,42 @@ export default function CreateMonitor() {
 	}
 
 	function handleMonitorCreate() {
-		const data = new FormData();
-		data.append("name", name);
-		data.append("url", url);
-		data.append("type", type);
-		data.append("interval", interval);
-		data.append("workspaceSlug", pathname.split("/")[2]);
-
-		createMonitor({ error: false, message: "" }, data).then((res) => {
-			setLoading(false);
-			if (res.error) {
-				toast.error(res.message);
-			} else {
-				toast.success("Monitor created successfully.");
-				setOpen(!open);
+		createMonitor({
+			name,
+			type,
+			url,
+			interval: parseInt(interval),
+			workspaceSlug: pathname.split("/")[2],
+		}).then((res) => {
+			if (typeof res?.validationErrors !== "undefined") {
+				return toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
+					description: res.validationErrors[Object.keys(res.validationErrors)[0] as keyof typeof res.validationErrors]?.[0],
+				});
 			}
-		});
+
+			if (typeof res?.serverError !== "undefined") {
+				return toast.error("Something went wrong!", { description: res.serverError })
+			}
+
+			if (res?.data?.error) {
+				return toast.error("Something went wrong!", {
+					description: res.data.message
+				})
+			}
+
+			toast.success("Monitor created successfully.");
+			setOpen(!open);
+		}).finally(() => setLoading(false))
 	}
 
 	function handleMonitorTest() {
 		if (!url || url.length < 1) {
-			toast.error("Please enter a domain before testing.");
+			toast.error("Please enter a domain.");
 			return;
 		}
 
 		if (!type || type.length < 1) {
-			toast.error("Please select a monitor type before testing.");
+			toast.error("Please select a monitor type.");
 			return;
 		}
 
@@ -178,7 +194,7 @@ export default function CreateMonitor() {
 									<Label>Type</Label>
 									<Select
 										value={type}
-										onValueChange={(v) => setType(v)}
+										onValueChange={(v) => setType(v as "http" | "tcp")}
 										disabled={loading}
 									>
 										<SelectTrigger className="w-full">
@@ -260,8 +276,9 @@ export default function CreateMonitor() {
 											Cancel
 										</Button>
 									</DialogClose>
-									<Button disabled={loading} type="submit">
-										{loading ? <Spinner /> : "Create"}
+									<Button disabled={loading} type="submit" className="flex flex-row gap-2 items-center">
+										{loading ? "Creating" : "Create"}
+										{loading && <Spinner />}
 									</Button>
 								</div>
 							</div>
@@ -319,7 +336,7 @@ export default function CreateMonitor() {
 									<Label>Type</Label>
 									<Select
 										value={type}
-										onValueChange={(v) => setType(v)}
+										onValueChange={(v) => setType(v as "http" | "tcp")}
 										disabled={loading}
 									>
 										<SelectTrigger className="w-full">

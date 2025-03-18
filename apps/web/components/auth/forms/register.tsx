@@ -6,7 +6,7 @@ import React, { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 import Spinner from "@/components/ui/spinner";
-import { register } from "@/components/auth/actions/register";
+import { register } from "@/components/auth/actions";
 
 export default function RegisterForm() {
 	const [state, formAction] = useActionState(register, {

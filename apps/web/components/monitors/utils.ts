@@ -1,8 +1,8 @@
-import { env } from "@/lib/env.mjs";
+"use server"
 import TestEndpoint from "@/types/monitor-service/test";
 
 export async function testUrl(method: string, url: string) {
-	await fetch(`${env.NEXT_PUBLIC_MONITOR_URL}/test/${method}/${url}`, {
+	await fetch(`${process.env.MONITOR_URL}/test/${method}/${url}`, {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
@@ -10,7 +10,6 @@ export async function testUrl(method: string, url: string) {
 		},
 	}).then(async (res) => {
 		const json: TestEndpoint = await res.json();
-		console.log(json)
 
 		if (json.success === true) {
 			return json;

@@ -1,0 +1,13 @@
+services:
+  database:
+    container_name: database
+    image: postgres:17.3
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.docker/database/:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: VerySecurePassword123
+      POSTGRES_USER: miru
+      POSTGRES_DB: miru
+

@@ -1,9 +1,10 @@
 import type { NextConfig } from "next";
 import { config } from "dotenv"
 
-config({ path: "./../../.env" })
+if (process.env.NODE_ENV === "development") config({ path: "./../../.env" });
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   transpilePackages: ["shiki"],
 };
 

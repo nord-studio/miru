@@ -5,48 +5,27 @@ import { incidentReports, incidents } from "@/lib/db/schema/incidents";
 import { monitorsToIncidents } from "@/lib/db/schema/monitors";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
-import { ActionResult } from "@/types/form";
 import { IncidentStatus } from "@/types/incident";
 import { eq } from "drizzle-orm";
+import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-export async function createIncident(prevState: ActionResult, formData: FormData): Promise<ActionResult> {
-	"use server";
-	// Incident data
+export const createIncident = actionClient.schema(z.object({
+	monitorIds: z.array(z.string()).min(1),
+	title: z.string().nonempty(),
+	message: z.string().nonempty(),
+	status: z.custom<IncidentStatus>(async (status) => {
+		return Object.values(IncidentStatus).includes(status);
+	})
+}), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).action(async ({ parsedInput: { monitorIds, title, message, status } }) => {
 	const id = generateId();
-	const monitorIds = formData.getAll("monitorIds") as string[];
-	const title = formData.get("title");
 
-	// Incident Report data
-	const message = formData.get("message");
-	const status = formData.get("status");
-
-	// Validate form data
-	if (!title) {
-		return { error: true, message: "Incident title is required" };
-	}
-
-	if (!message) {
-		return { error: true, message: "Incident message is required" };
-	}
-
-	if (!status) {
-		return { error: true, message: "Incident status is required" };
-	}
-
-	// check if status equals any of the enums
-	if (!Object.values(IncidentStatus).includes(status as IncidentStatus)) {
-		return { error: true, message: "Invalid incident status" };
-	}
-
-	// Create incident
 	const incident = await db.insert(incidents).values({
 		id,
 		title: title.toString(),
 	}).returning();
 
-	// Create relations between monitors and incidents
 	for (const id of monitorIds) {
 		await db.insert(monitorsToIncidents).values({
 			monitorId: id,
@@ -54,7 +33,6 @@ export async function createIncident(prevState: ActionResult, formData: FormData
 		})
 	}
 
-	// Create incident report
 	const report = await db.insert(incidentReports).values({
 		id: generateId(),
 		incidentId: incident[0].id,
@@ -70,9 +48,9 @@ export async function createIncident(prevState: ActionResult, formData: FormData
 		return { error: true, message: "Failed to create incident report" };
 	}
 
-	revalidatePath("/admin/[workspaceSlug]/incidents");
+	revalidatePath("/admin/[workspaceSlug]/incidents", "layout");
 	return { error: false, message: "Incident created successfully" };
-}
+});
 
 export const editIncident = actionClient.schema(z.object({
 	id: z.string(),
@@ -116,7 +94,7 @@ export const editIncident = actionClient.schema(z.object({
 		})
 	}
 
-	revalidatePath("/admin/[workspaceSlug]/incidents");
+	revalidatePath("/admin/[workspaceSlug]/incidents", "layout");
 	return { error: false, message: "Incident edited successfully" };
 })
 
@@ -141,6 +119,6 @@ export const deleteIncident = actionClient.schema(z.object({
 		return { error: true, message: "Failed to delete incident" };
 	})
 
-	revalidatePath("/admin/[workspaceSlug]/incidents");
+	revalidatePath("/admin/[workspaceSlug]/incidents", "layout");
 	return { error: false, message: "Incident deleted successfully" };
 })

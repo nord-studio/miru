@@ -5,7 +5,6 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
 import { createAuthClient } from "better-auth/react";
-import { env } from "@/lib/env.mjs";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -18,7 +17,7 @@ export function RequestPasswordResetForm() {
 		if (!email) return;
 
 		setLoading(true);
-		const authClient = createAuthClient({ baseURL: env.NEXT_PUBLIC_URL });
+		const authClient = createAuthClient({ baseURL: process.env.NODE_ENV === "production" ? global.secrets.url : "http://localhost:3000" });
 		const { error } = await authClient.forgetPassword({
 			email,
 			redirectTo: "/auth/reset",
@@ -78,7 +77,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
 		}
 
 		setLoading(true);
-		const authClient = createAuthClient({ baseURL: env.NEXT_PUBLIC_URL });
+		const authClient = createAuthClient({ baseURL: process.env.NODE_ENV === "production" ? global.secrets.url : "http://localhost:3000" });
 
 		const { error } = await authClient.resetPassword({
 			newPassword: password,

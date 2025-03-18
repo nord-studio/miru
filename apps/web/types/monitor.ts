@@ -1,7 +1,7 @@
 export type Monitor = {
 	id: string;
 	name: string;
-	type: string;
+	type: "http" | "tcp";
 	url: string;
 	interval: number;
 	createdAt: Date;

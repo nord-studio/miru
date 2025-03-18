@@ -4,7 +4,7 @@ import React, { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 import Spinner from "@/components/ui/spinner";
-import logIn from "@/components/auth/actions/login";
+import { logIn } from "@/components/auth/actions";
 
 export default function LoginForm() {
 	const [state, formAction] = useActionState(logIn, {
@@ -17,13 +17,13 @@ export default function LoginForm() {
 			<form className="flex flex-col gap-4 w-full" action={formAction}>
 				{state.error && <p className="text-center">{state.message}</p>}
 				{/* This is required to use the "useFormStatus" hook */}
-				<InnerForm />
+				<Form />
 			</form>
 		</>
 	);
 }
 
-function InnerForm() {
+function Form() {
 	const { pending } = useFormStatus();
 
 	const [showPassword, setShowPassword] = React.useState(false);
