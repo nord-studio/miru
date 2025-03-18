@@ -1,4 +1,19 @@
+volumes:
+  database:
+
 services:
+  database:
+    container_name: database
+    image: postgres:17.3
+    ports:
+      - "5432:5432"
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: VerySecurePassword123
+      POSTGRES_USER: miru
+      POSTGRES_DB: miru
+
   web:
     container_name: web
     build:
@@ -7,11 +22,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://miru:VerySecurePassword123@database.miru.orb.local:5432/miru
+      - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
       - DATABASE_SSL=false
-      - BETTER_AUTH_SECRET=22PstEUerqAUTTrmSvp6skavetnAXlhv
-      - APP_URL=http://web.miru.orb.local
-      - MONITOR_URL=http://monitor:8080
+      - BETTER_AUTH_SECRET=secret
+      - APP_URL=http://localhost:3000
+      - MONITOR_URL=http://localhost:8080
       - ENABLE_EMAIL=true
       - SMTP_HOST=smtp.useplunk.com
       - SMTP_PORT=465
@@ -30,7 +45,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - DATABASE_URL=postgresql://miru:VerySecurePassword123@database.miru.orb.local:5432/miru
+      - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
       - DATABASE_SSL=false
     labels:
       - "dev.orbstack.add-ca-certificates=false"

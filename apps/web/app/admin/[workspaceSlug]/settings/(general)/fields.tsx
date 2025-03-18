@@ -29,7 +29,8 @@ export default function WorkspaceGeneralSettingsFields({ workspace }: { workspac
 		} else {
 			toast.success("Success!", {
 				description: "Workspace updated successfully."
-			})
+			});
+			return router.push(`/admin/${slug}/settings`)
 		}
 	}
 
@@ -52,7 +53,6 @@ export default function WorkspaceGeneralSettingsFields({ workspace }: { workspac
 				action={(
 					<Button type="submit" size="sm" onClick={async () => {
 						await handleSubmit()
-						router.push(`/admin/${slug}/settings`)
 					}} disabled={workspace.slug === slug}>
 						Save
 					</Button>

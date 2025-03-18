@@ -36,12 +36,22 @@ A free, open-source and fully customisable status page and monitoring service.
 
 ## Tech stack
 
+### `@miru/web`
+
 -   Framework: [NextJS](https://nextjs.org/)
--   Deployment: [Hetzner](https://www.hetzner.com/cloud/)
 -   UI: [shadcn/ui](https://ui.shadcn.com/)
 -   Styling: [TailwindCSS](https://tailwindcss.com/)
 -   Database: [PostgreSQL](https://www.postgresql.org/)
 -   ORM: [Drizzle](https://orm.drizzle.team/)
+
+### `@miru/monitor`
+
+-   Framework: [Actix Web](https://actix.rs/)
+-   Runtime: [Tokio](https://tokio.rs/)
+-   Database: [PostgreSQL](https://www.postgresql.org/)
+-   SQL Toolkit: [SQLx](https://github.com/launchbadge/sqlx/)
+-   HTTP Client: [reqwest](https://github.com/seanmonstar/reqwest)
+-   TCP Client: [tokio/net](https://tokio.rs/)
 
 ## Project Structure
 
@@ -57,7 +67,9 @@ You need to have [NodeJS](https://nodejs.org/en), [pnpm](https://pnpm.io/), [Rus
 git clone https://github.com/nord-studio/miru
 cd miru
 pnpm install
-# Create and setup your .env file using the .env.example file before this command
+docker compose up -d database
+# Create and setup your .env file using the .env.example file before these commands
+pnpm drizzle migrate
 pnpm dev
 ```
 
