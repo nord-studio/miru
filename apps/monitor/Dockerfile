@@ -19,7 +19,7 @@ FROM debian:bookworm-slim
 
 # Set the working directory
 WORKDIR /app
-RUN apt-get update && apt-get upgrade -y && apt-get install -y libssl-dev openssl pkg-config
+RUN apt-get update && apt-get upgrade -y && apt-get install -y curl
 
 # Copy the built binary from the builder stage
 COPY --from=builder /app/target/release/monitor .
@@ -28,4 +28,4 @@ COPY --from=builder /app/target/release/monitor .
 EXPOSE 8080
 
 # Run the application
-CMD ["./monitor"]
+ENTRYPOINT ["./monitor"]

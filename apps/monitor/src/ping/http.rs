@@ -1,4 +1,6 @@
-use log::info;
+use std::time::Duration;
+
+use log::{error, info};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -18,14 +20,35 @@ pub struct HttpPingErrorResponse {
 
 pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorResponse> {
     let now = chrono::Utc::now();
-    let client = reqwest::Client::new();
+    let client = match reqwest::Client::builder()
+        .connect_timeout(Duration::from_secs(30))
+        .build()
+    {
+        Ok(client) => client,
+        Err(err) => {
+            error!("Failed to create reqwest client: {:?}", err);
+            return Err(HttpPingErrorResponse {
+                response: HttpPingResponse {
+                    status: 503,
+                    success: false,
+                    latency: (chrono::Utc::now() - now)
+                        .num_milliseconds()
+                        .try_into()
+                        .unwrap_or(i32::MAX),
+                    headers: std::collections::HashMap::new(),
+                    body: None,
+                },
+                error: format!("{}", err),
+            });
+        }
+    };
 
     let url = url
         .trim_start_matches("http://")
         .trim_start_matches("https://")
         .to_string();
 
-    let url = format!("http://{}", url);
+    let url = format!("https://{}", url);
     let resp = client.get(&url).send().await;
 
     match resp {
@@ -62,8 +85,9 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                 headers,
             })
         }
-        Err(_) => {
-            let url = url.replace("http://", "https://");
+        Err(err) => {
+            error!("[HTTPS] Failed to ping {}: {:?}", url, err);
+            let url = url.replace("https://", "http://");
             let resp = client.get(&url).send().await;
             match resp {
                 Ok(resp) => {
@@ -99,6 +123,7 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                     })
                 }
                 Err(err) => {
+                    error!("[HTTP] Failed to ping {}: {:?}", url, err);
                     Err(HttpPingErrorResponse {
                         response: HttpPingResponse {
                             // Set default status code to 503 if it's not available
