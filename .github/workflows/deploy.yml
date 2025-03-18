@@ -33,6 +33,11 @@ jobs:
               with:
                   images: |
                       ghcr.io/${{ github.repository }}/web
+                  tags: |
+                      type=semver,pattern={{version}}
+                      type=sha
+                  flavor: |
+                      latest=true
 
             - name: Build and push Docker image for @miru/web
               id: push-web
@@ -50,8 +55,13 @@ jobs:
               with:
                   images: |
                       ghcr.io/${{ github.repository }}/monitor
+                  tags: |
+                      type=semver,pattern={{version}}
+                      type=sha
+                  flavor: |
+                      latest=true
 
-            - name: Build and push Docker image for monitor app
+            - name: Build and push Docker image for @miru/monitor
               id: push-monitor
               uses: docker/build-push-action@v6
               with:
