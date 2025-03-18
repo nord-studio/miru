@@ -27,23 +27,24 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Extract metadata for web app
+            - name: Extract metadata for @miru/web
               id: meta-web
               uses: docker/metadata-action@v5
               with:
                   images: |
                       ghcr.io/${{ github.repository }}/web
 
-            - name: Build and push Docker image for web app
+            - name: Build and push Docker image for @miru/web
               id: push-web
               uses: docker/build-push-action@v6
               with:
-                  context: ./apps/web
+                  context: .
+                  file: ./apps/web/Dockerfile
                   push: true
                   tags: ${{ steps.meta-web.outputs.tags }}
                   labels: ${{ steps.meta-web.outputs.labels }}
 
-            - name: Extract metadata for monitor app
+            - name: Extract metadata for @miru/monitor
               id: meta-monitor
               uses: docker/metadata-action@v5
               with:
@@ -54,7 +55,8 @@ jobs:
               id: push-monitor
               uses: docker/build-push-action@v6
               with:
-                  context: ./apps/monitor
+                  context: .
+                  file: ./apps/monitor/Dockerfile
                   push: true
                   tags: ${{ steps.meta-monitor.outputs.tags }}
                   labels: ${{ steps.meta-monitor.outputs.labels }}
