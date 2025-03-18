@@ -27,13 +27,13 @@ services:
       - BETTER_AUTH_SECRET=secret
       - APP_URL=http://localhost:3000
       - MONITOR_URL=http://localhost:8080
-      - ENABLE_EMAIL=true
-      - SMTP_HOST=smtp.useplunk.com
-      - SMTP_PORT=465
-      - SMTP_SECURE=true
-      - SMTP_USER=plunk
-      - SMTP_PASSWORD=sk_482a265479915d3befd919e3276362a44933db25ccfc721b
-      - SMTP_FROM=hello@nordstud.io
+      - ENABLE_EMAIL=
+      - SMTP_HOST=
+      - SMTP_PORT=
+      - SMTP_SECURE=
+      - SMTP_USER=
+      - SMTP_PASSWORD=
+      - SMTP_FROM=
     labels:
       - "dev.orbstack.add-ca-certificates=false"
   
