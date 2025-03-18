@@ -4,9 +4,9 @@ A free, open-source and fully customisable status page and monitoring service.
 
 ## TODO:
 
--   [ ] Workspaces
+-   [x] Workspaces
     -   [x] Create default on register
-    -   [ ] Settings
+    -   [x] Settings
 -   [x] Monitors
     -   [x] CRUD Operations
     -   [x] Cron Jobs
@@ -16,6 +16,8 @@ A free, open-source and fully customisable status page and monitoring service.
     -   [ ] Auto create on monitor downtime
     -   [ ] RSS Feed
     -   [ ] Atom Feed
+-   [x] Incident Reports
+    -   [x] CRUD Operations
 -   [ ] Onboarding
     -   [ ] Standalone / Multi-tenant
 -   [ ] Status Pages
