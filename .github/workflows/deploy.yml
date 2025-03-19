@@ -33,8 +33,8 @@ jobs:
                   images: |
                       ghcr.io/${{ github.repository }}/web
                   tags: |
-                      type=semver,pattern={{version}},suffix=amd64
-                      type=sha,suffix=amd64
+                      type=semver,pattern={{version}},suffix=-amd64
+                      type=sha,suffix=-amd64
                   flavor: |
                       latest=true
 
@@ -55,8 +55,8 @@ jobs:
                   images: |
                       ghcr.io/${{ github.repository }}/monitor
                   tags: |
-                      type=semver,pattern={{version}},suffix=amd64
-                      type=sha,suffix=amd64
+                      type=semver,pattern={{version}},suffix=-amd64
+                      type=sha,suffix=-amd64
                   flavor: |
                       latest=true
 
@@ -96,10 +96,10 @@ jobs:
                   images: |
                       ghcr.io/${{ github.repository }}/web
                   tags: |
-                      type=semver,pattern={{version}},suffix=arm64
-                      type=sha,suffix=arm64
+                      type=semver,pattern={{version}},suffix=-arm64
+                      type=sha,suffix=-arm64
                   flavor: |
-                      latest=true
+                      latest=false
 
             - name: Build and push Docker image for @miru/web
               id: push-web
@@ -118,10 +118,10 @@ jobs:
                   images: |
                       ghcr.io/${{ github.repository }}/monitor
                   tags: |
-                      type=semver,pattern={{version}},suffix=arm64
-                      type=sha,suffix=arm64
+                      type=semver,pattern={{version}},suffix=-arm64
+                      type=sha,suffix=-arm64
                   flavor: |
-                      latest=true
+                      latest=false
 
             - name: Build and push Docker image for @miru/monitor
               id: push-monitor
