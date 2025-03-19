@@ -46,8 +46,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy over the package.json for Docker and install required deps for Drizzle ORM
-COPY --from=installer /app/apps/web/package.docker.json .
-RUN mv package.docker.json package.json
+COPY --from=installer /app/apps/web/package.json .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --no-frozen-lockfile
 
 COPY --from=installer /app/apps/web/drizzle.config.ts .
