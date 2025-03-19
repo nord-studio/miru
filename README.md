@@ -1,63 +1,19 @@
+![banner](/assets/banner.png)
+
 # 見る (Miru)
 
-A free, open-source and fully customisable status page and monitoring service.
+Miru is a free and open-source status page and monitoring service built to be self-hosted.
 
-## TODO:
+## Getting started
 
--   [x] Workspaces
-    -   [x] Create default on register
-    -   [x] Settings
--   [x] Monitors
-    -   [x] CRUD Operations
-    -   [x] Cron Jobs
-    -   [x] Ping logs
--   [ ] Incidents
-    -   [x] CRUD Operations
-    -   [ ] Auto create on monitor downtime
-    -   [ ] RSS Feed
-    -   [ ] Atom Feed
--   [x] Incident Reports
-    -   [x] CRUD Operations
--   [ ] Onboarding
-    -   [ ] Standalone / Multi-tenant
--   [ ] Status Pages
-    -   [ ] CRUD Operations
-    -   [ ] Multiple domain assignment
-    -   [ ] Brand Theming
--   [ ] Notification Channels
-    -   [ ] CRUD Operations
-    -   [ ] Discord
-    -   [ ] Email
-    -   [ ] Slack
--   [ ] Settings
-    -   [x] General Settings
-    -   [ ] Team
-    -   [ ] API Tokens
+To deploy your own instance of Miru, make sure you have Docker and the compose plugin installed.  
+Either clone the repo, or copy and paste the `docker-compose.yml` file, then run:
 
-## Tech stack
+```bash
+docker compose up -d
+```
 
-### `@miru/web`
-
--   Framework: [NextJS](https://nextjs.org/)
--   UI: [shadcn/ui](https://ui.shadcn.com/)
--   Styling: [TailwindCSS](https://tailwindcss.com/)
--   Database: [PostgreSQL](https://www.postgresql.org/)
--   ORM: [Drizzle](https://orm.drizzle.team/)
-
-### `@miru/monitor`
-
--   Framework: [Actix Web](https://actix.rs/)
--   Runtime: [Tokio](https://tokio.rs/)
--   Database: [PostgreSQL](https://www.postgresql.org/)
--   SQL Toolkit: [SQLx](https://github.com/launchbadge/sqlx/)
--   HTTP Client: [reqwest](https://github.com/seanmonstar/reqwest)
--   TCP Client: [tokio/net](https://tokio.rs/)
-
-## Project Structure
-
--   [@miru/web](./apps/web) - The control plane, powered by [NextJS](https://nextjs.org/).
--   [@miru/monitor](./apps/monitor/) - The service monitoring service, powered by [Rust](https://www.rust-lang.org/).
--   [@miru/docs](./apps/docs/) - The documentation site, powered by [Astro](https://astro.build/) using the [Starlight](https://starlight.astro.build/) template.
+Navigate to `http://localhost:3000` and you're done!
 
 ## Running locally
 
@@ -72,6 +28,10 @@ docker compose up -d database
 pnpm drizzle migrate
 pnpm dev
 ```
+
+## Support
+
+Miru is built by @tygrdotdev in their spare time for completely free. If you use Miru and want to support an indie dev, please consider sponsoring me and my work [here](https://github.com/sponsors/tygrdotdev).
 
 ## Contact
 
