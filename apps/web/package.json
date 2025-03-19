@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "pnpm drizzle migrate ; next start",
     "lint": "next lint",
-    "drizzle": "pnpm dlx drizzle-kit"
+    "drizzle": "pnpm exec drizzle-kit"
   },
   "dependencies": {
     "@better-fetch/fetch": "^1.1.15",
