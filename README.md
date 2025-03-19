@@ -1,6 +1,6 @@
 ![banner](/assets/banner.png)
 
-# 見る (Miru)
+# What is Miru?
 
 Miru is a free and open-source status page and monitoring service built to be self-hosted.
 
@@ -31,7 +31,7 @@ pnpm dev
 
 ## Support
 
-Miru is built by @tygrdotdev in their spare time for completely free. If you use Miru and want to support an indie dev, please consider sponsoring me and my work [here](https://github.com/sponsors/tygrdotdev).
+Miru is built by [@tygrdotdev](https://github.com/tygrdotdev) in their spare time for completely free. If you use Miru and want to support an indie dev, please consider sponsoring me and my work [here](https://github.com/sponsors/tygrdotdev).
 
 ## Contact
 
