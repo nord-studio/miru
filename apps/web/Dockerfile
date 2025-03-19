@@ -18,24 +18,19 @@ WORKDIR /app
 COPY . .
 RUN pnpm dlx turbo prune --scope=@miru/web --docker
 
-# Install and build the app
-FROM base AS installer
-
-WORKDIR /app
-
 # First install the dependencies (as they change less often)
-COPY --from=builder /app/out/json/ .
-COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY /app/out/json/ .
+COPY /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 # Set default PUBLIC environment variables
 ARG NEXT_PUBLIC_URL
-ENV NEXT_PUBLIC_URL $NEXT_PUBLIC_URL
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_PUBLIC_URL=$NEXT_PUBLIC_URL
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build the project
-COPY --from=builder /app/out/full/ .
+COPY /app/out/full/ .
 RUN pnpm dlx turbo run build --filter=@miru/web
 
 FROM base AS runner
@@ -61,7 +56,7 @@ COPY --from=installer /app/apps/web/public ./public
 EXPOSE 3000
 
 ENV HOSTNAME=0.0.0.0
-ENV PORT 3000
+ENV PORT=3000
 
 USER nextjs
 CMD ["pnpm", "start"]
