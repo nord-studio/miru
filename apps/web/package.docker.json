@@ -1,0 +1,21 @@
+{
+	"scripts": {
+		"start": "pnpm drizzle migrate ; next start",
+		"drizzle": "pnpm exec drizzle-kit"
+	},
+	"dependencies": {
+		"dotenv": "^16.4.7",
+		"drizzle-orm": "^0.40.0",
+		"next": "15.2.2",
+		"pg": "^8.14.0"
+	},
+	"devDependencies": {
+		"drizzle-kit": "^0.30.5"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild",
+			"sharp"
+		]
+	}
+}

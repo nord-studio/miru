@@ -16,7 +16,9 @@ services:
 
   monitor:
     container_name: monitor
-    image: ghcr.io/nord-studio/miru/monitor:latest
+    build:
+      context: .
+      dockerfile: ./apps/monitor/Dockerfile
     ports:
       - "8080:8080"
     environment:
@@ -24,11 +26,12 @@ services:
       - DATABASE_SSL=false
     depends_on:
       - database
-      - web
 
   web:
     container_name: web
-    image: ghcr.io/nord-studio/miru/web:latest
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
     ports:
       - "3000:3000"
     environment:
@@ -46,3 +49,4 @@ services:
       - SMTP_FROM=
     depends_on:
       - database
+      - monitor

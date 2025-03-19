@@ -7,7 +7,7 @@ Miru is a free and open-source status page and monitoring service built to be se
 ## Getting started
 
 To deploy your own instance of Miru, make sure you have Docker and the compose plugin installed.  
-Either clone the repo, or copy and paste the `docker-compose.yml` file, then run:
+Either clone the repo, or copy and paste the [`docker-compose.yml`](./docker-compose.yml) file, then run:
 
 ```bash
 docker compose up -d
