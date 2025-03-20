@@ -6,7 +6,7 @@ type Session = typeof auth.$Infer.Session;
 
 export async function middleware(request: NextRequest) {
 	const { data: session } = await betterFetch<Session>("/api/auth/get-session", {
-		baseURL: request.nextUrl.origin,
+		baseURL: request.nextUrl.origin.replace("https", "http"),
 		headers: {
 			cookie: request.headers.get("cookie") || "",
 		},
