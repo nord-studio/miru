@@ -13,13 +13,18 @@ export default async function Navbar() {
 		headers: await headers(),
 	});
 
+	if (!session) {
+		return null;
+	}
+
 	const workspaces = await getAllWorkspacesWithMembers();
+	const filteredWorkspaces = workspaces?.data?.filter((w) => w.user.id === session.user.id) ?? [];
 
 	return (
 		<nav className="flex flex-row items-center w-full justify-between">
 			<div className="flex flex-row gap-2 items-center justify-start w-full">
 				<div>
-					<WorkspaceSwitcher workspaces={workspaces?.data || []} />
+					<WorkspaceSwitcher workspaces={filteredWorkspaces} />
 				</div>
 				<div className="md:flex flex-row items-center justify-start w-full hidden">
 					<NavLinks />

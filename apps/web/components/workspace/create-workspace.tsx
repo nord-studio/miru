@@ -23,11 +23,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Spinner from "@/components/ui/spinner";
-import UserSelection from "@/components/workspace/user-select";
-import { User } from "better-auth";
+import UsersSelection from "@/components/workspace/users-select";
+import { User } from "@/lib/auth";
 import { createWorkspace } from "@/components/workspace/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { getCurrentUser } from "@/components/auth/actions";
 
 export default function CreateWorkspace({
 	open,
@@ -42,6 +43,17 @@ export default function CreateWorkspace({
 	const [name, setName] = useState("");
 	const [slug, setSlug] = useState("");
 	const [members, setMembers] = useState<User[]>([]);
+	const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+	React.useEffect(() => {
+		getCurrentUser().then((res) => {
+			if (res) {
+				setCurrentUser(res.user);
+			} else {
+				throw new Error("Failed to fetch current user");
+			}
+		});
+	}, []);
 
 	async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -50,7 +62,7 @@ export default function CreateWorkspace({
 		const res = await createWorkspace({
 			name,
 			slug,
-			members,
+			members: [...members, ...(currentUser ? [currentUser] : [])],
 		});
 
 		if (res?.validationErrors) {
@@ -97,7 +109,8 @@ export default function CreateWorkspace({
 							<DialogTitle>Create Workspace</DialogTitle>
 							<DialogDescription>
 								Create a new workspace to seperate your monitors
-								into different groups.
+								into different groups. You will automatically be
+								added as the owner of the workspace.
 							</DialogDescription>
 						</DialogHeader>
 						<form onSubmit={onSubmit}>
@@ -124,10 +137,11 @@ export default function CreateWorkspace({
 									/>
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Invite Members</Label>
-									<UserSelection
+									<Label>Invite Members (Optional)</Label>
+									<UsersSelection
 										value={members}
 										setValue={setMembers}
+										exclude={currentUser ? [currentUser] : []}
 									/>
 								</div>
 							</div>

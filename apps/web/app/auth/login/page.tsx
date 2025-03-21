@@ -38,6 +38,17 @@ export default function LoginPage() {
 								</Button>
 							</Link>
 						</span>
+						<span>
+							Don't have an account?{" "}
+							<Link href="/auth/register">
+								<Button
+									variant={"link"}
+									className="p-0 text-blue-500 dark:text-blue-500"
+								>
+									Create one.
+								</Button>
+							</Link>
+						</span>
 					</div>
 				</div>
 			</div>

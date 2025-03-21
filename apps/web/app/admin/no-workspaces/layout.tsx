@@ -2,8 +2,9 @@ import { auth } from "@/lib/auth";
 import db from "@/lib/db";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import React from "react";
 
-export default async function AdminRootPage() {
+export default async function NoWorkspacesLayout({ children }: { children: React.ReactNode }) {
 	const currentUser = await auth.api.getSession({
 		headers: await headers(),
 	});
@@ -20,9 +21,13 @@ export default async function AdminRootPage() {
 		)
 	);
 
-	if (workspaces.length === 0) {
-		return redirect("/admin/no-workspaces");
+	if (workspaces.length !== 0) {
+		return redirect(`/admin/${workspaces[0].slug}`);
 	}
 
-	redirect(`/admin/${workspaces[0].slug}`);
+	return (
+		<>
+			{children}
+		</>
+	)
 }

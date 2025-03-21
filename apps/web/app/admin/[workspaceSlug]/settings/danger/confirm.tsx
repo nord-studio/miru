@@ -23,11 +23,12 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User } from "better-auth/types";
+import { User } from "@/lib/auth";
 import { TriangleAlertIcon } from "lucide-react";
 import { Workspace } from "@/types/workspace";
 import { deleteWorkspace } from "@/components/workspace/actions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export function DeleteAccountConfirm({
 	user,
@@ -42,6 +43,7 @@ export function DeleteAccountConfirm({
 	const [username, setUsername] = React.useState("");
 	const [phrase, setPhrase] = React.useState("");
 	const [enabled, setEnabled] = React.useState(false);
+	const router = useRouter();
 
 	const toggleOpen = React.useCallback(() => {
 		setOpen(!open);
@@ -76,6 +78,8 @@ export function DeleteAccountConfirm({
 					id: t,
 				});
 				toggleOpen();
+
+				return router.push("/admin");
 			}
 		})
 	}

@@ -2,9 +2,10 @@
 
 import { auth } from "@/lib/auth";
 import db from "@/lib/db";
-import { user, workspaceMembers, workspaces } from "@/lib/db/schema";
+import { user, workspaceInvites, workspaceMembers, workspaces } from "@/lib/db/schema";
 import { verifyEmailInput } from "@/lib/utils";
 import { ActionResult } from "@/types/form";
+import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -48,14 +49,14 @@ export async function logOut() {
 	return redirect("/auth/login");
 }
 
+export async function getFreshStatus() {
+	"use server";
+	const fresh = await db.select().from(user).limit(1).then((res) => res.length === 0);
+	return fresh;
+}
+
 export async function register(prevState: { error: boolean, message: string }, formData: FormData) {
 	const fresh = await db.select().from(user).limit(1).then((res) => res.length === 0);
-	if (!fresh) {
-		return {
-			error: true,
-			message: "You have already registered an account. Please sign in."
-		};
-	}
 
 	const name = formData.get("name");
 	if (typeof name !== "string" || name.length < 2 || name.length > 32) {
@@ -102,6 +103,32 @@ export async function register(prevState: { error: boolean, message: string }, f
 		};
 	}
 
+	if (!fresh) {
+		const inviteToken = formData.get("inviteToken");
+		if (typeof inviteToken !== "string" || inviteToken.length < 1 || inviteToken.length > 255) {
+			return {
+				error: true,
+				message: "Please enter a valid invite code."
+			};
+		}
+
+		const invite = await db.select().from(workspaceInvites).where(eq(workspaceInvites.id, inviteToken)).limit(1);
+
+		if (!invite) {
+			return {
+				error: true,
+				message: "Invalid invite code."
+			}
+		};
+
+		if (new Date(invite[0].validUntil) < new Date()) {
+			return {
+				error: true,
+				message: "Invite code has expired. Please request a new one."
+			}
+		};
+	}
+
 	const userResponse = await auth.api.signUpEmail({
 		body: {
 			email: email.toString(),
@@ -123,27 +150,43 @@ export async function register(prevState: { error: boolean, message: string }, f
 	}
 	const userData = userResponse;
 
-	// Create a default workspace for the user
-	const workspace = await db.insert(workspaces).values({
-		name: "Default Workspace",
-		slug: "default-workspace"
-	}).returning();
+	if (!fresh) {
+		const inviteToken = formData.get("inviteToken") as string;
+		const invite = await db.select().from(workspaceInvites).where(eq(workspaceInvites.id, inviteToken)).limit(1).then((res) => res[0]);
+		const workspace = await db.select().from(workspaces).where(eq(workspaces.id, invite.workspaceId)).limit(1).then((res) => res[0]);
 
-	if (!workspace) {
-		return {
-			error: true,
-			message: "Failed to create a workspace."
-		};
+		await db.delete(workspaceInvites).where(eq(workspaceInvites.id, inviteToken));
+
+		await db.insert(workspaceMembers).values({
+			workspaceId: workspace.id,
+			userId: userData.id,
+			role: invite.role,
+		});
+
+		return redirect(`/admin/${workspace.slug}`);
+	} else {
+		// Create a default workspace for the user
+		const workspace = await db.insert(workspaces).values({
+			name: "Default Workspace",
+			slug: "default-workspace"
+		}).returning();
+
+		if (!workspace) {
+			return {
+				error: true,
+				message: "Failed to create a workspace."
+			};
+		}
+
+		// Add the user to the workspace
+		await db.insert(workspaceMembers).values({
+			workspaceId: workspace[0].id,
+			userId: userData.id,
+			role: "owner",
+		});
+
+		return redirect("/admin/default-workspace");
 	}
-
-	// Add the user to the workspace
-	await db.insert(workspaceMembers).values({
-		workspaceId: workspace[0].id,
-		userId: userData.id,
-		role: "owner",
-	});
-
-	return redirect("/admin/default-workspace");
 }
 
 export async function requestResetPassword(prevState: ActionResult, formData: FormData) {
@@ -160,4 +203,12 @@ export async function requestResetPassword(prevState: ActionResult, formData: Fo
 			email: email.toString(),
 		},
 	})
+}
+
+export async function getCurrentUser() {
+	const currentUser = await auth.api.getSession({
+		headers: await headers(),
+	});
+
+	return currentUser;
 }

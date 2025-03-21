@@ -43,6 +43,13 @@
       "when": 1740842674605,
       "tag": "0005_mute_otto_octavius",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1742577687603,
+      "tag": "0006_next_maestro",
+      "breakpoints": true
     }
   ]
 }

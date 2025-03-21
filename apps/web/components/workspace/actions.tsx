@@ -2,14 +2,15 @@
 
 import { auth } from "@/lib/auth";
 import db from "@/lib/db";
-import { workspaceMembers, workspaces } from "@/lib/db/schema/workspaces";
+import { workspaceInvites, workspaceMembers, workspaces } from "@/lib/db/schema/workspaces";
 import { actionClient } from "@/lib/safe-action";
-import { User } from "better-auth";
+import { User } from "@/lib/auth";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { flattenValidationErrors } from "next-safe-action";
 
 export const getAllWorkspaces = actionClient.action(async () => {
 	const wrkspcs = await db.select().from(workspaces);
@@ -124,6 +125,9 @@ export const editWorkspace = actionClient.schema(z.object({
 
 export const deleteWorkspace = actionClient.schema(z.object({
 	id: z.string().nonempty()
+})).outputSchema(z.object({
+	error: z.boolean(),
+	message: z.string(),
 })).action(async ({ parsedInput: { id } }) => {
 	const currentUser = await auth.api.getSession({
 		headers: await headers(),
@@ -149,11 +153,36 @@ export const deleteWorkspace = actionClient.schema(z.object({
 		return { error: true, message: "Failed to delete workspace" };
 	}
 
-	const wrkspcs = rawWrkspcs.filter((workspace) =>
-		workspace.members.some(
-			(member) => member.userId === currentUser?.user.id
-		)
-	);
-
-	redirect(`/admin/${wrkspcs[0].slug}`);
+	return { error: false, message: "Workspace deleted successfully" };
 })
+
+export const joinWorkspace = actionClient.schema(z.object({
+	inviteToken: z.string().nonempty()
+}), {
+	handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors,
+}).outputSchema(z.object({
+	error: z.boolean(),
+	message: z.string(),
+})).action(async ({ parsedInput: { inviteToken } }) => {
+	const currentUser = await auth.api.getSession({
+		headers: await headers(),
+	});
+
+	if (!currentUser) {
+		return { error: true, message: "You are not logged in" };
+	}
+
+	const invite = await db.select().from(workspaceInvites).where(eq(workspaceInvites.id, inviteToken)).limit(1).then((res) => res[0]);
+	const workspace = await db.select().from(workspaces).where(eq(workspaces.id, invite.workspaceId)).limit(1).then((res) => res[0]);
+
+	await db.delete(workspaceInvites).where(eq(workspaceInvites.id, inviteToken));
+
+	await db.insert(workspaceMembers).values({
+		workspaceId: workspace.id,
+		userId: currentUser.user.id,
+		role: invite.role,
+	});
+
+	revalidatePath(`/admin/[workspaceSlug]`, "layout");
+	return redirect(`/admin/${workspace.slug}`);
+});

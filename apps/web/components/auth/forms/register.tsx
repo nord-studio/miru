@@ -6,7 +6,7 @@ import React, { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 import Spinner from "@/components/ui/spinner";
-import { register } from "@/components/auth/actions";
+import { getFreshStatus, register } from "@/components/auth/actions";
 
 export default function RegisterForm() {
 	const [state, formAction] = useActionState(register, {
@@ -27,6 +27,14 @@ export default function RegisterForm() {
 
 function InnerForm() {
 	const [showPassword, setShowPassword] = React.useState(false);
+	const [fresh, setFresh] = React.useState(false);
+
+	React.useEffect(() => {
+		getFreshStatus().then((res) => {
+			setFresh(res);
+		});
+	}, []);
+
 	const togglePassword = () => setShowPassword((prev) => !prev);
 
 	const { pending } = useFormStatus();
@@ -85,6 +93,14 @@ function InnerForm() {
 				autoComplete="new-password"
 				disabled={pending}
 			/>
+			{!fresh && (
+				<Input
+					id="inviteToken"
+					name="inviteToken"
+					placeholder="Invite Token"
+					disabled={pending}
+				/>
+			)}
 			<Button
 				type="submit"
 				className="w-full data-[loading=true]:cursor-not-allowed"

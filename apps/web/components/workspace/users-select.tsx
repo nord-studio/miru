@@ -17,17 +17,19 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import { User } from "better-auth";
 import { getAllUsers } from "@/components/workspace/actions";
+import { User } from "@/lib/auth";
 
-export default function UserSelection({
+export default function UsersSelection({
 	value,
 	setValue,
 	min = 0,
+	exclude = [],
 }: {
 	value: User[];
 	setValue: React.Dispatch<React.SetStateAction<User[]>>;
 	min?: number;
+	exclude?: User[];
 }) {
 	const [open, setOpen] = React.useState(false);
 	const [users, setUsers] = React.useState<User[]>([]);
@@ -43,7 +45,8 @@ export default function UserSelection({
 	React.useEffect(() => {
 		getAllUsers().then((users) => {
 			if (users?.data) {
-				setUsers(users.data);
+				// Add all users expect the ones in the exclude list
+				setUsers(users.data.filter((user) => !exclude.some((excludedUser) => excludedUser.id === user.id)));
 			} else {
 				throw new Error("Failed to fetch users");
 			}
@@ -96,11 +99,10 @@ export default function UserSelection({
 									}
 								>
 									<Check
-										className={`mr-2 h-4 w-4 ${
-											value.includes(user)
-												? "opacity-100"
-												: "opacity-0"
-										}`}
+										className={`mr-2 h-4 w-4 ${value.includes(user)
+											? "opacity-100"
+											: "opacity-0"
+											}`}
 									/>
 									{user.name}
 								</CommandItem>

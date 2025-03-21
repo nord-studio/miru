@@ -9,5 +9,5 @@ export function register() {
 
 	global.secrets.url = process.env.APP_URL;
 
-	console.log("Secrets loaded!");
+	console.log("APP_URL:", global.secrets.url);
 }
