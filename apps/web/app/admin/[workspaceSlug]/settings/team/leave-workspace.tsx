@@ -1,6 +1,5 @@
 "use client";
 
-import { leaveWorkspace } from "@/app/admin/[workspaceSlug]/settings/team/actions"
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -13,6 +12,7 @@ import {
 	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
+import { leaveWorkspace } from "@/components/workspace/actions";
 import { Workspace } from "@/types/workspace";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner"

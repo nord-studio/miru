@@ -1,19 +1,14 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import React from "react";
 
-export default function NavLinks() {
-	const params = useParams();
-	if (!params?.workspaceSlug) return null;
-
+export default function NavLinks({ workspaceSlug }: { workspaceSlug: string }) {
 	return (
 		<>
-			<Link href={`/admin/${params?.workspaceSlug}/monitors`}>
+			<Link href={`/admin/${workspaceSlug}/monitors`}>
 				<Button variant="link">Monitors</Button>
 			</Link>
-			<Link href={`/admin/${params?.workspaceSlug}/incidents`}>
+			<Link href={`/admin/${workspaceSlug}/incidents`}>
 				<Button variant="link">Incidents</Button>
 			</Link>
 			{/* <Link href={`/admin/${params?.workspaceSlug}/status-pages`}> */}
@@ -26,7 +21,7 @@ export default function NavLinks() {
 				Notifications
 			</Button>
 			{/* </Link> */}
-			<Link href={`/admin/${params?.workspaceSlug}/settings`}>
+			<Link href={`/admin/${workspaceSlug}/settings`}>
 				<Button variant="link">Settings</Button>
 			</Link>
 		</>

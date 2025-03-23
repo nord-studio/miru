@@ -30,7 +30,7 @@ import { deleteWorkspace } from "@/components/workspace/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-export function DeleteAccountConfirm({
+export function DeleteWorkspaceConfirm({
 	user,
 	workspace,
 	children,

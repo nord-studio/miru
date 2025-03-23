@@ -1,4 +1,4 @@
-import { DeleteAccountConfirm } from "@/app/admin/[workspaceSlug]/settings/danger/confirm";
+import { DeleteWorkspaceConfirm } from "@/app/admin/[workspaceSlug]/settings/danger/confirm";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import db from "@/lib/db";
@@ -53,9 +53,9 @@ export default async function WorkspaceDangerSettingsPage({
 						</div>
 						<div className="flex flex-row items-center justify-between gap-4 bg-red-500/10 p-4">
 							<div />
-							<DeleteAccountConfirm user={session?.user} workspace={workspace}>
+							<DeleteWorkspaceConfirm user={session?.user} workspace={workspace}>
 								<Button variant="destructive">Delete Workspace</Button>
-							</DeleteAccountConfirm>
+							</DeleteWorkspaceConfirm>
 						</div>
 					</div>
 				</div>

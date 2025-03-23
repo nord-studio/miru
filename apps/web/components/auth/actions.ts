@@ -41,7 +41,12 @@ export async function logIn(prevState: ActionResult, formData: FormData) {
 		};
 	}
 
-	return redirect("/admin");
+	const redir = formData.get("redirect");
+	if (typeof redir === "string") {
+		return redirect(redir);
+	} else {
+		return redirect("/admin");
+	}
 }
 
 export async function logOut() {

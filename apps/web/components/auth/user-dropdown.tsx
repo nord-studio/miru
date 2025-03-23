@@ -101,21 +101,11 @@ export default function UserDropdown({ user }: { user: User }) {
 									<DropdownMenuSeparator />
 									<DropdownMenuGroup>
 										<Link
-											href={`/admin/${pathname.split("/")[2]
-												}/settings/profile`}
+											href={`/admin/${pathname.split("/")[2]}/settings/account`}
 										>
 											<DropdownMenuItem>
 												<UserIcon className="mr-2 h-4 w-4" />
-												Profile
-											</DropdownMenuItem>
-										</Link>
-										<Link
-											href={`/admin/${pathname.split("/")[2]
-												}/settings`}
-										>
-											<DropdownMenuItem>
-												<CogIcon className="mr-2 h-4 w-4" />
-												Settings
+												Account
 											</DropdownMenuItem>
 										</Link>
 									</DropdownMenuGroup>

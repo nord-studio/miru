@@ -1,6 +1,5 @@
 "use client";
 
-import { createWorkspaceInvite } from "@/app/admin/[workspaceSlug]/settings/team/actions";
 import { Button } from "@/components/ui/button";
 import { CopyToClipboardInput } from "@/components/ui/copy-input";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -8,6 +7,7 @@ import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, Dr
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Spinner from "@/components/ui/spinner";
+import { createWorkspaceInvite } from "@/components/workspace/actions";
 import { generateId } from "@/lib/utils";
 import { Workspace } from "@/types/workspace";
 import React from "react";

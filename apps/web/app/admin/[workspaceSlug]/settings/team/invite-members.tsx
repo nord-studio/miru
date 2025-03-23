@@ -1,6 +1,5 @@
 "use client";
 
-import { inviteMemberViaEmail } from "@/app/admin/[workspaceSlug]/settings/team/actions";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -10,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Spinner from "@/components/ui/spinner";
-import { getAllUsers } from "@/components/workspace/actions";
+import { getAllUsers, inviteMemberViaEmail } from "@/components/workspace/actions";
 import { User } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { Workspace, WorkspaceMember, WorkspaceMemberWithUser } from "@/types/workspace";

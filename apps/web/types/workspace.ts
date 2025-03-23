@@ -17,6 +17,12 @@ export interface WorkspaceMember {
 	role: "owner" | "admin" | "member";
 }
 
+export enum RankedRoles {
+	owner = 3,
+	admin = 2,
+	member = 1,
+}
+
 export interface WorkspaceMemberWithUser extends WorkspaceMember {
 	user: User;
 }

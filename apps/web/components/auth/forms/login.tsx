@@ -6,7 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 import Spinner from "@/components/ui/spinner";
 import { logIn } from "@/components/auth/actions";
 
-export default function LoginForm() {
+export default function LoginForm({ redirect }: { redirect?: string | null }) {
 	const [state, formAction] = useActionState(logIn, {
 		error: false,
 		message: "",
@@ -17,19 +17,20 @@ export default function LoginForm() {
 			<form className="flex flex-col gap-4 w-full" action={formAction}>
 				{state.error && <p className="text-center">{state.message}</p>}
 				{/* This is required to use the "useFormStatus" hook */}
-				<Form />
+				<Form redirect={redirect} />
 			</form>
 		</>
 	);
 }
 
-function Form() {
+function Form({ redirect }: { redirect?: string | null }) {
 	const { pending } = useFormStatus();
 
 	const [showPassword, setShowPassword] = React.useState(false);
 	const togglePassword = () => setShowPassword((prev) => !prev);
 	return (
 		<>
+			<input type="hidden" name="redirect" id="redirect" value={redirect ?? "/admin"} />
 			<Input
 				id="email"
 				name="email"

@@ -8,7 +8,7 @@ import { WorkspaceSwitcher } from "@/components/workspace/switcher";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-export default async function Navbar() {
+export default async function Navbar({ workspaceSlug }: { workspaceSlug: string }) {
 	const session = await auth.api.getSession({
 		headers: await headers(),
 	});
@@ -27,7 +27,7 @@ export default async function Navbar() {
 					<WorkspaceSwitcher workspaces={filteredWorkspaces} />
 				</div>
 				<div className="md:flex flex-row items-center justify-start w-full hidden">
-					<NavLinks />
+					<NavLinks workspaceSlug={workspaceSlug} />
 				</div>
 			</div>
 			<div className="flex flex-row gap-3 items-center justify-end w-full">
