@@ -111,7 +111,6 @@ export default function InviteMembers({ workspace, members, currentMember, child
     }
   }
 
-
   if (mode === "email") {
     if (isDesktop) {
       return (
@@ -192,26 +191,43 @@ export default function InviteMembers({ workspace, members, currentMember, child
               <form onSubmit={onSubmit}>
                 <div className="flex flex-col px-6 pb-4 gap-4">
                   <div className="flex flex-col gap-2 items-start w-full">
-                    <Label>Members</Label>
+                    <Label>Email</Label>
+                    <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" type="email" required />
+                  </div>
+                  <div className="flex flex-col gap-2 items-start w-full">
+                    <Label>Role</Label>
+                    <Select
+                      value={role}
+                      onValueChange={(value) => setRole(value as "member" | "admin" | "owner")}
+                      required
+                    >
+                      <SelectTrigger>
+                        <SelectValue>{role.slice(0, 1).toUpperCase() + role.slice(1)}</SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="member">Member</SelectItem>
+                        {RankedRoles[currentMember.role] >= RankedRoles.admin && (
+                          <SelectItem value="admin">Admin</SelectItem>
+                        )}
+                        {RankedRoles[currentMember.role] >= RankedRoles.owner && (
+                          <SelectItem value="owner">Owner</SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
                 <div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
-                  <span className="text-neutral-400 dark:text-neutral-600 text-sm">
-                    Note: You can update this later.
-                  </span>
-                  <div className="flex flex-row gap-2 items-center">
-                    <Button
-                      variant="outline"
-                      type="button"
-                      disabled={loading}
-                      onClick={() => setMode(null)}
-                    >
-                      Back
-                    </Button>
-                    <Button disabled={loading} type="submit">
-                      {loading ? <Spinner /> : "Invite"}
-                    </Button>
-                  </div>
+                  <Button
+                    variant="outline"
+                    type="button"
+                    disabled={loading}
+                    onClick={() => setMode(null)}
+                  >
+                    Back
+                  </Button>
+                  <Button disabled={loading} type="submit">
+                    {loading ? <Spinner /> : "Invite"}
+                  </Button>
                 </div>
               </form>
             </DrawerContent>
@@ -323,6 +339,7 @@ export default function InviteMembers({ workspace, members, currentMember, child
         </>
       );
     } else {
+      const filteredUsers = users.filter((user) => !members.find((member) => member.user.id === user.id));
       return (
         <>
           <Drawer open={open} onOpenChange={setOpen}>
@@ -339,27 +356,84 @@ export default function InviteMembers({ workspace, members, currentMember, child
               </DrawerHeader>
               <form onSubmit={onSubmit}>
                 <div className="flex flex-col px-6 pb-4 gap-4">
-                  <div className="flex flex-col gap-2 items-start w-full">
-                    <Label>Members</Label>
+                  <div className="flex flex-col gap-3 items-start w-full">
+                    <Label>Member</Label>
+                    <Popover open={selectOpen} onOpenChange={setSelectOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          aria-expanded={selectOpen}
+                          role="combobox"
+                          className="w-full justify-between"
+                        >
+                          {selectedUser ? selectedUser.name
+                            : "Select user..."}
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="p-0">
+                        <Command>
+                          <CommandInput placeholder="Search user..." className="h-9" />
+                          <CommandList>
+                            <CommandEmpty>No users found.</CommandEmpty>
+                            <CommandGroup>
+                              {filteredUsers.map((user) => (
+                                <CommandItem
+                                  key={user.id}
+                                  value={user.id}
+                                  onSelect={(currentValue) => {
+                                    setSelectedUser(users.find((user) => user.id === currentValue) || null)
+                                    setSelectOpen(false)
+                                  }}
+                                >
+                                  {user.name}
+                                  <Check
+                                    className={cn(
+                                      "ml-auto",
+                                      selectedUser?.id === user.id ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <div className="flex flex-col gap-3 items-start w-full">
+                    <Label>Role</Label>
+                    <Select
+                      value={role}
+                      onValueChange={(value) => setRole(value as "member" | "admin" | "owner")}
+                    >
+                      <SelectTrigger>
+                        <SelectValue>{role}</SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="member">Member</SelectItem>
+                        {RankedRoles[currentMember.role] >= RankedRoles.admin && (
+                          <SelectItem value="admin">Admin</SelectItem>
+                        )}
+                        {RankedRoles[currentMember.role] >= RankedRoles.owner && (
+                          <SelectItem value="owner">Owner</SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
                 <div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
-                  <span className="text-neutral-400 dark:text-neutral-600 text-sm">
-                    Note: You can update this later.
-                  </span>
-                  <div className="flex flex-row gap-2 items-center">
-                    <Button
-                      variant="outline"
-                      type="button"
-                      disabled={loading}
-                      onClick={() => setMode(null)}
-                    >
-                      Back
-                    </Button>
-                    <Button disabled={loading} type="submit">
-                      {loading ? <Spinner /> : "Invite"}
-                    </Button>
-                  </div>
+                  <Button
+                    variant="outline"
+                    type="button"
+                    disabled={loading}
+                    onClick={() => setMode(null)}
+                  >
+                    Back
+                  </Button>
+                  <Button disabled={loading} type="submit">
+                    {loading ? <Spinner /> : "Invite"}
+                  </Button>
                 </div>
               </form>
             </DrawerContent>

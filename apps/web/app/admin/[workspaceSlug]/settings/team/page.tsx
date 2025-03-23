@@ -63,20 +63,51 @@ export default async function ProfileSettingsPage({
             </p>
           </div>
           {currentMember.role !== "member" && (
-            <div className="flex flex-row gap-3">
-              <CreateInviteToken workspace={workspace} appUrl={appUrl} currentMember={currentMember}>
-                <Button variant="secondary">
-                  <Plus />
-                  Create Invite
-                </Button>
-              </CreateInviteToken>
-              <InviteMembers workspace={workspace} members={members} currentMember={currentMember}>
-                <Button>
-                  <UserPlus />
-                  Invite Member
-                </Button>
-              </InviteMembers>
-            </div>
+            <>
+              <div className="md:flex flex-row gap-3 hidden">
+                <CreateInviteToken
+                  workspace={workspace}
+                  appUrl={appUrl}
+                  currentMember={currentMember}
+                >
+                  <Button variant="secondary">
+                    <Plus />
+                    Create Invite
+                  </Button>
+                </CreateInviteToken>
+                <InviteMembers
+                  workspace={workspace}
+                  members={members}
+                  currentMember={currentMember}
+                >
+                  <Button>
+                    <UserPlus />
+                    Invite Member
+                  </Button>
+                </InviteMembers>
+              </div>
+              <div className="flex flex-row gap-3 md:hidden">
+                <CreateInviteToken
+                  workspace={workspace}
+                  appUrl={appUrl}
+                  currentMember={currentMember}
+                >
+                  <Button size="icon" variant="secondary">
+                    <Plus />
+                  </Button>
+                </CreateInviteToken>
+                <InviteMembers
+                  workspace={workspace}
+                  members={members}
+                  currentMember={currentMember}
+                >
+                  <Button>
+                    <UserPlus />
+                    Invite
+                  </Button>
+                </InviteMembers>
+              </div>
+            </>
           )}
         </div>
         <div>
@@ -120,7 +151,7 @@ export default async function ProfileSettingsPage({
             </TableBody>
           </Table>
         </div>
-      </main>
+      </main >
     </>
   );
 }

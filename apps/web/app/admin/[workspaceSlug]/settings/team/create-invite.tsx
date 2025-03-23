@@ -65,7 +65,12 @@ function InviteTokenMesage({ open, setOpen, token, url }: { open: boolean, setOp
 						</DrawerHeader>
 						<div className="flex flex-col px-6 pb-4 gap-4">
 							<div className="flex flex-col gap-2 items-start w-full">
-								<Label>Members</Label>
+								<Label>Invite Token</Label>
+								<CopyToClipboardInput content={token} />
+							</div>
+							<div className="flex flex-col gap-2 items-start w-full">
+								<Label>Invite URL</Label>
+								<CopyToClipboardInput content={url} />
 							</div>
 						</div>
 						<div className="flex flex-row items-end w-full gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
@@ -211,34 +216,56 @@ export default function CreateInviteToken({ workspace, appUrl, currentMember, ch
 					</DrawerTrigger>
 					<DrawerContent>
 						<DrawerHeader>
-							<DrawerTitle>Invite Members</DrawerTitle>
+							<DrawerTitle>Create Invite Token</DrawerTitle>
 							<DrawerDescription>
-								Select from the list of users to invite to this workspace.
-								They will be sent an email with an invite link.
+								Create an invite token to invite a user to this workspace.
 							</DrawerDescription>
 						</DrawerHeader>
 						<form onSubmit={onSubmit}>
 							<div className="flex flex-col px-6 pb-4 gap-4">
 								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Members</Label>
+									<Label>Invite Token</Label>
+									<CopyToClipboardInput content={inviteToken} />
+								</div>
+								<div className="flex flex-col gap-2 items-start w-full">
+									<Label>Invite URL</Label>
+									<CopyToClipboardInput content={`${appUrl}/join/${inviteToken}`} />
+								</div>
+								<hr />
+								<div className="flex flex-col gap-2 items-start w-full">
+									<Label>Role</Label>
+									<Select
+										value={role}
+										onValueChange={(value) => setRole(value as "member" | "admin" | "owner")}
+									>
+										<SelectTrigger>
+											<SelectValue>{role}</SelectValue>
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="member">Member</SelectItem>
+											{RankedRoles[currentMember.role] >= RankedRoles.admin && (
+												<SelectItem value="admin">Admin</SelectItem>
+											)}
+											{RankedRoles[currentMember.role] >= RankedRoles.owner && (
+												<SelectItem value="owner">Owner</SelectItem>
+											)}
+										</SelectContent>
+									</Select>
 								</div>
 							</div>
 							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
-								<span className="text-neutral-400 dark:text-neutral-600 text-sm">
-									Note: You can update this later.
-								</span>
-								<div className="flex flex-row gap-2 items-center">
+								<DialogClose asChild>
 									<Button
 										variant="outline"
 										type="button"
 										disabled={loading}
 									>
-										Back
+										Cancel
 									</Button>
-									<Button disabled={loading} type="submit">
-										{loading ? <Spinner /> : "Invite"}
-									</Button>
-								</div>
+								</DialogClose>
+								<Button disabled={loading} type="submit">
+									{loading ? <Spinner /> : "Create"}
+								</Button>
 							</div>
 						</form>
 					</DrawerContent>

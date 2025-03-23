@@ -12,7 +12,6 @@ import {
 import {
 	BookTextIcon,
 	CodeIcon,
-	CogIcon,
 	LogOut,
 	UserIcon,
 } from "lucide-react";
@@ -180,25 +179,13 @@ export default function UserDropdown({ user }: { user: User }) {
 									<div className="flex flex-col items-start">
 										<Link
 											href={`/admin/${pathname.split("/")[2]
-												}/settings/profile`}
+												}/settings/account`}
 											className="w-full"
 										>
 											<DrawerClose className="w-full">
 												<div className="text-md flex w-full cursor-default select-none items-center p-4 outline-hidden transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-disabled:pointer-events-none data-disabled:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50">
 													<UserIcon className="mr-3 h-4 w-4" />
-													<span>Profile</span>
-												</div>
-											</DrawerClose>
-										</Link>
-										<Link
-											href={`/admin/${pathname.split("/")[2]
-												}/settings`}
-											className="w-full"
-										>
-											<DrawerClose className="w-full">
-												<div className="text-md flex w-full cursor-default select-none items-center p-4 outline-hidden transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-disabled:pointer-events-none data-disabled:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50">
-													<CogIcon className="mr-3 h-4 w-4" />
-													<span>Settings</span>
+													<span>Account</span>
 												</div>
 											</DrawerClose>
 										</Link>

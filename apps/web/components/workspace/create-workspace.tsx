@@ -182,17 +182,42 @@ export default function CreateWorkspace({
 							</DrawerDescription>
 						</DrawerHeader>
 						<form onSubmit={onSubmit}>
-							<div className="flex flex-col px-6 pb-4 gap-4">
+							<div className="flex flex-col px-4 pb-6 gap-4">
+								<div className="flex flex-col gap-3 items-start w-full">
+									<Label>Name</Label>
+									<Input
+										disabled={loading}
+										required={true}
+										value={name}
+										onChange={(e) =>
+											setName(e.target.value)
+										}
+									/>
+								</div>
+								<div className="flex flex-col gap-3 items-start w-full">
+									<Label>Slug (Optional)</Label>
+									<Input
+										disabled={loading}
+										value={slug}
+										onChange={(e) =>
+											setSlug(e.target.value)
+										}
+									/>
+								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Title</Label>
-									<Input disabled={loading} />
+									<Label>Invite Members (Optional)</Label>
+									<UsersSelection
+										value={members}
+										setValue={setMembers}
+										exclude={currentUser ? [currentUser] : []}
+									/>
 								</div>
 							</div>
 							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
 								<span className="text-neutral-400 dark:text-neutral-600 text-sm">
 									Note: You can update this later.
 								</span>
-								<div className="flex flex-row gap-2 items-center">
+								<div className="flex flex-row gap-3 items-center">
 									<DialogClose asChild>
 										<Button
 											variant="outline"
