@@ -6,24 +6,44 @@ import { monitors } from "@/lib/db/schema/monitors";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
 import React from "react";
+import { workspaces } from "@/lib/db/schema";
+import { RankedRoles } from "@/types/workspace";
+import { getCurrentMember } from "@/components/workspace/actions";
+import { redirect } from "next/navigation";
 
 export default async function MonitorSingletonLayout({
 	children,
 	params,
 }: {
 	children: React.ReactNode;
-	params: Promise<{ id: string }>;
+	params: Promise<{ workspaceSlug: string, id: string }>;
 }) {
-	const id = (await params).id;
+	const { workspaceSlug, id } = await params;
 	const monitor = await db
 		.select()
 		.from(monitors)
 		.where(eq(monitors.id, id))
 		.limit(1)
 		.then((res) => res[0]);
+
+	const workspace = await db
+		.select()
+		.from(workspaces)
+		.where(eq(workspaces.slug, workspaceSlug))
+		.limit(1)
+		.then((res) => {
+			return res[0];
+		});
+
+	const currentMember = await getCurrentMember(workspace.id);
+
+	if (!currentMember) {
+		return redirect("/admin");
+	}
+
 	return (
 		<>
-			<MonitorDetailNav />
+			<MonitorDetailNav currentMember={currentMember} />
 			<div className="w-full">
 				<div className="w-full flex flex-row gap-2 items-center justify-between">
 					<div className="flex flex-col">
@@ -43,9 +63,12 @@ export default async function MonitorSingletonLayout({
 						</p>
 					</div>
 					<div className="flex flex-row gap-3 items-center">
-						<EditMonitorButton monitor={monitor} />
+						{RankedRoles[currentMember.role] >= RankedRoles.admin && (
+							<EditMonitorButton monitor={monitor} />
+						)}
 						<MonitorActionsDropdown
 							monitor={monitor}
+							workspaceId={workspace.id}
 							variant="outline"
 							size="icon"
 						/>

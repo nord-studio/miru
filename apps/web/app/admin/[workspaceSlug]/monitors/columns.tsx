@@ -9,8 +9,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import React from "react";
 import MonitorActionsDropdown from "@/components/monitors/monitor-dropdown";
 import { usePathname } from "next/navigation";
+import { MonitorRow } from "@/app/admin/[workspaceSlug]/monitors/page";
 
-export const columns: ColumnDef<Monitor>[] = [
+export const columns: ColumnDef<MonitorRow>[] = [
 	{
 		id: "select",
 		header: ({ table }) => (
@@ -44,9 +45,8 @@ export const columns: ColumnDef<Monitor>[] = [
 			const pathname = usePathname();
 			return (
 				<Link
-					href={`/admin/${pathname.split("/")[2]}/monitors/${
-						row.original.id
-					}`}
+					href={`/admin/${pathname.split("/")[2]}/monitors/${row.original.id
+						}`}
 					className="w-fit"
 				>
 					<p className="font-medium hover:underline w-fit">
@@ -120,7 +120,7 @@ export const columns: ColumnDef<Monitor>[] = [
 	// 				{Math.floor(
 	// 					(Date.now() -
 	// 						new Date(row.original.lastPing).getTime()) /
-	// 						60000
+	// 					60000
 	// 				)}
 	// 				m ago
 	// 			</span>
@@ -142,6 +142,7 @@ export const columns: ColumnDef<Monitor>[] = [
 			return (
 				<MonitorActionsDropdown
 					monitor={monitor}
+					workspaceId={row.original.workspaceId}
 					className="h-8 w-8 p-0"
 				/>
 			);

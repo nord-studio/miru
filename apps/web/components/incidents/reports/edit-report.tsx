@@ -22,16 +22,15 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Activity, Check, Fingerprint, Pencil, PlusIcon, Search } from "lucide-react";
+import { Activity, Check, Fingerprint, Pencil, Search } from "lucide-react";
 import Spinner from "@/components/ui/spinner";
 import React from "react";
-import { Incident } from "@/types/incident";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { IncidentReport, IncidentReportStatus } from "@/types/incident-report";
 import { toast } from "sonner";
-import { createIncidentReport, editIncidentReport } from "@/components/incidents/reports/actions";
+import { editIncidentReport } from "@/components/incidents/reports/actions";
 
 export default function EditIncidentReport({ report }: {
 	report: IncidentReport;

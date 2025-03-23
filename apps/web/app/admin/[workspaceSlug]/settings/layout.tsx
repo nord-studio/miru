@@ -2,7 +2,6 @@ import SettingsLinks from "@/app/admin/[workspaceSlug]/settings/links";
 import { getCurrentMember } from "@/components/workspace/actions";
 import db from "@/lib/db";
 import { workspaces } from "@/lib/db/schema";
-import { RankedRoles } from "@/types/workspace";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 

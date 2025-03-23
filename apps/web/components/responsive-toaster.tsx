@@ -1,6 +1,7 @@
 "use client";
 
-import { Toaster, ToasterProps } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
+import { ToasterProps } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 
 export default function ResponsiveToaster(props: ToasterProps) {

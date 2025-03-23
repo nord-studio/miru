@@ -30,7 +30,13 @@ export default function JoinWorkspace({
 					description: res.validationErrors[Object.keys(res.validationErrors)[0] as keyof typeof res.validationErrors]?.[0],
 				});
 			}
-		})
+
+			if (res?.data?.error) {
+				return toast.error("Something went wrong!", {
+					description: res?.data?.message,
+				});
+			}
+		}).finally(() => setLoading(false));
 	}
 
 	if (isDesktop) {
@@ -69,7 +75,12 @@ export default function JoinWorkspace({
 									</Button>
 								</DialogClose>
 								<Button disabled={loading} type="submit">
-									{loading ? <Spinner /> : "Join"}
+									{loading ? (
+										<>
+											<Spinner />
+											<span className="ml-2">Joining...</span>
+										</>
+									) : "Join"}
 								</Button>
 							</div>
 						</form>

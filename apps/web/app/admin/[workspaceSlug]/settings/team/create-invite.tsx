@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import Spinner from "@/components/ui/spinner";
 import { createWorkspaceInvite } from "@/components/workspace/actions";
 import { generateId } from "@/lib/utils";
-import { Workspace } from "@/types/workspace";
+import { RankedRoles, Workspace, WorkspaceMemberWithUser } from "@/types/workspace";
 import React from "react";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
@@ -85,7 +85,7 @@ function InviteTokenMesage({ open, setOpen, token, url }: { open: boolean, setOp
 	}
 }
 
-export default function CreateInviteToken({ workspace, appUrl, children }: { workspace: Workspace, appUrl: string, children: React.ReactNode }) {
+export default function CreateInviteToken({ workspace, appUrl, currentMember, children }: { workspace: Workspace, appUrl: string, currentMember: WorkspaceMemberWithUser, children: React.ReactNode }) {
 	const [open, setOpen] = React.useState(false);
 	const isDesktop = useMediaQuery("(min-width: 768px)");
 	const [loading, setLoading] = React.useState(false);
@@ -172,8 +172,12 @@ export default function CreateInviteToken({ workspace, appUrl, children }: { wor
 										</SelectTrigger>
 										<SelectContent>
 											<SelectItem value="member">Member</SelectItem>
-											<SelectItem value="admin">Admin</SelectItem>
-											<SelectItem value="owner">Owner</SelectItem>
+											{RankedRoles[currentMember.role] >= RankedRoles.admin && (
+												<SelectItem value="admin">Admin</SelectItem>
+											)}
+											{RankedRoles[currentMember.role] >= RankedRoles.owner && (
+												<SelectItem value="owner">Owner</SelectItem>
+											)}
 										</SelectContent>
 									</Select>
 								</div>

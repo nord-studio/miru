@@ -12,13 +12,13 @@ import Spinner from "@/components/ui/spinner";
 import { getAllUsers, inviteMemberViaEmail } from "@/components/workspace/actions";
 import { User } from "@/lib/auth";
 import { cn } from "@/lib/utils";
-import { Workspace, WorkspaceMember, WorkspaceMemberWithUser } from "@/types/workspace";
+import { RankedRoles, Workspace, WorkspaceMemberWithUser } from "@/types/workspace";
 import { Check, ChevronsUpDown } from "lucide-react";
 import React, { useEffect } from "react";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 
-export default function InviteMembers({ workspace, members, children }: { workspace: Workspace, members: WorkspaceMemberWithUser[], children: React.ReactNode }) {
+export default function InviteMembers({ workspace, members, currentMember, children }: { workspace: Workspace, members: WorkspaceMemberWithUser[], currentMember: WorkspaceMemberWithUser, children: React.ReactNode }) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [loading, setLoading] = React.useState(false);
@@ -73,7 +73,7 @@ export default function InviteMembers({ workspace, members, children }: { worksp
         });
         setMode(null);
         setOpen(false);
-      })
+      }).finally(() => setLoading(false))
     }
 
     if (mode === "select") {
@@ -146,8 +146,12 @@ export default function InviteMembers({ workspace, members, children }: { worksp
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="member">Member</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="owner">Owner</SelectItem>
+                        {RankedRoles[currentMember.role] >= RankedRoles.admin && (
+                          <SelectItem value="admin">Admin</SelectItem>
+                        )}
+                        {RankedRoles[currentMember.role] >= RankedRoles.owner && (
+                          <SelectItem value="owner">Owner</SelectItem>
+                        )}
                       </SelectContent>
                     </Select>
                   </div>
@@ -290,8 +294,12 @@ export default function InviteMembers({ workspace, members, children }: { worksp
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="member">Member</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="owner">Owner</SelectItem>
+                        {RankedRoles[currentMember.role] >= RankedRoles.admin && (
+                          <SelectItem value="admin">Admin</SelectItem>
+                        )}
+                        {RankedRoles[currentMember.role] >= RankedRoles.owner && (
+                          <SelectItem value="owner">Owner</SelectItem>
+                        )}
                       </SelectContent>
                     </Select>
                   </div>

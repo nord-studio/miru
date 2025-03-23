@@ -64,13 +64,13 @@ export default async function ProfileSettingsPage({
           </div>
           {currentMember.role !== "member" && (
             <div className="flex flex-row gap-3">
-              <CreateInviteToken workspace={workspace} appUrl={appUrl}>
+              <CreateInviteToken workspace={workspace} appUrl={appUrl} currentMember={currentMember}>
                 <Button variant="secondary">
                   <Plus />
                   Create Invite
                 </Button>
               </CreateInviteToken>
-              <InviteMembers workspace={workspace} members={members}>
+              <InviteMembers workspace={workspace} members={members} currentMember={currentMember}>
                 <Button>
                   <UserPlus />
                   Invite Member

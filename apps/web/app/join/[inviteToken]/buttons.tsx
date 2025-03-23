@@ -2,11 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { declineInvite, joinWorkspace } from "@/components/workspace/actions";
-import { Workspace } from "@/types/workspace";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export default function JoinWorkspaceButtons({ inviteToken, workspace }: { inviteToken: string, workspace: Workspace }) {
+export default function JoinWorkspaceButtons({ inviteToken }: { inviteToken: string }) {
 	const router = useRouter();
 
 	return (
@@ -41,7 +40,7 @@ export default function JoinWorkspaceButtons({ inviteToken, workspace }: { invit
 					Decline Invite
 				</Button>
 				<Button onClick={async () => {
-					const t = toast.loading("Accepting invite...");
+					const t = toast.loading("Joining workspace...");
 
 					await joinWorkspace({ inviteToken }).then((res) => {
 						if (res?.validationErrors) {
@@ -64,7 +63,7 @@ export default function JoinWorkspaceButtons({ inviteToken, workspace }: { invit
 						});
 
 						return router.push("/admin");
-					})
+					});
 				}}>
 					Accept Invite
 				</Button>

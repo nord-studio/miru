@@ -7,9 +7,13 @@ import { getAllMonitorUptime } from "@/lib/db/utils";
 import { Monitor } from "@/types/monitor";
 import { eq } from "drizzle-orm";
 import { workspaces } from "@/lib/db/schema";
+import { RankedRoles } from "@/types/workspace";
+import { getCurrentMember } from "@/components/workspace/actions";
+import { redirect } from "next/navigation";
 
-interface MonitorRow extends Monitor {
+export interface MonitorRow extends Monitor {
 	uptime: number;
+	workspaceId: string;
 }
 
 export default async function MonitorsPage({
@@ -35,12 +39,19 @@ export default async function MonitorsPage({
 
 	const allUptimes = await getAllMonitorUptime(7);
 
+	const currentMember = await getCurrentMember(workspace.id);
+
+	if (!currentMember) {
+		return redirect("/admin");
+	}
+
 	const data: MonitorRow[] = raw.map((monitor) => {
 		const uptime = allUptimes.find((u) => u.monitor_id === monitor.id);
 
 		return {
 			...monitor,
 			uptime: uptime?.uptime_percentage || 0,
+			workspaceId: workspace.id
 		};
 	});
 
@@ -57,7 +68,9 @@ export default async function MonitorsPage({
 						</p>
 					</div>
 					<div className="flex flex-row gap-2 items-center">
-						<CreateMonitor />
+						{RankedRoles[currentMember.role] >= RankedRoles.admin && (
+							<CreateMonitor />
+						)}
 					</div>
 				</div>
 				<div className="container mx-auto mt-4">

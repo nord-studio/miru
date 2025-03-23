@@ -1,9 +1,30 @@
 import JoinWorkspaceButtons from "@/app/join/[inviteToken]/buttons";
-import { authClient } from "@/lib/auth/client";
+import { Button } from "@/components/ui/button";
+import { auth } from "@/lib/auth";
 import db from "@/lib/db";
-import { workspaceInvites, workspaces } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
-import { notFound, redirect } from "next/navigation";
+import { workspaceInvites, workspaceMembers, workspaces } from "@/lib/db/schema";
+import { and, eq } from "drizzle-orm";
+import { headers } from "next/headers";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+function InvalidOrExpired() {
+	return (
+		<>
+			<main className="flex min-h-screen w-full flex-col items-center justify-center gap-4">
+				<h1 className="text-3xl font-black">┐(￣∀￣)┌</h1>
+				<h2 className="text-lg">
+					This invite doesn&apos;t exist or has expired.
+				</h2>
+				<Link href="/admin">
+					<Button variant="outline">
+						Go to /admin
+					</Button>
+				</Link>
+			</main>
+		</>
+	)
+}
 
 export default async function JoinWorkspace({
 	params
@@ -12,22 +33,40 @@ export default async function JoinWorkspace({
 }) {
 	const { inviteToken } = await params;
 
-	const session = await authClient.getSession();
+	const currentUser = await auth.api.getSession({
+		headers: await headers()
+	});
 
-	if (!session) {
+	if (!currentUser?.user) {
 		return redirect(`/auth/register?inviteToken=${inviteToken}`)
 	}
 
 	const invite = await db.select().from(workspaceInvites).where(eq(workspaceInvites.id, inviteToken)).limit(1);
 
 	if (invite.length === 0) {
-		return notFound();
+		return (<InvalidOrExpired />)
+	}
+
+	if (invite[0].validUntil < new Date()) {
+		return (<InvalidOrExpired />)
 	}
 
 	const workspace = await db.select().from(workspaces).where(eq(workspaces.id, invite[0].workspaceId)).limit(1);
 
-	if (workspace.length === 0) {
+	if (workspace.length <= 0) {
 		return redirect(`/admin`)
+	}
+
+	const workspaceMember = await db.query.workspaceMembers.findMany({
+		with: {
+			workspace: true,
+			user: true
+		},
+		where: () => and(eq(workspaceMembers.workspaceId, invite[0].workspaceId), eq(workspaceMembers.userId, currentUser.user.id))
+	});
+
+	if (workspaceMember.length >= 1) {
+		return redirect(`/admin/${workspaceMember[0].workspace.slug}/monitors`)
 	}
 
 	return (
@@ -39,10 +78,10 @@ export default async function JoinWorkspace({
 							Join {workspace[0].name}?
 						</h1>
 						<p>
-							You've been invited to join the workspace "{workspace[0].name}" with the role of {invite[0].role}.
+							You&apos;ve been invited to join the workspace &quot;{workspace[0].name}&quot; with the role of {invite[0].role}.
 						</p>
 					</div>
-					<JoinWorkspaceButtons inviteToken={inviteToken} workspace={workspace[0]} />
+					<JoinWorkspaceButtons inviteToken={inviteToken} />
 				</div>
 			</main>
 		</>

@@ -21,7 +21,7 @@ export default function LeaveWorkspace({ workspace }: { workspace: Workspace }) 
 	const router = useRouter();
 
 	async function leave() {
-		let t = toast.loading("Leaving workspace...");
+		const t = toast.loading("Leaving workspace...");
 
 		await leaveWorkspace({
 			workspaceId: workspace.id,

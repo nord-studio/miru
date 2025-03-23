@@ -51,7 +51,7 @@ export default function UsersSelection({
 				throw new Error("Failed to fetch users");
 			}
 		});
-	}, []);
+	}, [exclude]);
 
 	return (
 		<Popover open={open} onOpenChange={setOpen}>

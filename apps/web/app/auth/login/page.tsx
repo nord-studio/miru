@@ -44,7 +44,7 @@ export default function LoginPage() {
 							</Link>
 						</span>
 						<span>
-							Don't have an account?{" "}
+							Don&apos;t have an account?{" "}
 							<Link href="/auth/register">
 								<Button
 									variant={"link"}

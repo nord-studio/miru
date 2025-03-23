@@ -10,6 +10,7 @@ import TestEndpoint from "@/types/monitor-service/test";
 import { actionClient } from "@/lib/safe-action";
 import { z } from "zod";
 import { flattenValidationErrors } from "next-safe-action";
+import { cache } from "react";
 
 export const testMonitor = actionClient.schema(z.object({
 	url: z.string().nonempty(),
@@ -43,7 +44,7 @@ export const createMonitor = actionClient.schema(z.object({
 	url: z.string().nonempty(),
 	interval: z.number().int().positive(),
 	workspaceSlug: z.string().nonempty(),
-}), { handleValidationErrorsShape: async (ve, utils) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
+}), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
 	error: z.boolean(),
 	message: z.string(),
 })).action(async ({ parsedInput: { name, type, url, interval, workspaceSlug } }) => {
@@ -250,7 +251,7 @@ export const deleteMonitor = actionClient.schema(z.string().nonempty()).outputSc
 	return { error: false, message: "Monitor deleted successfully" };
 });
 
-export const getAllMonitors = actionClient.action(async () => {
+export const getAllMonitors = cache(actionClient.action(async () => {
 	const mons = await db.select().from(monitors);
 	return mons;
-})
+}))

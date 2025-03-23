@@ -24,5 +24,5 @@ export default async function AdminRootPage() {
 		return redirect("/admin/no-workspaces");
 	}
 
-	redirect(`/admin/${workspaces[0].slug}`);
+	redirect(`/admin/${workspaces[0].slug}/monitors`);
 }

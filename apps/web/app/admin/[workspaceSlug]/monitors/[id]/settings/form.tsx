@@ -16,7 +16,6 @@ import { editMonitor, testMonitor } from "@/components/monitors/actions";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
 import Alert from "@/components/ui/alert";
-import { set } from "zod";
 
 export default function MonitorSingletonSettingsForm({
 	monitor,
@@ -30,19 +29,6 @@ export default function MonitorSingletonSettingsForm({
 	const [url, setUrl] = useState(monitor.url);
 	const [type, setType] = useState<"http" | "tcp">(monitor.type);
 	const [interval, setInterval] = useState(monitor.interval.toString());
-
-	function testUrl() {
-		const promise = new Promise<string>(async (resolve, reject) => {
-			const res = await testMonitor({ method: type, url });
-			if (res?.data?.error) {
-				reject("Couldn't establish a connection to ${url}.");
-			} else {
-				resolve(`Connection established with ${url}.`);
-			}
-		});
-
-		return promise;
-	}
 
 	function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();

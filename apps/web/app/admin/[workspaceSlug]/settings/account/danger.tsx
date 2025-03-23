@@ -1,5 +1,4 @@
 import { DeleteAccountConfirm } from "@/app/admin/[workspaceSlug]/settings/account/confirm";
-import { Button } from "@/components/ui/button";
 import { User } from "@/lib/auth";
 
 export default function DangerUserSettings({ user }: { user: User }) {

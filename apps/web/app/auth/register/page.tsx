@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
 
-export default function RegisterPage() {
+export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ inviteToken: string }> }) {
+	const { inviteToken } = await searchParams;
+
 	return (
 		<>
 			<div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[400px]">
@@ -17,7 +19,7 @@ export default function RegisterPage() {
 						</p>
 					</div>
 					<div className="flex w-full flex-col items-center justify-center gap-4">
-						<RegisterForm />
+						<RegisterForm inviteToken={inviteToken} />
 					</div>
 					<hr className="w-full border border-black/10 dark:border-white/10" />
 					<div className="flex w-full flex-col items-center">

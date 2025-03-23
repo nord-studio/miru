@@ -8,6 +8,7 @@ import { ActionResult } from "@/types/form";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 
 export async function logIn(prevState: ActionResult, formData: FormData) {
 	const email = formData.get("email");
@@ -210,10 +211,10 @@ export async function requestResetPassword(prevState: ActionResult, formData: Fo
 	})
 }
 
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async () => {
 	const currentUser = await auth.api.getSession({
 		headers: await headers(),
 	});
 
 	return currentUser;
-}
+})

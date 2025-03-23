@@ -9,7 +9,7 @@ import { createTransport } from "nodemailer";
 import WorkspaceInviteEmail from "@/lib/email/workspace-invite";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { z } from "zod";
-import React from "react";
+import React, { cache } from "react";
 import { Workspace } from "@/types/workspace";
 import { workspaceInvites, workspaceMembers, workspaces } from "@/lib/db/schema";
 import { generateId } from "@/lib/utils";
@@ -19,13 +19,13 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 
-export const getAllWorkspaces = actionClient.action(async () => {
+export const getAllWorkspaces = cache(actionClient.action(async () => {
 	const wrkspcs = await db.select().from(workspaces);
 
 	return wrkspcs;
-});
+}));
 
-export const getAllWorkspacesWithMembers = actionClient.action(async () => {
+export const getAllWorkspacesWithMembers = cache(actionClient.action(async () => {
 	const wrkspcs = await db.query.workspaceMembers.findMany({
 		with: {
 			workspace: true,
@@ -34,13 +34,13 @@ export const getAllWorkspacesWithMembers = actionClient.action(async () => {
 	});
 
 	return wrkspcs;
-});
+}));
 
-export const getAllUsers = actionClient.action(async () => {
+export const getAllUsers = cache(actionClient.action(async () => {
 	const users = await db.query.user.findMany();
 
 	return users;
-});
+}));
 
 export const createWorkspace = actionClient
 	.schema(
@@ -164,13 +164,14 @@ export const deleteWorkspace = actionClient.schema(z.object({
 })
 
 export const joinWorkspace = actionClient.schema(z.object({
-	inviteToken: z.string().nonempty()
+	inviteToken: z.string().nonempty(),
+	autoRedirect: z.boolean().default(true).optional(),
 }), {
 	handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors,
 }).outputSchema(z.object({
 	error: z.boolean(),
 	message: z.string(),
-})).action(async ({ parsedInput: { inviteToken } }) => {
+})).action(async ({ parsedInput: { inviteToken, autoRedirect } }) => {
 	const currentUser = await auth.api.getSession({
 		headers: await headers(),
 	});
@@ -180,7 +181,16 @@ export const joinWorkspace = actionClient.schema(z.object({
 	}
 
 	const invite = await db.select().from(workspaceInvites).where(eq(workspaceInvites.id, inviteToken)).limit(1).then((res) => res[0]);
+
+	if (!invite) {
+		return { error: true, message: "Invite not found" };
+	}
+
 	const workspace = await db.select().from(workspaces).where(eq(workspaces.id, invite.workspaceId)).limit(1).then((res) => res[0]);
+
+	if (!workspace) {
+		return { error: true, message: "Workspace not found" };
+	}
 
 	await db.delete(workspaceInvites).where(eq(workspaceInvites.id, inviteToken));
 
@@ -191,7 +201,12 @@ export const joinWorkspace = actionClient.schema(z.object({
 	});
 
 	revalidatePath(`/admin/[workspaceSlug]`, "layout");
-	return redirect(`/admin/${workspace.slug}`);
+
+	if (autoRedirect === true) {
+		return redirect(`/admin/${workspace.slug}`);
+	} else {
+		return { error: false, message: "You've joined the workspace successfully" };
+	}
 });
 
 export const inviteMemberViaEmail = actionClient.schema(z.object({
@@ -225,7 +240,7 @@ export const inviteMemberViaEmail = actionClient.schema(z.object({
 
 	// Send email
 	const inviteToken = generateId();
-	const body = await render(<WorkspaceInviteEmail workspaceName={workspace.name} workspaceSlug={workspace.slug} inviteToken={inviteToken} />);
+	const body = await render(<WorkspaceInviteEmail workspaceName={workspace.name} inviteToken={inviteToken} />);
 
 	await db.insert(workspaceInvites).values({
 		id: inviteToken,
@@ -294,7 +309,7 @@ export const leaveWorkspace = actionClient.schema(z.object({
 })
 
 /// Get the authenticated users workspace member data
-export const getCurrentMember = async (workspaceId: string) => {
+export const getCurrentMember = cache(async (workspaceId: string) => {
 	const currentUser = await auth.api.getSession({
 		headers: await headers(),
 	});
@@ -316,7 +331,7 @@ export const getCurrentMember = async (workspaceId: string) => {
 
 	return currentMember[0];
 
-}
+});
 
 export const declineInvite = actionClient.schema(z.object({
 	inviteToken: z.string().nonempty()

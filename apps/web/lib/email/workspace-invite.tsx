@@ -15,11 +15,10 @@ import * as React from "react";
 
 interface WorkspaceInviteEmailProps {
 	workspaceName: string;
-	workspaceSlug: string;
 	inviteToken: string;
 }
 
-const WorkspaceInviteEmail = ({ inviteToken, workspaceName, workspaceSlug }: WorkspaceInviteEmailProps) => (
+const WorkspaceInviteEmail = ({ inviteToken, workspaceName }: WorkspaceInviteEmailProps) => (
 	<Html>
 		<Head />
 		<Preview>Workspace Invite</Preview>
@@ -32,7 +31,7 @@ const WorkspaceInviteEmail = ({ inviteToken, workspaceName, workspaceSlug }: Wor
 				</Text>
 				<div>
 					<Section style={buttonContainer}>
-						<Button style={button} height={25} width={160} href={`${global.secrets.url}/join?inviteToken=${inviteToken}`}>
+						<Button style={button} height={25} width={160} href={`${global.secrets.url}/join/${inviteToken}`}>
 							Accept Invite
 						</Button>
 					</Section>

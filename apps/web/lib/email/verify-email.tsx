@@ -1,4 +1,4 @@
-import db from "@/lib/db";
+
 import {
 	Body,
 	Button,
@@ -7,7 +7,6 @@ import {
 	Heading,
 	Hr,
 	Html,
-	Img,
 	Link,
 	Preview,
 	render,
@@ -61,7 +60,7 @@ const baseUrl = process.env.NODE_ENV === "production" ?
 	global.secrets.url :
 	"http://localhost:3000";
 
-export const VerifyAccountEmail = ({
+const VerifyAccountEmail = ({
 	url,
 }: VerifyAccountEmailProps) => (
 	<Html>
@@ -147,15 +146,4 @@ const reportLink = {
 const hr = {
 	borderColor: "#dfe1e4",
 	margin: "42px 0 26px",
-};
-
-const code = {
-	fontFamily: "monospace",
-	fontWeight: "700",
-	padding: "1px 4px",
-	backgroundColor: "#dfe1e4",
-	letterSpacing: "-0.3px",
-	fontSize: "21px",
-	borderRadius: "4px",
-	color: "#3c4149",
 };

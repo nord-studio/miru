@@ -20,31 +20,59 @@ import { Monitor } from "@/types/monitor";
 import { testUrl } from "@/components/monitors/utils";
 import { VariantProps } from "class-variance-authority";
 import { usePathname } from "next/navigation";
+import { RankedRoles, WorkspaceMemberWithUser } from "@/types/workspace";
+import { getCurrentMember } from "@/components/workspace/actions";
+import Spinner from "@/components/ui/spinner";
 
 export default function MonitorActionsDropdown({
 	monitor,
+	workspaceId,
 	...props
 }: {
 	monitor: Omit<Monitor, "uptime">;
+	workspaceId: string;
 } & React.ComponentProps<"button"> &
 	VariantProps<typeof buttonVariants>) {
 	const pathname = usePathname();
 	const [deleteOpen, setDeleteOpen] = React.useState(false);
 	const [editOpen, setEditOpen] = React.useState(false);
+	const [currentMember, setCurrentMember] = React.useState<WorkspaceMemberWithUser | null>(null);
+
+	React.useEffect(() => {
+		getCurrentMember(workspaceId).then((res) => {
+			setCurrentMember(res
+			);
+		});
+	}, [workspaceId]);
+
+	if (!currentMember) {
+		return (
+			<div className="w-full flex-row flex justify-end">
+				<Button variant="ghost" {...props}>
+					<span className="sr-only">Open menu</span>
+					<Spinner size={16} />
+				</Button>
+			</div>
+		);
+	}
 
 	return (
 		<>
 			<div className="w-full flex-row flex justify-end">
-				<DeleteMonitor
-					open={deleteOpen}
-					setOpen={setDeleteOpen}
-					id={monitor.id}
-				/>
-				<EditMonitor
-					monitor={monitor}
-					open={editOpen}
-					setOpen={setEditOpen}
-				/>
+				{RankedRoles[currentMember.role] >= RankedRoles.admin && (
+					<>
+						<DeleteMonitor
+							open={deleteOpen}
+							setOpen={setDeleteOpen}
+							id={monitor.id}
+						/>
+						<EditMonitor
+							monitor={monitor}
+							open={editOpen}
+							setOpen={setEditOpen}
+						/>
+					</>
+				)}
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild className="">
 						<Button variant="ghost" {...props}>
@@ -54,9 +82,11 @@ export default function MonitorActionsDropdown({
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuItem onClick={() => setEditOpen(true)}>
-							Edit
-						</DropdownMenuItem>
+						{RankedRoles[currentMember.role] >= RankedRoles.admin && (
+							<DropdownMenuItem onClick={() => setEditOpen(true)}>
+								Edit
+							</DropdownMenuItem>
+						)}
 						<Link
 							href={`/admin/${pathname.split("/")[2]}/monitors/${monitor.id
 								}`}
@@ -108,15 +138,19 @@ export default function MonitorActionsDropdown({
 						>
 							Copy ID
 						</DropdownMenuItem>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem
-							className="text-red-500 hover:text-black dark:hover:text-white hover:bg-red-500 dark:hover:bg-red-600"
-							onClick={() => {
-								setDeleteOpen(true);
-							}}
-						>
-							Delete
-						</DropdownMenuItem>
+						{RankedRoles[currentMember.role] >= RankedRoles.admin && (
+							<>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem
+									className="text-red-500 hover:text-black dark:hover:text-white hover:bg-red-500 dark:hover:bg-red-600"
+									onClick={() => {
+										setDeleteOpen(true);
+									}}
+								>
+									Delete
+								</DropdownMenuItem>
+							</>
+						)}
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</div>
