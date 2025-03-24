@@ -59,45 +59,36 @@ export default function CreateWorkspace({
 		e.preventDefault();
 		setLoading(true);
 
-		const res = await createWorkspace({
+		const t = toast.loading("Creating Workspace...");
+
+		await createWorkspace({
 			name,
 			slug,
 			members: [...members, ...(currentUser ? [currentUser] : [])],
-		});
+		}).then((res) => {
+			if (res?.validationErrors) {
+				toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
+					description: res.validationErrors[Object.keys(res.validationErrors)[0] as keyof typeof res.validationErrors]?.[0],
+					id: t
+				});
+			}
 
-		if (res?.validationErrors) {
-			return toast.error("Failed to create workspace", {
-				description: res.validationErrors._errors
-					?.map((e) => e)
-					.join(", "),
-			});
-		}
+			if (res?.data?.error) {
+				return toast.error("Something went wrong!", {
+					description: res.data.message,
+					id: t
+				});
+			}
 
-		if (res?.serverError) {
-			return toast.error("Failed to create workspace", {
-				description: res.serverError,
-			});
-		}
-
-		if (res?.bindArgsValidationErrors) {
-			return toast.error("Failed to create workspace", {
-				description: res.bindArgsValidationErrors
-					.map((e) => e)
-					.join(", "),
-			});
-		}
-
-		if (res?.data?.error) {
-			return toast.error("Failed to create workspace", {
-				description: res.data.message,
-			});
-		} else {
-			toast.success("Workspace created successfully", {
+			toast.success("Success!", {
 				description: res?.data?.message,
+				id: t
 			});
-			router.push(`/admin/${slug}/monitors`)
-			setOpen(false);
-		}
+
+			router.push(`/admin/${slug
+				? slug.toLowerCase().replace(/\s/g, "-")
+				: name.toLowerCase().replace(/\s/g, "-")}/monitors`)
+		}).finally(() => setLoading(false));
 	}
 
 	if (isDesktop) {

@@ -50,7 +50,9 @@ export default async function ProfileSettingsPage({
     owner = 2,
   }
 
-  const appUrl = process.env.APP_DOMAIN ?? "http://localhost:3000";
+  const moreThanOneOwner = members.filter((member) => member.role === "owner").length > 1;
+
+  const appUrl = process.env.APP_DOMAIN ?? "localhost:3000";
 
   return (
     <>
@@ -127,7 +129,7 @@ export default async function ProfileSettingsPage({
                   <TableCell>{member.user.email}</TableCell>
                   <TableCell>{member.role}</TableCell>
                   <TableCell className="text-right">
-                    {member.id === currentMember.id ? (
+                    {member.id === currentMember.id || moreThanOneOwner ? (
                       <>
                         {currentMember.role !== "owner" && (
                           <LeaveWorkspace workspace={workspace} />

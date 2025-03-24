@@ -46,9 +46,12 @@ export const createWorkspace = actionClient
 	.schema(
 		z.object({
 			name: z.string().nonempty(),
-			slug: z.string().nonempty(),
+			slug: z.string().optional(),
 			members: z.array(z.custom<User>()),
-		})
+		}),
+		{
+			handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors,
+		}
 	)
 	.action(async ({ parsedInput: { name, members, slug } }) => {
 		const currentUser = await auth.api.getSession({

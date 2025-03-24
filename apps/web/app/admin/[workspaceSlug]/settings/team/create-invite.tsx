@@ -135,7 +135,7 @@ export default function CreateInviteToken({ workspace, appUrl, currentMember, ch
 	if (isDesktop) {
 		return (
 			<>
-				<InviteTokenMesage open={finished} setOpen={setFinished} token={inviteToken} url={`${appUrl}/admin/${workspace.slug}/join?inviteToken=${inviteToken}`} />
+				<InviteTokenMesage open={finished} setOpen={setFinished} token={inviteToken} url={`${process.env.NODE_ENV === "development" ? "http" : "https"}://${appUrl}/join/${inviteToken}`} />
 				<Dialog open={open} onOpenChange={() => {
 					if (open === false) {
 						setOpen(!open);
@@ -163,7 +163,7 @@ export default function CreateInviteToken({ workspace, appUrl, currentMember, ch
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Invite URL</Label>
-									<CopyToClipboardInput content={`${appUrl}/admin/${workspace.slug}/join?inviteToken=${inviteToken}`} />
+									<CopyToClipboardInput content={`${process.env.NODE_ENV === "development" ? "http" : "https"}://${appUrl}/join/${inviteToken}`} />
 								</div>
 								<hr />
 								<div className="flex flex-col gap-2 items-start w-full">
@@ -209,7 +209,7 @@ export default function CreateInviteToken({ workspace, appUrl, currentMember, ch
 	} else {
 		return (
 			<>
-				<InviteTokenMesage open={finished} setOpen={setFinished} token={inviteToken} url={`${appUrl}/admin/${workspace.slug}/join?inviteToken=${inviteToken}`} />
+				<InviteTokenMesage open={finished} setOpen={setFinished} token={inviteToken} url={`${process.env.NODE_ENV === "development" ? "http" : "https"}://${appUrl}/join/${inviteToken}`} />
 				<Drawer open={open} onOpenChange={setOpen}>
 					<DrawerTrigger asChild>
 						{children}
