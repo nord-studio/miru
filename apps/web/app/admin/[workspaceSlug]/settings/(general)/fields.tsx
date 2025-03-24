@@ -8,6 +8,7 @@ import React from "react";
 import { editWorkspace } from "@/components/workspace/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { kebabCase } from "es-toolkit/string";
 
 export default function WorkspaceGeneralSettingsFields({ workspace }: { workspace: Workspace; }) {
 	const [name, setName] = React.useState(workspace.name);
@@ -30,7 +31,7 @@ export default function WorkspaceGeneralSettingsFields({ workspace }: { workspac
 			toast.success("Success!", {
 				description: "Workspace updated successfully."
 			});
-			return router.push(`/admin/${slug}/settings`)
+			return router.push(`/admin/${kebabCase(slug ? slug : name).replace("/", "-").replace("\\", "-")}/settings`)
 		}
 	}
 

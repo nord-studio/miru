@@ -39,7 +39,7 @@ export default function CreateIncidentReport({ incident }: {
 	const [open, setOpen] = useState(false);
 	const [mounted, setMounted] = useState(false);
 	const [loading, setLoading] = useState(false);
-	const isDesktop = useMediaQuery("(min-width: 1024px)");
+	const isDesktop = useMediaQuery("(min-width: 768px)");
 
 	const [status, setStatus] = useState<IncidentReportStatus>(IncidentReportStatus.INVESTIGATING);
 	const [message, setMessage] = useState("");

@@ -29,6 +29,7 @@ import { createWorkspace } from "@/components/workspace/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { getCurrentUser } from "@/components/auth/actions";
+import { kebabCase } from "es-toolkit/string";
 
 export default function CreateWorkspace({
 	open,
@@ -85,9 +86,7 @@ export default function CreateWorkspace({
 				id: t
 			});
 
-			router.push(`/admin/${slug
-				? slug.toLowerCase().replace(/\s/g, "-")
-				: name.toLowerCase().replace(/\s/g, "-")}/monitors`)
+			router.push(`/admin/${kebabCase(slug ? slug : name).replace("/", "-").replace("\\", "-")}/monitors`)
 		}).finally(() => setLoading(false));
 	}
 

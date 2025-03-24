@@ -9,6 +9,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import CreateInviteToken from "@/app/admin/[workspaceSlug]/settings/team/create-invite";
 import LeaveWorkspace from "@/app/admin/[workspaceSlug]/settings/team/leave-workspace";
+import ManageMember from "@/app/admin/[workspaceSlug]/settings/team/manage-member";
+import KickWorkspaceMember from "@/app/admin/[workspaceSlug]/settings/team/kick-member";
 
 export default async function ProfileSettingsPage({
   params,
@@ -139,9 +141,9 @@ export default async function ProfileSettingsPage({
                       <div className="flex flex-row gap-2 justify-end">
                         {rankedRoles[currentMember?.role as keyof typeof rankedRoles] >= rankedRoles[member.role] && (
                           <div className="flex flex-row gap-2 justify-end">
-                            <Button size="sm">Manage</Button>
+                            <ManageMember member={member} currentMember={currentMember} />
                             {currentMember.role === "owner" && currentMember.id !== member.id && (
-                              <Button size="sm" variant="destructive">Kick</Button>
+                              <KickWorkspaceMember member={member} />
                             )}
                           </div>
                         )}

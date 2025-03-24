@@ -10,7 +10,7 @@ import WorkspaceInviteEmail from "@/lib/email/workspace-invite";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { z } from "zod";
 import React, { cache } from "react";
-import { Workspace } from "@/types/workspace";
+import { RankedRoles, Workspace } from "@/types/workspace";
 import { workspaceInvites, workspaceMembers, workspaces } from "@/lib/db/schema";
 import { generateId } from "@/lib/utils";
 import db from "@/lib/db";
@@ -18,6 +18,7 @@ import { flattenValidationErrors } from "next-safe-action";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
+import { kebabCase } from "es-toolkit/string"
 
 export const getAllWorkspaces = cache(actionClient.action(async () => {
 	const wrkspcs = await db.select().from(workspaces);
@@ -67,8 +68,8 @@ export const createWorkspace = actionClient
 			.values({
 				name,
 				slug: slug
-					? slug.toLowerCase().replace(/\s/g, "-")
-					: name.toLowerCase().replace(/\s/g, "-"),
+					? kebabCase(slug).replace("/", "-").replace("\\", "-")
+					: kebabCase(name).replace("/", "-").replace("\\", "-"),
 			})
 			.returning();
 
@@ -92,8 +93,8 @@ export const createWorkspace = actionClient
 
 export const editWorkspace = actionClient.schema(z.object({
 	id: z.string().nonempty(),
-	name: z.string(),
-	slug: z.string(),
+	name: z.string().optional(),
+	slug: z.string().optional(),
 	members: z.array(z.custom<User>())
 })).action(async ({ parsedInput: { id, name, slug } }) => {
 	const chunks = [];
@@ -114,7 +115,7 @@ export const editWorkspace = actionClient.schema(z.object({
 		if (slug.includes(" ")) {
 			return { error: true, message: "Workspace slug cannot have spaces" };
 		}
-		chunks.push({ slug: slug });
+		chunks.push({ slug: kebabCase(slug).replace("/", "-").replace("\\", "-") });
 	}
 
 	if (chunks.length === 0) {
@@ -311,8 +312,54 @@ export const leaveWorkspace = actionClient.schema(z.object({
 	return { error: false, message: "You've left the workspace successfully" };
 })
 
+export const kickWorkspaceMember = actionClient.schema(z.object({
+	workspaceId: z.string().nonempty(),
+	memberId: z.string().nonempty(),
+}), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
+	error: z.boolean(),
+	message: z.string(),
+})).action(async ({ parsedInput: { workspaceId, memberId } }) => {
+	const currentUser = await auth.api.getSession({
+		headers: await headers(),
+	});
+
+	if (!currentUser) {
+		return { error: true, message: "You are not logged in" };
+	}
+
+	const currentMember = await db.query.workspaceMembers.findMany({
+		with: {
+			user: true,
+		},
+		where: () => and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.userId, currentUser.user.id)),
+	});
+
+	if (currentMember.length === 0) {
+		return { error: true, message: "You are not a member of this workspace" };
+	}
+
+	const member = await db.select().from(workspaceMembers).where(eq(workspaceMembers.id, memberId)).limit(1).then((res) => res[0]);
+
+	if (!member) {
+		return { error: true, message: "Member not found" };
+	}
+
+	if (currentUser.user.id === member.userId) {
+		return { error: true, message: "You cannot kick yourself" };
+	}
+
+	if (RankedRoles[currentMember[0].role] < RankedRoles[member.role]) {
+		return { error: true, message: "You cannot kick a member with a higher role than you" };
+	}
+
+	await db.delete(workspaceMembers).where(eq(workspaceMembers.id, memberId));
+
+	revalidatePath("/admin/[workspaceSlug]/settings/team", "page");
+	return { error: false, message: "Member kicked successfully" };
+})
+
 /// Get the authenticated users workspace member data
-export const getCurrentMember = cache(async (workspaceId: string) => {
+export const getCurrentMember = async (workspaceId: string) => {
 	const currentUser = await auth.api.getSession({
 		headers: await headers(),
 	});
@@ -334,7 +381,7 @@ export const getCurrentMember = cache(async (workspaceId: string) => {
 
 	return currentMember[0];
 
-});
+};
 
 export const declineInvite = actionClient.schema(z.object({
 	inviteToken: z.string().nonempty()
@@ -353,4 +400,51 @@ export const declineInvite = actionClient.schema(z.object({
 	await db.delete(workspaceInvites).where(eq(workspaceInvites.id, inviteToken));
 
 	return { error: false, message: "Invite declined successfully" };
+})
+
+export const editWorkspaceMember = actionClient.schema(z.object({
+	id: z.string().nonempty(),
+	workspaceId: z.string().nonempty(),
+	role: z.enum(["admin", "member", "owner"]),
+}), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
+	error: z.boolean(),
+	message: z.string(),
+})).action(async ({ parsedInput: { id, workspaceId, role } }) => {
+	const currentUser = await auth.api.getSession({
+		headers: await headers(),
+	});
+
+	if (!currentUser) {
+		return { error: true, message: "You are not logged in" };
+	}
+
+	const currentMember = await db.query.workspaceMembers.findMany({
+		with: {
+			user: true,
+		},
+		where: () => and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.userId, currentUser.user.id)),
+	});
+
+	if (currentMember.length === 0) {
+		return { error: true, message: "You are not a member of this workspace" };
+	}
+
+	const member = await db.select().from(workspaceMembers).where(eq(workspaceMembers.id, id)).limit(1).then((res) => res[0]);
+
+	if (!member) {
+		return { error: true, message: "Member not found" };
+	}
+
+	if (currentUser.user.id === member.userId) {
+		return { error: true, message: "You cannot change your own role" };
+	}
+
+	if (RankedRoles[currentMember[0].role] < RankedRoles[role]) {
+		return { error: true, message: "You cannot change the role of a member with a higher role than you" };
+	}
+
+	await db.update(workspaceMembers).set({ role: role }).where(eq(workspaceMembers.id, id));
+
+	revalidatePath("/admin/[workspaceSlug]/settings/team", "page");
+	return { error: false, message: "Role updated successfully" };
 })

@@ -38,7 +38,7 @@ export default function EditIncidentReport({ report }: {
 	const [open, setOpen] = useState(false);
 	const [mounted, setMounted] = useState(false);
 	const [loading, setLoading] = useState(false);
-	const isDesktop = useMediaQuery("(min-width: 1024px)");
+	const isDesktop = useMediaQuery("(min-width: 768px)");
 
 	const [status, setStatus] = useState<IncidentReportStatus>(report.status);
 	const [message, setMessage] = useState(report.message);
