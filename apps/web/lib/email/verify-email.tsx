@@ -57,7 +57,7 @@ interface VerifyAccountEmailProps {
 }
 
 const baseUrl = process.env.NODE_ENV === "production" ?
-	`https://${global.secrets.domain}` :
+	`https://${process.env.APP_DOMAIN}` :
 	"http://localhost:3000";
 
 const VerifyAccountEmail = ({

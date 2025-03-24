@@ -50,7 +50,7 @@ export default async function ProfileSettingsPage({
     owner = 2,
   }
 
-  const appUrl = globalThis.secrets.url ?? "http://localhost:3000";
+  const appUrl = process.env.APP_DOMAIN ?? "http://localhost:3000";
 
   return (
     <>

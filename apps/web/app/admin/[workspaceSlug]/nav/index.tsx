@@ -1,5 +1,4 @@
 import NavLinks from "@/app/admin/[workspaceSlug]/nav/links";
-import AuthMenu from "@/components/auth/auth-dialog";
 import UserDropdown from "@/components/auth/user-dropdown";
 import MobileNavbar from "@/app/admin/[workspaceSlug]/nav/mobile";
 import { ThemeDropdown } from "@/components/theme/dropdown";
@@ -35,14 +34,8 @@ export default async function Navbar({ workspaceSlug }: { workspaceSlug: string 
 					<ThemeDropdown />
 				</div>
 				<div className="flex flex-row gap-2 items-center justify-end">
-					{session ? (
-						<>
-							<UserDropdown user={session.user} />
-						</>
-					) : (
-						<>
-							<AuthMenu />
-						</>
+					{session && (
+						<UserDropdown user={session.user} />
 					)}
 					<div className="block md:hidden">
 						<MobileNavbar />

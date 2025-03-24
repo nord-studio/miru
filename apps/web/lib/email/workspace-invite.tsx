@@ -31,7 +31,7 @@ const WorkspaceInviteEmail = ({ inviteToken, workspaceName }: WorkspaceInviteEma
 				</Text>
 				<div>
 					<Section style={buttonContainer}>
-						<Button style={button} height={25} width={160} href={`${process.env.NODE_ENV === "development" ? "http://localhost:3000" : `https://${global.secrets.domain}`}/join/${inviteToken}`}>
+						<Button style={button} height={25} width={160} href={`${process.env.NODE_ENV === "development" ? "http://localhost:3000" : `https://${process.env.APP_DOMAIN}`}/join/${inviteToken}`}>
 							Accept Invite
 						</Button>
 					</Section>

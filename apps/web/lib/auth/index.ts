@@ -9,7 +9,7 @@ import sendEmailVerification from "@/lib/email/verify-email";
 
 export const auth = betterAuth({
 	appName: "miru",
-	baseURL: "http://localhost:3000",
+	baseURL: process.env.NODE_ENV === "development" ? "http://localhost:3000" : `https://${process.env.APP_DOMAIN}`,
 	emailAndPassword: {
 		enabled: true,
 		autoSignIn: true,
@@ -60,9 +60,9 @@ export const auth = betterAuth({
 			},
 		}),
 		passkey({
-			rpID: process.env.NODE_ENV === "development" ? "localhost" : global.secrets.domain,
+			rpID: process.env.NODE_ENV === "development" ? "localhost" : process.env.APP_DOMAIN,
 			rpName: "Miru",
-			origin: process.env.NODE_ENV === "development" ? "http://localhost:3000" : `https://${global.secrets.domain}`,
+			origin: process.env.NODE_ENV === "development" ? "http://localhost:3000" : `https://${process.env.APP_DOMAIN}`,
 		})
 	]
 });

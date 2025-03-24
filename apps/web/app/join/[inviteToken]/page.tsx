@@ -8,6 +8,9 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 function InvalidOrExpired() {
 	return (
 		<>
