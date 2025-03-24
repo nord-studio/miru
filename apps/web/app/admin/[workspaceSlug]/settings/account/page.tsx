@@ -1,4 +1,5 @@
 import DangerUserSettings from "@/app/admin/[workspaceSlug]/settings/account/danger";
+import SecurityUserSettings from "@/app/admin/[workspaceSlug]/settings/account/security";
 import UserSettings from "@/app/admin/[workspaceSlug]/settings/account/user";
 import WorkspaceSettings from "@/app/admin/[workspaceSlug]/settings/account/workspaces";
 import { auth } from "@/lib/auth";
@@ -7,8 +8,9 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function UserAccountPage() {
+	const headerList = await headers();
 	const user = await auth.api.getSession({
-		headers: await headers(),
+		headers: headerList
 	});
 
 	if (!user) {
@@ -37,6 +39,17 @@ export default async function UserAccountPage() {
 						</p>
 					</div>
 					<UserSettings user={user.user} />
+				</div>
+				<div className="flex flex-col gap-4 w-full">
+					<div className="flex flex-col">
+						<h1 className="text-3xl font-black font-display">
+							Account Security
+						</h1>
+						<p className="text-neutral-500 dark:text-neutral-400">
+							Update your email, password and other security settings.
+						</p>
+					</div>
+					<SecurityUserSettings />
 				</div>
 				<div className="flex flex-col gap-4 w-full">
 					<div className="flex flex-col">

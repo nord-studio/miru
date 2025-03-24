@@ -59,7 +59,11 @@ export const auth = betterAuth({
 				}
 			},
 		}),
-		passkey()
+		passkey({
+			rpID: process.env.NODE_ENV === "development" ? "localhost" : global.secrets.domain,
+			rpName: "Miru",
+			origin: process.env.NODE_ENV === "development" ? "http://localhost:3000" : `https://${global.secrets.domain}`,
+		})
 	]
 });
 
