@@ -8,37 +8,36 @@ import { IncidentReport, IncidentReportStatus } from "@/types/incident-report";
 import { eq } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
+import { cache } from "react";
 import { z } from "zod";
 
-export const getIncidentWithReports = actionClient
-	.schema(z.string().nonempty())
-	.action(async ({ parsedInput: id }) => {
-		const incident = await db
-			.select()
-			.from(incidents)
-			.where(eq(incidents.id, id))
-			.limit(1)
-			.then((res) => res[0]);
+export const getIncidentWithReports = cache(actionClient.schema(z.string().nonempty()).action(async ({ parsedInput: id }) => {
+	const incident = await db
+		.select()
+		.from(incidents)
+		.where(eq(incidents.id, id))
+		.limit(1)
+		.then((res) => res[0]);
 
-		if (!incident) {
-			return { error: true, message: "Incidents not found" };
-		}
+	if (!incident) {
+		return { error: true, message: "Incidents not found" };
+	}
 
-		const reports: IncidentReport[] = await db.query.incidentReports.findMany({
-			with: {
-				incidentId: true
-			},
-			where: (reports, { eq }) => (eq(reports.incidentId, id))
-		}).then((res) => res.map((r) => ({
-			id: r.id,
-			incident_id: r.incidentId.id, // Map incidentId to incident_id
-			status: r.status as IncidentReportStatus,
-			message: r.message,
-			timestamp: r.timestamp,
-		})));
+	const reports: IncidentReport[] = await db.query.incidentReports.findMany({
+		with: {
+			incidentId: true
+		},
+		where: (reports, { eq }) => (eq(reports.incidentId, id))
+	}).then((res) => res.map((r) => ({
+		id: r.id,
+		incident_id: r.incidentId.id, // Map incidentId to incident_id
+		status: r.status as IncidentReportStatus,
+		message: r.message,
+		timestamp: r.timestamp,
+	})));
 
-		return { reports };
-	});
+	return { reports };
+}));
 
 export const createIncidentReport = actionClient
 	.schema(

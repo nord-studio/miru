@@ -1,4 +1,4 @@
-import { User } from "better-auth/types";
+import { User } from "@/lib/auth";
 
 export interface Workspace {
 	id: string;
@@ -15,6 +15,16 @@ export interface WorkspaceMember {
 	userId: string;
 	workspaceId: string;
 	role: "owner" | "admin" | "member";
+}
+
+export enum RankedRoles {
+	owner = 3,
+	admin = 2,
+	member = 1,
+}
+
+export interface WorkspaceMemberWithUser extends WorkspaceMember {
+	user: User;
 }
 
 export interface WorkspaceWithMembers extends WorkspaceMember {

@@ -21,8 +21,8 @@ export default async function AdminRootPage() {
 	);
 
 	if (workspaces.length === 0) {
-		return redirect("/auth/register");
+		return redirect("/admin/no-workspaces");
 	}
 
-	redirect(`/admin/${workspaces[0].slug}`);
+	redirect(`/admin/${workspaces[0].slug}/monitors`);
 }

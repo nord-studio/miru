@@ -6,9 +6,9 @@ import React, { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 import Spinner from "@/components/ui/spinner";
-import { register } from "@/components/auth/actions";
+import { getFreshStatus, register } from "@/components/auth/actions";
 
-export default function RegisterForm() {
+export default function RegisterForm({ inviteToken }: { inviteToken: string | null }) {
 	const [state, formAction] = useActionState(register, {
 		error: false,
 		message: "",
@@ -20,13 +20,21 @@ export default function RegisterForm() {
 			className="flex w-full flex-col items-center gap-4"
 		>
 			{state.error && <p className="text-center">{state.message}</p>}
-			<InnerForm />
+			<InnerForm inviteToken={inviteToken} />
 		</form>
 	);
 }
 
-function InnerForm() {
+function InnerForm({ inviteToken }: { inviteToken: string | null }) {
 	const [showPassword, setShowPassword] = React.useState(false);
+	const [fresh, setFresh] = React.useState(false);
+
+	React.useEffect(() => {
+		getFreshStatus().then((res) => {
+			setFresh(res);
+		});
+	}, []);
+
 	const togglePassword = () => setShowPassword((prev) => !prev);
 
 	const { pending } = useFormStatus();
@@ -85,6 +93,15 @@ function InnerForm() {
 				autoComplete="new-password"
 				disabled={pending}
 			/>
+			{!fresh && (
+				<Input
+					id="inviteToken"
+					name="inviteToken"
+					defaultValue={inviteToken ?? undefined}
+					placeholder="Invite Token"
+					disabled={pending}
+				/>
+			)}
 			<Button
 				type="submit"
 				className="w-full data-[loading=true]:cursor-not-allowed"

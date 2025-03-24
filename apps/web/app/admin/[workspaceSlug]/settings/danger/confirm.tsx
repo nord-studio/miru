@@ -23,13 +23,13 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User } from "better-auth/types";
-import { TriangleAlertIcon } from "lucide-react";
+import { User } from "@/lib/auth";
 import { Workspace } from "@/types/workspace";
 import { deleteWorkspace } from "@/components/workspace/actions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-export function DeleteAccountConfirm({
+export function DeleteWorkspaceConfirm({
 	user,
 	workspace,
 	children,
@@ -42,6 +42,7 @@ export function DeleteAccountConfirm({
 	const [username, setUsername] = React.useState("");
 	const [phrase, setPhrase] = React.useState("");
 	const [enabled, setEnabled] = React.useState(false);
+	const router = useRouter();
 
 	const toggleOpen = React.useCallback(() => {
 		setOpen(!open);
@@ -76,6 +77,8 @@ export function DeleteAccountConfirm({
 					id: t,
 				});
 				toggleOpen();
+
+				return router.push("/admin");
 			}
 		})
 	}
@@ -136,41 +139,36 @@ export function DeleteAccountConfirm({
 					<DrawerTrigger asChild>{children}</DrawerTrigger>
 					<DrawerContent>
 						<DrawerHeader className="p-6 text-left">
-							<DrawerTitle>Delete Account</DrawerTitle>
+							<DrawerTitle>Delete Workspace?</DrawerTitle>
 							<DrawerDescription>
-								Katarogu will <b>permanently</b> delete all data associated with
-								your account.
-								<br /> <br />
-								We reccomend you export your data before deleting your account.
-								<div className="my-4 flex flex-row items-center gap-2 rounded-md border border-red-500 p-2 text-red-500 dark:border-red-700">
-									<TriangleAlertIcon className="h-4 w-4 text-red-500 dark:text-red-700" />
-									<span>
-										This action is <b>not</b> reversible.
-									</span>
-								</div>
+								<span>
+									Miru will <b>permanently</b> delete all data associated
+									with your workspace.
+								</span>
 							</DrawerDescription>
-							<div className="flex flex-col items-start gap-4">
-								<div className="flex w-full flex-col gap-1">
-									<Label className="text-sm text-neutral-500">
-										To verify, type <b>delete my account</b> below:
-									</Label>
-									<Input
-										value={phrase}
-										onChange={(e) => setPhrase(e.target.value)}
-									/>
-								</div>
-							</div>
 						</DrawerHeader>
+						<div className="flex flex-col items-start gap-4 px-6 pb-6">
+							<div className="flex w-full flex-col gap-3">
+								<Label htmlFor="name" className="text-sm text-neutral-500 gap-1">
+									To confirm deletion, type your workspace name <b>&quot;{workspace.name}&quot;</b> below:
+								</Label>
+								<Input
+									value={phrase}
+									onChange={(e) => setPhrase(e.target.value)}
+									placeholder={workspace.name}
+								/>
+							</div>
+						</div>
 						<DrawerFooter className="flex w-full flex-row justify-between border-t bg-neutral-200 p-3 dark:bg-neutral-900">
 							<Button variant="outline" onClick={toggleOpen}>
 								Cancel
 							</Button>
 							<Button
 								variant="destructive"
-								onClick={() => alert("Your workspace has been deleted!")}
 								disabled={!enabled}
+								onClick={() => handleDelete()}
 							>
-								Delete Account
+								Confirm Deletion
 							</Button>
 						</DrawerFooter>
 					</DrawerContent>

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronsUpDown, Plus } from "lucide-react";
+import { Check, ChevronsUpDown, Plus, Signpost } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,13 +22,21 @@ import { WorkspaceWithMembers } from "@/types/workspace";
 import CreateWorkspace from "@/components/workspace/create-workspace";
 import { usePathname, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
+import JoinWorkspace from "@/components/workspace/join-workspace";
 
 export function WorkspaceSwitcher({ workspaces }: { workspaces: WorkspaceWithMembers[] }) {
+	// filter out duplicate workspaces
+	workspaces = workspaces.filter(
+		(workspace, index) =>
+			workspaces.findIndex((w) => w.workspace.id === workspace.workspace.id) === index
+	);
+
 	const pathname = usePathname();
 	const router = useRouter();
 
 	const [open, setOpen] = React.useState(false);
 	const [openCreate, setOpenCreate] = React.useState(false);
+	const [openJoin, setOpenJoin] = React.useState(false);
 	const [currentWorkspace, setCurrentWorkspace] = React.useState<string>();
 
 	React.useEffect(() => {
@@ -40,6 +48,7 @@ export function WorkspaceSwitcher({ workspaces }: { workspaces: WorkspaceWithMem
 	return (
 		<>
 			<CreateWorkspace open={openCreate} setOpen={setOpenCreate} />
+			<JoinWorkspace open={openJoin} setOpen={setOpenJoin} />
 			<Popover open={open} onOpenChange={setOpen}>
 				<PopoverTrigger asChild>
 					<Button
@@ -98,6 +107,12 @@ export function WorkspaceSwitcher({ workspaces }: { workspaces: WorkspaceWithMem
 								>
 									Create Workspace
 									<Plus className="ml-auto" />
+								</CommandItem>
+								<CommandItem
+									onSelect={() => setOpenJoin(true)}
+								>
+									Join Workspace
+									<Signpost className="ml-auto" />
 								</CommandItem>
 							</CommandGroup>
 						</CommandList>

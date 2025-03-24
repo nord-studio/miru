@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Activity, Check, Edit, FingerprintIcon, Search, Trash } from "lucide-react";
+import { Activity, Check, FingerprintIcon, Search, Trash } from "lucide-react";
 import { format } from "date-fns";
 import { IncidentReport, IncidentReportStatus } from "@/types/incident-report";
 import Alert from "@/components/ui/alert";
