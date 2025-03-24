@@ -131,9 +131,9 @@ export default async function ProfileSettingsPage({
                   <TableCell>{member.user.email}</TableCell>
                   <TableCell>{member.role}</TableCell>
                   <TableCell className="text-right">
-                    {member.id === currentMember.id || moreThanOneOwner ? (
+                    {member.id === currentMember.id ? (
                       <>
-                        {currentMember.role !== "owner" && (
+                        {currentMember.role === "owner" && moreThanOneOwner && (
                           <LeaveWorkspace workspace={workspace} />
                         )}
                       </>

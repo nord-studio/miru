@@ -303,6 +303,23 @@ export const leaveWorkspace = actionClient.schema(z.object({
 		return { error: true, message: "You are not logged in" };
 	}
 
+	const members = await db.query.workspaceMembers.findMany({
+		with: {
+			user: true,
+		},
+		where: () => eq(workspaceMembers.workspaceId, workspaceId),
+	});
+
+	const currentMember = members.find((member) => member.userId === currentUser.user.id);
+
+	if (!currentMember) {
+		return { error: true, message: "You are not a member of this workspace" };
+	}
+
+	if (members.filter((member) => member.role === "owner").length === 1 && currentMember.role === "owner") {
+		return { error: true, message: "You cannot leave the workspace as the only owner" };
+	}
+
 	const res = await db.delete(workspaceMembers).where(and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.userId, currentUser.user.id))).returning();
 
 	if (!res) {
