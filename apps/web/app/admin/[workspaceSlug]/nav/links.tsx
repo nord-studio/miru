@@ -11,11 +11,11 @@ export default function NavLinks({ workspaceSlug }: { workspaceSlug: string }) {
 			<Link href={`/admin/${workspaceSlug}/incidents`}>
 				<Button variant="link">Incidents</Button>
 			</Link>
-			{/* <Link href={`/admin/${params?.workspaceSlug}/status-pages`}> */}
-			<Button variant="link" disabled>
-				Status Pages
-			</Button>
-			{/* </Link> */}
+			<Link href={`/admin/${workspaceSlug}/status-pages`}>
+				<Button variant="link">
+					Status Pages
+				</Button>
+			</Link>
 			{/* <Link href={`/admin/${params?.workspaceSlug}/notifications`}> */}
 			<Button variant="link" disabled>
 				Notifications
