@@ -1,8 +1,9 @@
 import { incidents } from "@/lib/db/schema";
 import { workspaces } from "@/lib/db/schema/workspaces";
 import { generateId } from "@/lib/utils";
-import { relations } from "drizzle-orm";
+import { relations } from "drizzle-orm/relations";
 import { pgTable, text, timestamp, boolean, varchar, integer, primaryKey, json } from "drizzle-orm/pg-core";
+import { statusPageMonitors } from "@/lib/db/schema/status-pages";
 
 export const monitors = pgTable("monitors", {
 	/// The unique identifier for the monitor
@@ -29,7 +30,8 @@ export const monitorRelations = relations(monitors, ({ many, one }) => ({
 	workspace: one(workspaces, {
 		fields: [monitors.workspaceId],
 		references: [workspaces.id]
-	})
+	}),
+	statusPageMonitors: many(statusPageMonitors)
 }))
 
 // Join table for the many to many relationship between monitors and incidents

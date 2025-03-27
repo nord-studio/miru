@@ -1,0 +1,1 @@
+ALTER TABLE "status_page_monitors" DROP CONSTRAINT "status_page_monitors_order_unique";

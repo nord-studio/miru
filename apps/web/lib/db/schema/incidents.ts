@@ -1,6 +1,6 @@
 import { monitorsToIncidents } from "@/lib/db/schema";
 import { generateId } from "@/lib/utils";
-import { relations } from "drizzle-orm";
+import { relations } from "drizzle-orm/relations";
 import { pgTable, text, timestamp, boolean, varchar } from "drizzle-orm/pg-core";
 
 export const incidents = pgTable("incidents", {

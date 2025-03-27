@@ -64,6 +64,20 @@
       "when": 1742606509368,
       "tag": "0008_nostalgic_deadpool",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1743021901516,
+      "tag": "0009_lively_professor_monster",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1743037244529,
+      "tag": "0010_magenta_demogoblin",
+      "breakpoints": true
     }
   ]
 }
