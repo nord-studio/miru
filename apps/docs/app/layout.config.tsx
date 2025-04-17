@@ -1,5 +1,4 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { Book } from 'lucide-react';
 
 /**
  * Shared layout configurations
@@ -24,7 +23,6 @@ export const baseOptions: BaseLayoutProps = {
       text: "Documentation",
       url: "/docs",
       active: "nested-url",
-      icon: <Book />
     }
   ],
   githubUrl: "https://github.com/nord-studio/miru"
