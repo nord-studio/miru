@@ -6,7 +6,7 @@
 @theme {
 	--font-sans: var(--font-inter);
 	--font-display: var(--font-manrope);
-	--spacing-screen-no-nav: calc(100vh - 6.5rem);
+	--spacing-screen-no-nav: calc(100vh - 8rem);
 }
 
 :root {
