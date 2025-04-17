@@ -1,0 +1,197 @@
+---
+title: Getting Started
+description: Getting started with Miru
+---
+
+## Introduction
+
+Miru is a free, open-source and fully customisable status page and monitoring service built with Rust and Next.js.
+It was built to provide a simple and easy way to monitor your services like websites, APIs, dependency sites, and more.
+
+Miru is designed to be local-first, meaning it can be run entirely on your own server in just a few minutes.
+
+## Installation
+
+There are multiple ways you can install and setup your own Miru instance. This installation guide ranks from easiest methods to more advanced methods.
+
+### Docker Compose
+
+By far, the easiest way to get started with Miru is to use Docker Compose. The Miru repository comes with a [`docker-compose.yml`](https://github.com/nord-studio/miru/blob/main/docker-compose.yml) file that you can use as a template.
+
+To get started, follow the these steps:
+
+<Steps>
+<Step>
+Create a new `docker-compose.yml` file:
+
+```yml
+volumes:
+    database:
+
+services:
+    database:
+        container_name: database
+        image: postgres:17.3
+        ports:
+            - "5432:5432"
+        volumes:
+            - database:/var/lib/postgresql/data
+        environment:
+            POSTGRES_PASSWORD: VerySecurePassword123
+            POSTGRES_USER: miru
+            POSTGRES_DB: miru
+
+    monitor:
+        container_name: monitor
+        image: ghcr.io/nord-studio/miru/monitor:latest
+        ports:
+            - "8080:8080"
+        environment:
+            - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
+            - DATABASE_SSL=false
+        depends_on:
+            - database
+            - web
+
+    web:
+        container_name: web
+        image: ghcr.io/nord-studio/miru/web:latest
+        ports:
+            - "3000:3000"
+        environment:
+            - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
+            - DATABASE_SSL=false
+            - BETTER_AUTH_SECRET=secret
+            - APP_DOMAIN=http://localhost:3000
+            - MONITOR_URL=http://localhost:8080
+            - ENABLE_EMAIL=
+            - SMTP_HOST=
+            - SMTP_PORT=
+            - SMTP_SECURE=
+            - SMTP_USER=
+            - SMTP_PASSWORD=
+            - SMTP_FROM=
+        depends_on:
+            - database
+```
+
+</Step>
+
+<Step>
+Run the following command to spin up the containers:
+
+```bash
+docker compose up -d
+```
+
+</Step>
+
+<Step>
+Navigate to [localhost:3000](http://localhost:3000) in your browser to access the Miru dashboard. You should see the welcome screen as seen below.
+![Welcome Screen](/screenshots/welcome.png)
+</Step>
+</Steps>
+
+### Docker
+
+The easiest way to get started with Miru is to use Docker. You can run the following steps to get started:
+
+<Steps>
+
+<Step>
+Create a new directory and navigate to it:
+
+```bash
+mkdir miru
+cd miru
+```
+
+</Step>
+
+<Step>
+Create an `.env` file to store your Miru instance secrets.
+
+```sh
+# Database Configuration
+POSTGRES_PASSWORD=VerySecurePassword123
+POSTGRES_USER=miru
+POSTGRES_DB=miru
+
+# Database Connection Settings
+DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
+DATABASE_SSL=false
+
+# JWT Secret
+BETTER_AUTH_SECRET=
+
+# URL Settings
+APP_DOMAIN=localhost
+MONITOR_URL=http://localhost:8080
+
+# If you must verify your email before logging in
+EMAIL_VERIFICATION=true
+
+# SMTP Settings
+ENABLE_EMAIL=true
+SMTP_HOST=smtp.useplunk.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=plunk
+SMTP_PASSWORD=
+SMTP_FROM=hello@nordstud.io
+```
+
+</Step>
+
+<Step>
+Create a Docker network:
+
+```bash
+docker network create miru
+```
+
+</Step>
+
+<Step>
+Create and run the database container:
+
+<Callout title="Note" type="warn">
+	It is important that the database is started before the Miru containers as
+	they depend on it.
+</Callout>
+
+```bash
+docker run -d --name database --network=miru --env-file ./.env -v ./database:/var/lib/postgresql/data -p 5432:5432 postgres:17.3
+```
+
+</Step>
+
+<Step>
+Create and run the Miru dashboard container:
+
+<Tabs items={["amd64", "arm64"]}>
+<Tab value="amd64">
+```bash
+docker run -d --name web --network=miru --env-file ./.env -p 3000:3000 ghcr.io/nord-studio/miru/web:latest ;
+docker run -d --name monitor --network=miru --env-file ./.env -p 8080:8080 ghcr.io/nord-studio/miru/monitor:latest 
+```
+</Tab>
+
+<Tab value="arm64">
+```bash
+docker run -d --name web --network=miru --env-file ./.env -p 3000:3000 ghcr.io/nord-studio/miru/web:latest-arm64 ;
+docker run -d --name monitor --network=miru --env-file ./.env -p 8080:8080 ghcr.io/nord-studio/miru/monitor:latest-arm64 
+```
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step>
+Navigate to [localhost:3000](http://localhost:3000) in your browser to access the Miru dashboard. You should see the welcome screen as seen below.
+
+![Welcome Screen](/screenshots/welcome.png)
+
+</Step>
+
+</Steps>
