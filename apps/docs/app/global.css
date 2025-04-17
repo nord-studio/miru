@@ -1,5 +1,12 @@
-@import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
-@import 'fumadocs-ui/css/preset.css';
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+@import "tw-animate-css";
+
+@theme inline {
+	--font-sans: var(--font-inter);
+	--font-display: var(--font-manrope);
+	--font-mono: var(--font-jetbrains-mono);
+}
 
 @source '../node_modules/fumadocs-ui/dist/**/*.js';

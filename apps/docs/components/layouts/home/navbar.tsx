@@ -101,11 +101,11 @@ const linkVariants = cva('', {
     variant: {
       main: navItemVariants(),
       button: buttonVariants({
-        variant: 'secondary',
+        color: 'secondary',
         className: 'gap-1.5 [&_svg]:size-4',
       }),
       icon: buttonVariants({
-        variant: 'ghost',
+        color: 'ghost',
         size: 'icon',
       }),
     },
