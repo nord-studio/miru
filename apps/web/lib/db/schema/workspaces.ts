@@ -1,7 +1,9 @@
 import { monitors, user } from "@/lib/db/schema";
 import { generateId } from "@/lib/utils";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm/sql";
+import { relations } from "drizzle-orm/relations";
 import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { statusPages } from "@/lib/db/schema/status-pages";
 
 export const workspaces = pgTable("workspaces", {
 	id: varchar("id", { length: 16 }).primaryKey().$defaultFn(generateId),
@@ -30,7 +32,8 @@ export const workspaceInvites = pgTable("workspace_invites", {
 
 export const workspacesRelations = relations(workspaces, ({ many }) => ({
 	monitors: many(monitors),
-	members: many(workspaceMembers)
+	members: many(workspaceMembers),
+	statusPages: many(statusPages),
 }));
 
 export const workspaceMembersRelations = relations(workspaceMembers, ({ one }) => ({

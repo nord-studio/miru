@@ -24,18 +24,20 @@ export default function MonitorSelection({
 	value,
 	setValue,
 	min = 0,
+	disabled = false,
 }: {
 	monitors: Omit<Monitor, "uptime">[];
-	value: string[];
-	setValue: React.Dispatch<React.SetStateAction<string[]>>;
+	value: Omit<Monitor, "uptime">[];
+	setValue: React.Dispatch<React.SetStateAction<Omit<Monitor, "uptime">[]>>;
 	min?: number;
+	disabled?: boolean;
 }) {
 	const [open, setOpen] = React.useState(false);
 
-	const toggleSelect = (monitor: string) => {
+	const toggleSelect = (monitor: Omit<Monitor, "uptime">) => {
 		setValue((prev) =>
-			prev.includes(monitor)
-				? prev.filter((g) => g !== monitor)
+			prev.some((g) => g.id === monitor.id)
+				? prev.filter((g) => g.id !== monitor.id)
 				: [...prev, monitor]
 		);
 	};
@@ -48,16 +50,17 @@ export default function MonitorSelection({
 					role="combobox"
 					aria-expanded={open}
 					className="h-auto"
+					disabled={disabled}
 				>
 					<div className="flex flex-wrap gap-1 items-center text-start w-full">
 						{value.length > 0 ? (
 							value.map((monitor) => (
 								<Badge
-									key={monitor}
+									key={monitor.id}
 									variant="default"
 									className="text-xs font-normal"
 								>
-									{monitor}
+									{monitor.name}
 								</Badge>
 							))
 						) : (
@@ -78,19 +81,18 @@ export default function MonitorSelection({
 							{monitors.map((monitor) => (
 								<CommandItem
 									key={monitor.id}
-									onSelect={() => toggleSelect(monitor.id)}
+									onSelect={() => toggleSelect(monitor)}
 									className="cursor-pointer"
 									disabled={
-										value.includes(monitor.id) &&
+										value.includes(monitor) &&
 										value.length <= min
 									}
 								>
 									<Check
-										className={`mr-2 h-4 w-4 ${
-											value.includes(monitor.id)
-												? "opacity-100"
-												: "opacity-0"
-										}`}
+										className={`mr-2 h-4 w-4 ${value.includes(monitor)
+											? "opacity-100"
+											: "opacity-0"
+											}`}
 									/>
 									{monitor.name}
 								</CommandItem>

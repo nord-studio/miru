@@ -53,7 +53,7 @@ export default function CreateIncident({
 	const [mounted, setMounted] = useState(false);
 
 	const [title, setTitle] = useState("");
-	const [monitorIds, setMonitorIds] = useState<string[]>([]);
+	const [monitorList, setMonitorList] = useState<Omit<Monitor, "uptime">[]>([]);
 	const [message, setMessage] = useState("");
 	const [status, setStatus] = useState<IncidentReportStatus>(
 		IncidentReportStatus.INVESTIGATING
@@ -68,7 +68,7 @@ export default function CreateIncident({
 		setLoading(true);
 
 		createIncident({
-			monitorIds,
+			monitorIds: monitorList.map((m) => m.id),
 			title,
 			message,
 			status,
@@ -143,8 +143,8 @@ export default function CreateIncident({
 									<Label>Affected Monitors</Label>
 									<MonitorSelection
 										monitors={monitors}
-										value={monitorIds}
-										setValue={setMonitorIds}
+										value={monitorList}
+										setValue={setMonitorList}
 										min={1}
 									/>
 								</div>
@@ -264,8 +264,8 @@ export default function CreateIncident({
 									<Label>Affected Monitors</Label>
 									<MonitorSelection
 										monitors={monitors}
-										value={monitorIds}
-										setValue={setMonitorIds}
+										value={monitorList}
+										setValue={setMonitorList}
 									/>
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">

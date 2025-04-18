@@ -88,9 +88,7 @@ export default function EditIncident({
 	const isDesktop = useMediaQuery("(min-width: 768px)");
 	const [loading, setLoading] = useState(false);
 	const [title, setTitle] = useState(incident.title);
-	const [monitorIds, setMonitorIds] = useState(
-		incident.monitors.map((m) => m.id)
-	);
+	const [monitorList, setMonitorList] = useState<Omit<Monitor, "uptime">[]>(incident.monitors.map((m) => m));
 
 	async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -98,7 +96,7 @@ export default function EditIncident({
 
 		const res = await editIncident({
 			id: incident.id,
-			data: { title, monitors: monitorIds },
+			data: { title, monitors: monitorList.map((m) => m.id) },
 		});
 
 		if (res?.serverError) {
@@ -149,8 +147,8 @@ export default function EditIncident({
 									<Label>Affected Monitors</Label>
 									<MonitorSelection
 										monitors={monitors}
-										setValue={setMonitorIds}
-										value={monitorIds}
+										value={monitorList}
+										setValue={setMonitorList}
 										min={1}
 									/>
 								</div>
@@ -201,6 +199,15 @@ export default function EditIncident({
 											setTitle(e.target.value)
 										}
 										disabled={loading}
+									/>
+								</div>
+								<div className="flex flex-col gap-2 items-start w-full">
+									<Label>Affected Monitors</Label>
+									<MonitorSelection
+										monitors={monitors}
+										value={monitorList}
+										setValue={setMonitorList}
+										min={1}
 									/>
 								</div>
 							</div>

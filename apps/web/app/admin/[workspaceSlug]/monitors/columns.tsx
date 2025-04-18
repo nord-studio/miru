@@ -132,6 +132,7 @@ export const columns: ColumnDef<MonitorRow>[] = [
 		cell: ({ row }) => {
 			const monitor: Omit<Monitor, "uptime"> = {
 				id: row.original.id,
+				workspaceId: row.original.workspaceId,
 				name: row.original.name,
 				url: row.original.url,
 				type: row.original.type,

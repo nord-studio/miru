@@ -38,8 +38,8 @@ services:
       - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
       - DATABASE_SSL=false
       - BETTER_AUTH_SECRET=secret
-      - APP_DOMAIN=localhost
-      - MONITOR_URL=http://localhost:8080
+      - APP_DOMAIN=mini:3000
+      - MONITOR_URL=http://monitor:8080
       - ENABLE_EMAIL=
       - SMTP_HOST=
       - SMTP_PORT=

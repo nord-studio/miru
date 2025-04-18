@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 function Drawer({
 	...props
 }: React.ComponentProps<typeof DrawerPrimitive.Root>) {
-	return <DrawerPrimitive.Root data-slot="drawer" {...props} />;
+	return <DrawerPrimitive.Root data-slot="drawer" shouldScaleBackground={true} {...props} />;
 }
 
 function DrawerTrigger({
@@ -123,8 +123,8 @@ function DrawerDescription({
 
 export {
 	Drawer,
-	
-	
+
+
 	DrawerTrigger,
 	DrawerClose,
 	DrawerContent,

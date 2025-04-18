@@ -13,7 +13,6 @@ import { redirect } from "next/navigation";
 
 export interface MonitorRow extends Monitor {
 	uptime: number;
-	workspaceId: string;
 }
 
 export default async function MonitorsPage({
