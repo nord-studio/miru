@@ -16,7 +16,7 @@ const docsOptions: DocsLayoutProps = {
     },
     {
       text: "Need help?",
-      url: "https://tygr.dev/discord",
+      url: "https://nordstud.io/discord",
       active: "url",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
