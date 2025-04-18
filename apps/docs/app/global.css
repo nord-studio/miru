@@ -7,6 +7,20 @@
 	--font-sans: var(--font-inter);
 	--font-display: var(--font-manrope);
 	--font-mono: var(--font-jetbrains-mono);
+
+	@keyframes shimmer {
+		0%,
+		90%,
+		100% {
+			background-position: calc(-100% - var(--shimmer-width)) 0;
+		}
+		30%,
+		60% {
+			background-position: calc(100% + var(--shimmer-width)) 0;
+		}
+	}
+
+	--animate-shimmer: shimmer 8s infinite;
 }
 
 @source '../node_modules/fumadocs-ui/dist/**/*.js';

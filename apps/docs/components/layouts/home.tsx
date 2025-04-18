@@ -60,7 +60,7 @@ export function HomeLayout(
       <main
         id="nd-home-layout"
         {...rest}
-        className={cn('flex flex-1 flex-col pt-14', rest.className)}
+        className={cn('flex flex-col w-full h-full flex-1 items-center pt-10 sm:pt-8', rest.className)}
       >
         {slot(
           nav,
