@@ -12,249 +12,129 @@ Miru is designed to be local-first, meaning it can be run entirely on your own s
 
 ## Installation
 
-There are multiple ways you can install and setup your own Miru instance. This installation guide ranks from easiest methods to more advanced methods.
+There are multiple ways you can install and setup your own Miru instance. The cards below rank the installation methods from easiest to hardest.
 
-### Docker Compose
+import { ScrollText } from "lucide-react";
+import { Docker } from "@/components/icons";
 
-By far, the easiest way to get started with Miru is to use Docker Compose. The Miru repository comes with a [`docker-compose.yml`](https://github.com/nord-studio/miru/blob/main/docker-compose.yml) file that you can use as a template.
+<Cards>
+	<Card
+		icon={<ScrollText />}
+		title="Docker Compose"
+		description="Learn how to run Miru using Docker Compose."
+		href="/docs/install/docker-compose"
+	/>
+	<Card
+		icon={<Docker />}
+		title="Docker"
+		description="Learn how to run Miru using Docker."
+		href="/docs/install/docker"
+	/>
+</Cards>
 
-To get started, follow the these steps:
+## Configuration
 
-<Steps>
-<Step>
-Create a new `docker-compose.yml` file:
+Please find a list of all the environment variables that can be set in the `.env` file to configure your Miru instance.
 
-<Tabs items={["amd64", "arm64"]}>
-
-<Tab value="amd64">
-
-```yml
-volumes:
-    database:
-
-services:
-    database:
-        container_name: database
-        image: postgres:17.3
-        ports:
-            - "5432:5432"
-        volumes:
-            - database:/var/lib/postgresql/data
-        environment:
-            POSTGRES_PASSWORD: VerySecurePassword123
-            POSTGRES_USER: miru
-            POSTGRES_DB: miru
-
-    monitor:
-        container_name: monitor
-        image: ghcr.io/nord-studio/miru/monitor:latest
-        ports:
-            - "8080:8080"
-        environment:
-            - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
-            - DATABASE_SSL=false
-        depends_on:
-            - database
-            - web
-
-    web:
-        container_name: web
-        image: ghcr.io/nord-studio/miru/web:latest
-        ports:
-            - "3000:3000"
-        environment:
-            - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
-            - DATABASE_SSL=false
-            - BETTER_AUTH_SECRET=secret
-            - APP_DOMAIN=http://localhost:3000
-            - MONITOR_URL=http://localhost:8080
-            - ENABLE_EMAIL=
-            - SMTP_HOST=
-            - SMTP_PORT=
-            - SMTP_SECURE=
-            - SMTP_USER=
-            - SMTP_PASSWORD=
-            - SMTP_FROM=
-        depends_on:
-            - database
-```
-
-</Tab>
-
-<Tab value="arm64">
-
-```yml
-volumes:
-    database:
-
-services:
-    database:
-        container_name: database
-        image: postgres:17.3
-        ports:
-            - "5432:5432"
-        volumes:
-            - database:/var/lib/postgresql/data
-        environment:
-            POSTGRES_PASSWORD: VerySecurePassword123
-            POSTGRES_USER: miru
-            POSTGRES_DB: miru
-
-    monitor:
-        container_name: monitor
-        image: ghcr.io/nord-studio/miru/monitor:latest-arm64
-        ports:
-            - "8080:8080"
-        environment:
-            - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
-            - DATABASE_SSL=false
-        depends_on:
-            - database
-            - web
-
-    web:
-        container_name: web
-        image: ghcr.io/nord-studio/miru/web:latest-arm64
-        ports:
-            - "3000:3000"
-        environment:
-            - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
-            - DATABASE_SSL=false
-            - BETTER_AUTH_SECRET=secret
-            - APP_DOMAIN=http://localhost:3000
-            - MONITOR_URL=http://localhost:8080
-            - ENABLE_EMAIL=
-            - SMTP_HOST=
-            - SMTP_PORT=
-            - SMTP_SECURE=
-            - SMTP_USER=
-            - SMTP_PASSWORD=
-            - SMTP_FROM=
-        depends_on:
-            - database
-```
-
-</Tab>
-
-</Tabs>
-
-</Step>
-
-<Step>
-Run the following command to spin up the containers:
-
-```bash
-docker compose up -d
-```
-
-</Step>
-
-<Step>
-Navigate to [localhost:3000](http://localhost:3000) in your browser to access the Miru dashboard. You should see the welcome screen as seen below.
-![Welcome Screen](/screenshots/welcome.png)
-</Step>
-</Steps>
-
-### Docker
-
-The easiest way to get started with Miru is to use Docker. You can run the following steps to get started:
-
-<Steps>
-
-<Step>
-Create a new directory and navigate to it:
-
-```bash
-mkdir miru
-cd miru
-```
-
-</Step>
-
-<Step>
-Create an `.env` file to store your Miru instance secrets.
-
-```sh
-# Database Configuration
-POSTGRES_PASSWORD=VerySecurePassword123
-POSTGRES_USER=miru
-POSTGRES_DB=miru
-
-# Database Connection Settings
-DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
-DATABASE_SSL=false
-
-# JWT Secret
-BETTER_AUTH_SECRET=
-
-# URL Settings
-APP_DOMAIN=localhost
-MONITOR_URL=http://localhost:8080
-
-# If you must verify your email before logging in
-EMAIL_VERIFICATION=true
-
-# SMTP Settings
-ENABLE_EMAIL=true
-SMTP_HOST=smtp.useplunk.com
-SMTP_PORT=465
-SMTP_SECURE=true
-SMTP_USER=plunk
-SMTP_PASSWORD=
-SMTP_FROM=hello@nordstud.io
-```
-
-</Step>
-
-<Step>
-Create a Docker network:
-
-```bash
-docker network create miru
-```
-
-</Step>
-
-<Step>
-Create and run the database container:
-
-<Callout title="Note" type="warn">
-	It is important that the database is started before the Miru containers as
-	they depend on it.
+<Callout title="Warning" type="warn">
+	If any values inside the `.env` file do **not** match their type, you may
+	experience errors or even crashes.
 </Callout>
 
-```bash
-docker run -d --name database --network=miru --env-file ./.env -v ./database:/var/lib/postgresql/data -p 5432:5432 postgres:17.3
-```
+<TypeTable
+	type={{
+		DATABASE_URL: {
+			description:
+				"The shared database URL for the web and monitor containers.",
+			type: "string",
+			required: true,
+		},
+		DATABASE_SSL: {
+			description: "Whether to use SSL when connecting to the database.",
+			type: "'true' | 'false'",
+			required: false,
+			default: "'false'",
+		},
+		BETTER_AUTH_SECRET: {
+			description:
+				"Random value used by better-auth package for encryption and generating hashes.",
+			type: "string",
+			required: true,
+		},
+		APP_DOMAIN: {
+			description:
+				"The domain of your Miru instance. This is used for generating links throughout the app.",
+			type: "string",
+			required: true,
+			default: "'localhost'",
+		},
+		MONITOR_URL: {
+			description:
+				"The URL of the monitor instance. This is used by the web container to send requests to the monitor's API.",
+			required: true,
+			type: "string",
+			default: "'http://localhost:8080'",
+		},
+		EMAIL_VERIFICATION: {
+			description:
+				"Whether users are required to verify their email before logging in.",
+			type: "'true' | 'false'",
+			default: "'true'",
+		},
+		ENABLE_EMAIL: {
+			description: "Whether to enable email notifications on Miru.",
+			type: "'true' | 'false'",
+			default: "'true'",
+		},
+		SMTP_HOST: {
+			description: "The SMTP host to use for sending emails.",
+			type: "string",
+		},
+		SMTP_PORT: {
+			description: "The SMTP port to use for sending emails.",
+			type: "'465' | '587'",
+		},
+		SMTP_SECURE: {
+			description:
+				"Whether to use SSL when connecting to the SMTP server.",
+			type: "'true' | 'false'",
+		},
+		SMTP_USER: {
+			description: "The SMTP username to use for sending emails.",
+			type: "string",
+		},
+		SMTP_PASSWORD: {
+			description: "The SMTP password to use for sending emails.",
+			type: "string",
+		},
+		SMTP_FROM: {
+			description: "The email address to use as the sender for emails.",
+			type: "string",
+		},
+	}}
+/>
 
-</Step>
+## Support us
 
-<Step>
-Create and run the Miru dashboard container:
+Miru is an open-source project and is maintained by a small team of developers at [Nord Studio](https://nordstud.io). If you like Miru and want to support us, please consider the actions below:
 
-<Tabs items={["amd64", "arm64"]}>
-<Tab value="amd64">
-```bash
-docker run -d --name web --network=miru --env-file ./.env -p 3000:3000 ghcr.io/nord-studio/miru/web:latest ;
-docker run -d --name monitor --network=miru --env-file ./.env -p 8080:8080 ghcr.io/nord-studio/miru/monitor:latest 
-```
-</Tab>
+import { Star, Heart } from "lucide-react";
 
-<Tab value="arm64">
-```bash
-docker run -d --name web --network=miru --env-file ./.env -p 3000:3000 ghcr.io/nord-studio/miru/web:latest-arm64 ;
-docker run -d --name monitor --network=miru --env-file ./.env -p 8080:8080 ghcr.io/nord-studio/miru/monitor:latest-arm64 
-```
-</Tab>
-</Tabs>
+<Cards>
+	<Card
+		icon={<Star />}
+		title="Star us!"
+		description="Give the repo a star to show your support!"
+		href="https://github.com/nord-studio/miru"
+	/>
+	<Card
+		icon={<Heart />}
+		title="Sponsor us!"
+		description="Sponsor us on GitHub to help us keep the lights on."
+		href="https://github.com/sponsors/tygrdotdev"
+	/>
+</Cards>
 
-</Step>
+## Need Help?
 
-<Step>
-Navigate to [localhost:3000](http://localhost:3000) in your browser to access the Miru dashboard. You should see the welcome screen as seen below.
-
-![Welcome Screen](/screenshots/welcome.png)
-
-</Step>
-
-</Steps>
+If you have any questions or need help with Miru, feel free to reach out to us on [Discord](https://nordstud.io/discord) or via [GitHub Discussions](https://github.com/nord-studio/miru/discussions).

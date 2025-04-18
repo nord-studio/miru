@@ -1,0 +1,151 @@
+---
+title: Docker Compose
+description: This guide shows you the steps to deploy a self-hosted instance of Miru using Docker Compose.
+---
+
+## Prerequisites
+
+Before we start, you need to make sure you have a VPS or on-prem machine with:
+
+-   2 vCPUs
+-   2GB of RAM
+-   [Docker](https://docs.docker.com/get-started/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
+
+## Installation
+
+By far, the easiest way to get started with Miru is to use Docker Compose. The Miru repository comes with a [`docker-compose.yml`](https://github.com/nord-studio/miru/blob/main/docker-compose.yml) file that you can use as a template.
+
+<Steps>
+<Step> 
+Create a new `docker-compose.yml` file:
+
+<Tabs groupId="arch" items={["amd64", "arm64"]}>
+
+<Tab value="amd64">
+
+```yml
+volumes:
+    database:
+
+services:
+    database:
+        container_name: database
+        image: postgres:17.3
+        ports:
+            - "5432:5432"
+        volumes:
+            - database:/var/lib/postgresql/data
+        environment:
+            POSTGRES_PASSWORD: VerySecurePassword123
+            POSTGRES_USER: miru
+            POSTGRES_DB: miru
+
+    monitor:
+        container_name: monitor
+        image: ghcr.io/nord-studio/miru/monitor:latest
+        ports:
+            - "8080:8080"
+        environment:
+            - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
+            - DATABASE_SSL=false
+        depends_on:
+            - database
+            - web
+
+    web:
+        container_name: web
+        image: ghcr.io/nord-studio/miru/web:latest
+        ports:
+            - "3000:3000"
+        environment:
+            - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
+            - DATABASE_SSL=false
+            - BETTER_AUTH_SECRET=secret
+            - APP_DOMAIN=http://localhost:3000
+            - MONITOR_URL=http://localhost:8080
+            - ENABLE_EMAIL=
+            - SMTP_HOST=
+            - SMTP_PORT=
+            - SMTP_SECURE=
+            - SMTP_USER=
+            - SMTP_PASSWORD=
+            - SMTP_FROM=
+        depends_on:
+            - database
+```
+
+</Tab>
+
+<Tab value="arm64">
+
+```yml
+volumes:
+    database:
+
+services:
+    database:
+        container_name: database
+        image: postgres:17.3
+        ports:
+            - "5432:5432"
+        volumes:
+            - database:/var/lib/postgresql/data
+        environment:
+            POSTGRES_PASSWORD: VerySecurePassword123
+            POSTGRES_USER: miru
+            POSTGRES_DB: miru
+
+    monitor:
+        container_name: monitor
+        image: ghcr.io/nord-studio/miru/monitor:latest-arm64
+        ports:
+            - "8080:8080"
+        environment:
+            - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
+            - DATABASE_SSL=false
+        depends_on:
+            - database
+            - web
+
+    web:
+        container_name: web
+        image: ghcr.io/nord-studio/miru/web:latest-arm64
+        ports:
+            - "3000:3000"
+        environment:
+            - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
+            - DATABASE_SSL=false
+            - BETTER_AUTH_SECRET=secret
+            - APP_DOMAIN=http://localhost:3000
+            - MONITOR_URL=http://localhost:8080
+            - ENABLE_EMAIL=
+            - SMTP_HOST=
+            - SMTP_PORT=
+            - SMTP_SECURE=
+            - SMTP_USER=
+            - SMTP_PASSWORD=
+            - SMTP_FROM=
+        depends_on:
+            - database
+```
+
+</Tab>
+
+</Tabs>
+
+</Step>
+
+<Step>
+Run the following command to spin up the containers:
+
+```bash
+docker compose up -d
+```
+
+</Step>
+
+<Step>
+Navigate to your servers IP on port `3000` in your browser to access the Miru dashboard. You should see the welcome screen as seen below.
+![Welcome Screen](/screenshots/welcome.png)
+</Step>
+</Steps>
