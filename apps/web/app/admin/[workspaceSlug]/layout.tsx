@@ -39,9 +39,9 @@ export default async function DashboardLayout({
 
 	return (
 		<>
-			<div className="flex flex-col w-full px-4 sm:px-6 py-2 sm:py-4">
+			<div className="flex flex-col w-full min-h-screen px-4 sm:px-6 py-2 sm:py-4">
 				<Navbar workspaceSlug={workspaceSlug} />
-				<div className="flex flex-col md:flex-row gap-8 w-full py-4">
+				<div className="flex flex-col md:flex-row gap-8 h-screen-no-nav w-full py-4">
 					{children}
 				</div>
 			</div>
