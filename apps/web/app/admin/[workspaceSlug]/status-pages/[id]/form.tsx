@@ -7,21 +7,42 @@ import { Label } from "@/components/ui/label";
 import { Sortable, SortableDragHandle, SortableItem } from "@/components/ui/sortable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../tabs";
 import { Monitor } from "@/types/monitor";
-import { GripVertical } from "lucide-react";
+import { CircleCheck, FileQuestion, GripVertical } from "lucide-react";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
-import { editStatusPage } from "@/components/status-pages/actions";
+import { editStatusPage, removeLogo, uploadLogo } from "@/components/status-pages/actions";
 import { toast } from "sonner";
 import { StatusPageWithMonitorsExtended } from "@/types/status-pages";
 import { Workspace } from "@/types/workspace";
+import { Skeleton } from "@/components/ui/skeleton";
+import * as RadioGroup from "@radix-ui/react-radio-group";
+import { cn, MAX_FILE_SIZE } from "@/lib/utils";
+import Image from "next/image"
+import ColorPicker from "@/components/status-pages/color-picker";
+import Color, { ColorInstance } from "color";
+import { Switch } from "@/components/ui/switch";
 
-export default function EditStatusPageForm({ existing, monitors, workspace }: { existing: StatusPageWithMonitorsExtended, monitors: Omit<Monitor, "uptime">[], workspace: Workspace }) {
+export default function EditStatusPageForm({ existing, monitors, workspace, appDomain }: { existing: StatusPageWithMonitorsExtended, monitors: Omit<Monitor, "uptime">[], workspace: Workspace, appDomain: string }) {
 	const [loading, setLoading] = React.useState(false);
+
 	const [name, setName] = React.useState(existing.name);
+	const [description, setDescription] = React.useState(existing.description ?? "");
 	const [root, setRoot] = React.useState(existing.root);
 	const [domain, setDomain] = React.useState(existing.domain ?? "");
+	const [logo, setLogo] = React.useState(existing.logo ?? "");
+	const [darkLogo, setDarkLogo] = React.useState(existing.darkLogo ?? "");
 	const [monitorList, setMonitorList] = React.useState<Omit<Monitor, "uptime">[]>(existing.statusPageMonitors.map((m) => m.monitor));
+	const [design, setDesign] = React.useState(existing.design ?? "simple");
+	const [forceIsLight, setForceIsLight] = React.useState(existing.forceIsLight ?? false);
+
+	const [brandColor, setBrandColor] = React.useState<ColorInstance>(Color(existing.brandColor ?? "#5865F2"));
+
+	const [mounted, setMounted] = React.useState(false);
+
+	React.useEffect(() => {
+		setMounted(true);
+	}, []);
 
 	async function onSubmit() {
 		setLoading(true);
@@ -35,7 +56,11 @@ export default function EditStatusPageForm({ existing, monitors, workspace }: { 
 			enabled: true,
 			root: root,
 			domain: domain,
-			monitorIds: monitorList.map((m) => m.id)
+			monitorIds: monitorList.map((m) => m.id),
+			design: design,
+			brandColor: brandColor.hex(),
+			forceIsLight: forceIsLight,
+			description: description
 		}).then((res) => {
 			if (res?.validationErrors) {
 				toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
@@ -66,68 +91,192 @@ export default function EditStatusPageForm({ existing, monitors, workspace }: { 
 		setLoading(false)
 	}
 
+	const logoInputRef = React.useRef<HTMLInputElement>(null);
+	const logoDarkInputRef = React.useRef<HTMLInputElement>(null);
+
+	const upload = async (file: FileList | null, dark: boolean) => {
+		if (!file || file.length === 0) {
+			return;
+		}
+
+		if (file[0].size > MAX_FILE_SIZE) {
+			return toast.error("Please upload a file smaller than 12MB");
+		}
+
+		setLoading(true);
+		const t = toast.loading("Uploading logo...");
+
+		const formData = new FormData();
+		formData.append("file", file[0]);
+		formData.append("id", existing.id);
+		if (dark) {
+			formData.append("dark", "true");
+		}
+
+		const res = await uploadLogo(formData);
+
+		if (res?.validationErrors) {
+			setLoading(false);
+			return toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
+				description: res.validationErrors[Object.keys(res.validationErrors)[0] as keyof typeof res.validationErrors]?.[0],
+				id: t
+			});
+		}
+
+		if (res?.data?.error) {
+			setLoading(false);
+			return toast.error("Something went wrong!", {
+				description: res.data.message,
+				id: t
+			});
+		}
+
+		if (res?.serverError) {
+			setLoading(false);
+			return toast.error("Something went wrong!", {
+				description: res.serverError,
+				id: t
+			});
+		}
+
+		setLoading(false);
+		toast.success("Success!", {
+			description: res?.data?.message,
+			id: t
+		});
+
+		if (dark) {
+			setDarkLogo(res?.data?.id ?? "");
+		} else {
+			setLogo(res?.data?.id ?? "");
+		}
+	};
+
+	const remove = async (dark: boolean) => {
+		setLoading(true);
+
+		const t = toast.loading("Removing logo...");
+
+		const res = await removeLogo({ id: existing.id, dark });
+
+		if (res?.validationErrors) {
+			setLoading(false);
+			return toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
+				description: res.validationErrors[Object.keys(res.validationErrors)[0] as keyof typeof res.validationErrors]?.[0],
+				id: t
+			});
+		}
+
+		if (res?.data?.error) {
+			setLoading(false);
+			return toast.error("Something went wrong!", {
+				description: res.data.message,
+				id: t
+			});
+		}
+
+		if (res?.serverError) {
+			setLoading(false);
+			return toast.error("Something went wrong!", {
+				description: res.serverError,
+				id: t
+			});
+		}
+
+		setLoading(false);
+		toast.success("Success!", {
+			description: res?.data?.message,
+			id: t
+		});
+
+		if (dark) {
+			setDarkLogo("");
+		} else {
+			setLogo("");
+		}
+	};
+
 	return (
 		<>
-			<div className="flex flex-col items-start justify-center w-full gap-8">
-				<div className="flex flex-col gap-6 items-start w-full">
-					<div className="flex flex-col gap-2 items-start w-full">
-						<Label>Name</Label>
-						<Input
-							value={name}
-							onChange={(e) =>
-								setName(e.target.value)
-							}
-							placeholder="Nord Studio"
-							disabled={loading}
-						/>
-					</div>
-					<div className="flex flex-col gap-4 items-start w-full">
-						<Label>Root Domain</Label>
-						<div className="items-top flex space-x-2">
-							<Checkbox
-								checked={root}
-								onCheckedChange={(v) => setRoot(v === true ? true : false)}
-								disabled={loading}
-							/>
-							<div className="grid gap-1.5 leading-none">
-								<label
-									className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-								>
-									Use Root Domain?
-								</label>
-								<p className="text-sm text-muted-foreground">
-									Host this page on the same domain as your Miru instance.
-								</p>
-							</div>
-						</div>
-					</div>
-					{!root && (
-						<div className="flex flex-col gap-2 items-start w-full">
-							<Label>Domain / URL</Label>
-							<Input
-								placeholder="status.tygr.dev"
-								disabled={loading}
-								value={domain}
-								onChange={(e) =>
-									setDomain(e.target.value)
-								}
-							/>
-						</div>
-					)}
-				</div>
+			<div className="flex flex-col items-start justify-center w-full gap-8 pb-8">
 				<Tabs
-					defaultValue="monitors"
+					defaultValue="general"
 					className="w-full"
 				>
-					<TabsList>
+					<TabsList className="">
+						<TabsTrigger value="general">
+							General
+						</TabsTrigger>
 						<TabsTrigger value="monitors">
 							Monitors
 						</TabsTrigger>
-						<TabsTrigger value="advanced">Advanced</TabsTrigger>
+						<TabsTrigger value="branding">
+							Branding
+						</TabsTrigger>
 					</TabsList>
+					<TabsContent value="general">
+						<div className="flex flex-col gap-6 items-start w-full">
+							<div className="flex flex-col gap-0 items-start w-full">
+								<h2 className="text-xl font-semibold">General Information</h2>
+								<p className="text-neutral-500 dark:text-neutral-400 text-sm">Some general info about your status page.</p>
+							</div>
+							<div className="flex flex-col gap-6 items-start w-full">
+								<div className="flex flex-col gap-2 items-start w-full">
+									<Label>Name</Label>
+									<Input
+										value={name}
+										onChange={(e) =>
+											setName(e.target.value)
+										}
+										placeholder="Nord Studio"
+										disabled={loading}
+									/>
+									<p className="text-sm text-neutral-500 dark:text-nuetral-400">The name of your status page. This is used at the top of the page when a logo hasn't been uploaded.</p>
+								</div>
+								<div className="gap-2 flex flex-col items-start w-full">
+									<Label>Description</Label>
+									<Input placeholder={existing.description ?? ""} value={description} onChange={(e) => setDescription(e.target.value)} />
+									<p className="text-sm text-neutral-500 dark:text-nuetral-400">Provide your users information about this status page.</p>
+								</div>
+								<div className="flex flex-col gap-4 items-start w-full">
+									<Label>Root Domain</Label>
+									<div className="items-top flex space-x-2">
+										<Checkbox
+											checked={root}
+											onCheckedChange={(v) => setRoot(v === true ? true : false)}
+											disabled={loading}
+										/>
+										<div className="grid gap-1.5 leading-none">
+											<label
+												className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+											>
+												Use Root Domain?
+											</label>
+											<p className="text-sm text-muted-foreground">
+												Host this page on the same domain as your Miru instance.
+											</p>
+										</div>
+									</div>
+								</div>
+								{!root && (
+									<div className="flex flex-col gap-2 items-start w-full">
+										<Label>Domain / URL</Label>
+										<Input
+											placeholder="status.tygr.dev"
+											disabled={loading}
+											value={domain}
+											onChange={(e) =>
+												setDomain(e.target.value)
+											}
+										/>
+									</div>
+								)}
+							</div>
+						</div>
+					</TabsContent>
 					<TabsContent value="monitors">
-						<div className="flex flex-col gap-4 items-start w-full">
-							<div className="flex flex-col gap-1 items-start w-full">
+						<div className="flex flex-col gap-6 items-start w-full">
+							<div className="flex flex-col gap-0 items-start w-full">
 								<h2 className="text-xl font-semibold">Connected Monitors</h2>
 								<p className="text-neutral-500 dark:text-neutral-400 text-sm">Select the monitors you want to display on your status page. Change the order by using the right-side handle. Inactive monitors will not be shown on the page.</p>
 							</div>
@@ -155,44 +304,229 @@ export default function EditStatusPageForm({ existing, monitors, workspace }: { 
 											}}
 										>
 											<div className="w-full space-y-2 py-4">
-												{monitorList.map((field, index) => (
-													// TODO: Wait for mounted, add skeleton loader
-													<SortableItem key={field.id} value={field.id} asChild>
-														<div className="flex flex-row gap-2 items-center w-full py-2 pl-4 pr-2 border border-neutral-100 dark:border-neutral-800 rounded-md">
+												{mounted ? (
+													<>
+														{monitorList.map((field) => (
+															<SortableItem key={field.id} value={field.id} asChild>
+																<div className="flex flex-row gap-2 items-center w-full py-2 pl-4 pr-2 border rounded-md">
+																	<div className="flex flex-row gap-3 items-center w-full">
+																		<div className="flex items-center gap-2 truncate">
+																			<span className="truncate">{field.name}</span>
+																		</div>
+																		<div className="truncate text-muted-foreground">
+																			{field?.url}
+																		</div>
+																	</div>
+																	<SortableDragHandle
+																		variant="outline"
+																		size="icon"
+																		className="size-8 shrink-0"
+																		type="button"
+																		disabled={loading}
+																	>
+																		<GripVertical className="size-4" aria-hidden="true" />
+																	</SortableDragHandle>
+																</div>
+															</SortableItem>
+														))}
+													</>
+												) : (
+													<>
+														<div className="flex flex-row gap-2 items-center w-full h-[50px] py-2 pl-4 pr-2 border rounded-md">
 															<div className="flex flex-row gap-3 items-center w-full">
-																<div className="flex items-center gap-2 truncate">
-																	<span className="truncate">{field.name}</span>
-																</div>
-																<div className="truncate text-muted-foreground">
-																	{field?.url}
-																</div>
+																<Skeleton className="w-32 h-4" />
+																<Skeleton className="w-24 h-4" />
 															</div>
-															<SortableDragHandle
-																variant="outline"
-																size="icon"
-																className="size-8 shrink-0"
-																type="button"
-																disabled={loading}
-															>
+															<Button variant="outline" size="icon" className="size-8 shrink-0">
 																<GripVertical className="size-4" aria-hidden="true" />
-															</SortableDragHandle>
+															</Button>
 														</div>
-													</SortableItem>
-												))}
-											</div>
+														<div className="flex flex-row gap-2 items-center w-full h-[50px] py-2 pl-4 pr-2 border rounded-md">
+															<div className="flex flex-row gap-3 items-center w-full">
+																<Skeleton className="w-32 h-4" />
+																<Skeleton className="w-24 h-4" />
+															</div>
+															<Button variant="outline" size="icon" className="size-8 shrink-0">
+																<GripVertical className="size-4" aria-hidden="true" />
+															</Button>
+														</div>
+														<div className="flex flex-row gap-2 items-center w-full h-[50px] py-2 pl-4 pr-2 border rounded-md">
+															<div className="flex flex-row gap-3 items-center w-full">
+																<Skeleton className="w-32 h-4" />
+																<Skeleton className="w-24 h-4" />
+															</div>
+															<Button variant="outline" size="icon" className="size-8 shrink-0">
+																<GripVertical className="size-4" aria-hidden="true" />
+															</Button>
+														</div>
+													</>
+												)}
+											</div >
 										</Sortable>
 									</div>
 								</div>
 							</div>
 						</div>
 					</TabsContent>
-					<TabsContent value="advanced">
-						<div className="flex flex-col gap-4 items-start w-full">
-							<div className="flex flex-col gap-1 items-start w-full">
-								<h2 className="text-xl font-semibold">Advanced Settings</h2>
-								<p className="text-neutral-500 dark:text-neutral-400 text-sm">
-									Provide information about what your status page is for.
-								</p>
+					<TabsContent value="branding">
+						<div className="flex flex-col gap-8 items-start w-full">
+							<div className="flex flex-col gap-0 items-start w-full">
+								<h2 className="text-xl font-semibold">Branding</h2>
+								<p className="text-neutral-500 dark:text-neutral-400 text-sm">The branding on your status page.</p>
+							</div>
+							<div className="flex flex-col gap-4 items-start w-full">
+								<div className="flex flex-col gap-1">
+									<Label>Design</Label>
+									<p className="text-sm text-neutral-500 dark:text-neutral-400">The design your status page will use.</p>
+								</div>
+								<div className="flex flex-row gap-4 items-center w-full">
+									<RadioGroup.Root
+										className="max-w-md w-full flex flex-wrap gap-6"
+									>
+										<div className="flex flex-col gap-2 items-center">
+											<RadioGroup.Item
+												key="simple"
+												value="simple"
+												checked={design === "simple"}
+												onClick={() => setDesign("simple")}
+												className={cn(
+													"relative group ring-[1px] ring-border rounded py-2 px-3 text-start w-32 h-16",
+													"data-[state=checked]:ring-2 data-[state=checked]:ring-neutral-500 data-[state=checked]:bg-neutral-800 data-[state=checked]:dark:bg-neutral-200"
+												)}
+											>
+												<CircleCheck className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-6 w-6 text-primary fill-neutral-500 stroke-white group-data-[state=unchecked]:hidden" />
+											</RadioGroup.Item>
+											<span className="text-sm data-[checked=true]:font-semibold" data-checked={design === "simple"}>Simple</span>
+										</div>
+										<div className="flex flex-col gap-2 items-center">
+											<RadioGroup.Item
+												key="panda"
+												value="panda"
+												checked={design === "panda"}
+												onClick={() => setDesign("panda")}
+												className={cn(
+													"relative group ring-[1px] ring-border rounded text-start w-32 h-16",
+													"data-[state=checked]:ring-2 data-[state=checked]:ring-neutral-500 data-[state=checked]:opacity-100 opacity-80"
+												)}
+											>
+												<CircleCheck className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-6 w-6 text-primary fill-neutral-500 stroke-white group-data-[state=unchecked]:hidden" />
+												<div className="flex flex-col w-full h-full">
+													<div className="h-1/2 bg-neutral-800 dark:bg-neutral-200 border-b rounded-t" />
+												</div>
+											</RadioGroup.Item>
+											<span className="text-sm data-[checked=true]:font-semibold" data-checked={design === "panda"}>Panda</span>
+										</div>
+										<div className="flex flex-col gap-2 items-center">
+											<RadioGroup.Item
+												key="stormtrooper"
+												value="stormtrooper"
+												checked={design === "stormtrooper"}
+												onClick={() => setDesign("stormtrooper")}
+												className={cn(
+													"relative group ring-[1px] ring-border rounded text-start w-32 h-16",
+													"data-[state=checked]:ring-2 data-[state=checked]:ring-neutral-500 bg-neutral-200/80 data-[state=checked]:opacity-100 opacity-80"
+												)}
+											>
+												<CircleCheck className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-6 w-6 text-primary fill-neutral-500 stroke-white group-data-[state=unchecked]:hidden" />
+												<div className="flex flex-col w-full h-full">
+													<div className="h-1/2 bg-neutral-950/80 border-b rounded-t" />
+													<div className="absolute w-18 h-12 bg-neutral-100 border-x border-t border-black/10 dark:border-white/10 drop-shadow-2xl top-4 left-1/5 rounded-t-md" data-checked={design === "stormtrooper"} />
+												</div>
+											</RadioGroup.Item>
+											<span className="text-sm data-[checked=true]:font-semibold" data-checked={design === "stormtrooper"}>Stormtrooper</span>
+										</div>
+									</RadioGroup.Root>
+								</div>
+								<div className="flex flex-col gap-4 items-start w-full pt-2">
+									<div className="items-top flex space-x-2">
+										<Checkbox
+											checked={forceIsLight}
+											onCheckedChange={(v) => setForceIsLight(v === true ? true : false)}
+											disabled={loading}
+										/>
+										<div className="grid gap-1.5 leading-none">
+											<label
+												className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+											>
+												Force bright Mode?
+											</label>
+											<p className="text-sm text-muted-foreground">
+												Force the top half of the page to be bright, even if the brand color is dark.
+											</p>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div className="flex flex-col gap-4 items-start w-full">
+								<div className="flex flex-col gap-1">
+									<Label>Colors</Label>
+									<p className="text-sm text-neutral-500 dark:text-neutral-400">The colors your status page will use.</p>
+								</div>
+
+								<div className="flex flex-wrap gap-4">
+									<div className="flex flex-col gap-2 items-start">
+										<span className="text-sm text-neutral-500 dark:text-neutral-400">Brand Color</span>
+										<ColorPicker value={brandColor} setValue={setBrandColor} />
+									</div>
+								</div>
+							</div>
+							<div className="flex flex-col gap-4 items-start w-full">
+								<div className="flex flex-col gap-1">
+									<Label>Logo</Label>
+									<p className="text-sm text-neutral-500 dark:text-neutral-400">Upload a logo for your status page. This will be shown on the top left of the page.</p>
+								</div>
+								<div className="flex flex-row gap-4 items-center w-full">
+									{logo ? (
+										<Image src={`/api/assets/${logo}`} alt="Logo" width={128} height={128} />
+									) : (
+										<div className="max-w-32 max-h-32 w-32 h-32 border rounded-md gap-2 text-center flex flex-col items-center justify-center">
+											<FileQuestion className="text-neutral-500 dark:text-neutral-400" />
+											<p className="text-sm text-neutral-500 dark:text-neutral-400">No logo <br />uploaded</p>
+										</div>
+									)}
+									<div className="flex flex-col gap-2 items-start">
+										<input type="file" accept="image/png, image/jpeg, image/webp" id="logo" className="hidden" ref={logoInputRef} onChange={async (e) => await upload(e.target.files, false)} />
+										<Button disabled={loading} onClick={() => {
+											if (logoInputRef.current) {
+												logoInputRef.current.click();
+											}
+										}}>
+											Upload
+										</Button>
+										<Button variant="secondary" disabled={loading || !logo} onClick={async () => await remove(false)}>
+											Remove
+										</Button>
+									</div>
+								</div>
+							</div>
+							<div className="flex flex-col gap-4 items-start w-full">
+								<div className="flex flex-col gap-1">
+									<Label>Logo (dark mode)</Label>
+									<p className="text-sm text-neutral-500 dark:text-neutral-400">The logo to use when the status page is in dark mode. Applies to simple design only.</p>
+								</div>
+								<div className="flex flex-row gap-4 items-center w-full">
+									{darkLogo ? (
+										<Image src={`/api/assets/${darkLogo}`} alt="Logo" width={128} height={128} />
+									) : (
+										<div className="max-w-32 max-h-32 w-32 h-32 border rounded-md gap-2 text-center flex flex-col items-center justify-center">
+											<FileQuestion className="text-neutral-500 dark:text-neutral-400" />
+											<p className="text-sm text-neutral-500 dark:text-neutral-400">No logo <br />uploaded</p>
+										</div>
+									)}
+									<div className="flex flex-col gap-2 items-start">
+										<input type="file" accept="image/png, image/jpeg, image/webp" className="hidden" ref={logoDarkInputRef} onChange={async (e) => await upload(e.target.files, true)} />
+										<Button disabled={loading} onClick={() => {
+											if (logoDarkInputRef.current) {
+												logoDarkInputRef.current.click();
+											}
+										}}>
+											Upload
+										</Button>
+										<Button variant="secondary" disabled={loading || !darkLogo} onClick={async () => await remove(true)}>
+											Remove
+										</Button>
+									</div>
+								</div>
 							</div>
 						</div>
 					</TabsContent>

@@ -78,6 +78,13 @@
       "when": 1743037244529,
       "tag": "0010_magenta_demogoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1745193619053,
+      "tag": "0011_quick_mandrill",
+      "breakpoints": true
     }
   ]
 }

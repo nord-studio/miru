@@ -17,6 +17,20 @@ export const statusPages = pgTable("status_pages", {
 	root: boolean("root").notNull().default(false),
 	/// The domain of the status page
 	domain: text("domain").unique(),
+	/// Description of the status page
+	description: text("description"),
+	/// The ID of the status page logo in S3 bucket
+	logo: text("logo"),
+	/// The ID of the status page dark logo in S3 bucket
+	darkLogo: text("dark_logo"),
+	/// The ID of the status page favicon in S3 bucket
+	favicon: text("favicon"),
+	/// The brand color of the status page
+	brandColor: text("brand_color").default("#000000").notNull(),
+	/// The design of the status page
+	design: text("design", { enum: ["simple", "panda", "stormtrooper"] }).default("simple").notNull(),
+	/// If the status page should force light mode (panda design only)
+	forceIsLight: boolean("force_is_light").default(false).notNull(),
 });
 
 export const statusPageMonitors = pgTable("status_page_monitors", {
@@ -33,16 +47,6 @@ export const statusPageMonitors = pgTable("status_page_monitors", {
 	/// If the number of pings should be shown
 	showPings: boolean("show_pings").notNull().default(true),
 });
-
-// TODO: Implement status page branding with S3
-// export const statusPageBranding = pgTable("status_page_branding", {
-// 	/// The status page id the branding belongs to
-// 	id: varchar("status_page_id", { length: 16 }).primaryKey().references(() => statusPages.id, { onDelete: "cascade" }),
-// 	/// The logo of the status page
-// 	logo: jsonb("logo"),
-// 	/// The favicon of the status page
-// 	favicon: jsonb("favicon"),
-// });
 
 export const statusPageRelations = relations(statusPages, ({ many }) => ({
 	statusPageMonitors: many(statusPageMonitors)

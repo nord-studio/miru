@@ -6,6 +6,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import ResponsiveToaster from "@/components/responsive-toaster";
 
 import "./globals.css";
+import "react-image-crop/dist/ReactCrop.css";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -35,7 +36,7 @@ export default function RootLayout({
 			<body
 				className={`${inter.variable} ${manrope.variable} antialiased bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-sans flex flex-col items-center min-h-screen`}
 			>
-				<div className="flex flex-col min-h-screen w-full max-w-[1200px]" data-vaul-drawer-wrapper="">
+				<div className="flex flex-col min-h-screen w-full" data-vaul-drawer-wrapper="">
 					<ThemeProvider
 						attribute="class"
 						defaultTheme="system"

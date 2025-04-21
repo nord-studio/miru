@@ -20,17 +20,17 @@ const StatusBannerVariant = cva(
 	}
 );
 
-export function StatusIcon({ variant }: { variant: VariantProps<typeof StatusBannerVariant>["variant"] }) {
+export function StatusIcon({ variant, className }: { variant: VariantProps<typeof StatusBannerVariant>["variant"], className?: string }) {
 	if (variant === "degraded") {
-		return <AlertTriangleIcon className="h-5 w-5 text-background" />;
+		return <AlertTriangleIcon className={cn("h-5 w-5 text-background", className)} />;
 	}
 	if (variant === "maintenance") {
-		return <Hammer className="h-5 w-5 text-background" />;
+		return <Hammer className={cn("h-5 w-5 text-background", className)} />;
 	}
 	if (variant === "down") {
-		return <Minus className="h-5 w-5 text-background" />;
+		return <Minus className={cn("h-5 w-5 text-background", className)} />;
 	}
-	return <Check className="h-5 w-5 text-background" />;
+	return <Check className={cn("h-5 w-5 text-background", className)} />;
 }
 
 function StatusBanner({
@@ -69,4 +69,42 @@ function StatusBanner({
 	);
 }
 
-export { StatusBanner, StatusBannerVariant };
+function MonoStatusBanner({
+	isLight = false,
+	className,
+	variant = "operational",
+	...props
+}: React.ComponentProps<"div"> & VariantProps<typeof StatusBannerVariant> & (
+	{ isLight?: boolean }
+)) {
+	return (
+		<div
+			className={cn(
+				"flex items-center gap-3 rounded-lg border p-3",
+				isLight ? "bg-neutral-100 text-neutral-800 border-neutral-900/10" : "bg-neutral-900 text-neutral-100 border-neutral-800",
+				className
+			)} {...props}
+		>
+			<span className={cn(
+				"rounded-full border p-1.5 w-fit",
+				isLight ? "border-neutral-200 bg-neutral-100" : "border-neutral-800",
+				className
+			)}>
+				<StatusIcon variant={variant} className={isLight ? "text-neutral-900" : "text-neutral-100 border-neutral-800"} />
+			</span>
+			<div className="flex w-full flex-wrap items-center justify-between gap-4">
+				<h2 className="font-semibold text-xl">
+					{variant === "operational" && "All Systems Operational"}
+					{variant === "down" && "All Systems Down"}
+					{variant === "degraded" && "Degraded Performance"}
+					{variant === "maintenance" && "Under Maintenance"}
+				</h2>
+				<p className="text-xs">
+					<DateTimeTooltip date={new Date()} />
+				</p>
+			</div>
+		</div>
+	);
+}
+
+export { StatusBanner, MonoStatusBanner, StatusBannerVariant };

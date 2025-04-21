@@ -22,3 +22,5 @@ export function generateId(): string {
   }
   return result;
 }
+
+export const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE!) ?? 12582912

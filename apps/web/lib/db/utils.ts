@@ -79,7 +79,7 @@ export async function getSingleMonitorLatencyPercentiles(monitorId: string, days
 		percentile_cont(0.95) WITHIN GROUP (ORDER BY latency) AS p95,
 		percentile_cont(0.99) WITHIN GROUP (ORDER BY latency) AS p99
 	FROM pings 
-	WHERE monitor_id = '${monitorId}' AND created_at >= NOW() - INTERVAL '${days} days';`);
+	WHERE monitor_id = '${monitorId}' AND success = true AND created_at >= NOW() - INTERVAL '${days} days';`);
 
 	const data = await db.execute(query);
 

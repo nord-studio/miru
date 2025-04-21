@@ -59,8 +59,15 @@ export default async function StatusPageMonitor({ monitor }: { monitor: Monitor 
 					</span>
 				</div>
 				<div className="relative w-full h-full">
-					<div className="flex flex-row gap-px sm:gap-0.5">
-						{days.reverse().map((v, i) => {
+					<div className="sm:flex flex-row gap-px sm:gap-0.5 hidden">
+						{days.toReversed().map((v, i) => {
+							return (
+								<StatusMonitorBar key={i} data={v} />
+							)
+						})}
+					</div>
+					<div className="flex-row gap-px sm:gap-0.5 flex sm:hidden">
+						{days.slice(0, 30).toReversed().map((v, i) => {
 							return (
 								<StatusMonitorBar key={i} data={v} />
 							)
@@ -68,7 +75,7 @@ export default async function StatusPageMonitor({ monitor }: { monitor: Monitor 
 					</div>
 				</div>
 				<div className="flex flex-row gap-2 items-center justify-between w-full">
-					<p className="text-sm">45 days ago</p>
+					<p className="text-sm before:content-['30'] sm:before:content-['45']">{" "} days ago</p>
 					<p className="text-sm">Today</p>
 				</div>
 			</div>
@@ -83,7 +90,7 @@ const StatusMonitorBarVariants = cva("h-10 rounded-[4px] flex-1", {
 			degraded: "bg-yellow-500/80 dark:bg-yellow-400/80",
 			down: "bg-red-500/80 dark:bg-red-400/80",
 			maintenance: "bg-blue-500/80 dark:bg-blue-400/80",
-			empty: "bg-neutral-100 dark:bg-neutral-800"
+			empty: "bg-neutral-200 dark:bg-neutral-800"
 		}
 	},
 	defaultVariants: {

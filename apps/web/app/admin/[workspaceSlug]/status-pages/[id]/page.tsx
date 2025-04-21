@@ -1,10 +1,8 @@
 import EditStatusPageForm from "@/app/admin/[workspaceSlug]/status-pages/[id]/form";
-import { Button } from "@/components/ui/button";
 import db from "@/lib/db";
 import { monitors, statusPages, workspaces } from "@/lib/db/schema";
 import { StatusPageWithMonitorsExtended } from "@/types/status-pages";
 import { eq } from "drizzle-orm"
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export default async function CreateStatusPage({
@@ -42,6 +40,8 @@ export default async function CreateStatusPage({
 		return notFound();
 	}
 
+	const domain = process.env.APP_DOMAIN ?? "localhost:3000";
+
 	return (
 		<>
 			<div className="flex flex-col w-full h-full gap-8">
@@ -56,8 +56,7 @@ export default async function CreateStatusPage({
 						</p>
 					</div>
 				</div>
-
-				<EditStatusPageForm existing={statusPage} monitors={mons} workspace={workspace} />
+				<EditStatusPageForm existing={statusPage} monitors={mons} workspace={workspace} appDomain={domain} />
 			</div >
 		</>
 	)

@@ -1,5 +1,6 @@
 volumes:
   database:
+  minio:
 
 services:
   database:
@@ -13,6 +14,19 @@ services:
       POSTGRES_PASSWORD: VerySecurePassword123
       POSTGRES_USER: miru
       POSTGRES_DB: miru
+
+  minio:
+    container_name: minio
+    image: bitnami/minio
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - minio:/bitnami/minio/data
+    environment:
+      - MINIO_ROOT_USER=miru
+      - MINIO_ROOT_PASSWORD=VerySecurePassword
+      - MINIO_DEFAULT_BUCKETS=public
 
   monitor:
     container_name: monitor
@@ -34,6 +48,11 @@ services:
     environment:
       - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
       - DATABASE_SSL=false
+      - S3_ENDPOINT=127.0.0.1
+      - S3_PORT=9000
+      - S3_SECURE=false
+      - S3_ACCESS_KEY=
+      - S3_SECRET_KEY=
       - BETTER_AUTH_SECRET=secret
       - APP_DOMAIN=http://localhost:3000
       - MONITOR_URL=http://localhost:8080

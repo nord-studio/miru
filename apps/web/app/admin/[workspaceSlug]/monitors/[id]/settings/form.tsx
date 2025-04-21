@@ -114,16 +114,8 @@ export default function MonitorSingletonSettingsForm({
 					setBrokenWarning(false);
 				}}
 			/>
-			<form onSubmit={onSubmit} className="border rounded-lg">
-				<div className="px-6 pt-4 pb-2 flex flex-col items-start ">
-					<h2 className="font-bold text-2xl font-display">
-						General Information
-					</h2>
-					<span className="text-neutral-500 dark:text-neutral-400 text-sm">
-						The fundementals to a monitor and how Miru pings it.
-					</span>
-				</div>
-				<div className="flex flex-col px-6 py-4 gap-4">
+			<form onSubmit={onSubmit} className="py-2">
+				<div className="flex flex-col gap-4">
 					<div className="flex flex-col gap-2 items-start w-full">
 						<Label>Name</Label>
 						<Input
@@ -190,10 +182,8 @@ export default function MonitorSingletonSettingsForm({
 						</Select>
 					</div>
 				</div>
-				<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
-					<span className="text-neutral-400 dark:text-neutral-600 text-sm">
-						Note: This will not ping your monitor.
-					</span>
+				<div className="flex flex-row items-center justify-between gap-4 mt-8">
+					<div />
 					<div className="flex flex-row gap-2 items-center">
 						<Button
 							variant="outline"

@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
     "@radix-ui/react-icons/?(((\\w*)?/?)*)": {
       transform: '@radix-ui/react-icons/{{ matches.[1] }}/{{member}}'
     }
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "12mb"
+    }
   }
 };
 

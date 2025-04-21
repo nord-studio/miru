@@ -7,6 +7,13 @@ export interface StatusPage {
 	enabled: boolean;
 	root: boolean;
 	domain: string | null;
+	description: string | null;
+	logo: string | null;
+	darkLogo: string | null;
+	favicon: string | null;
+	brandColor: string | null;
+	design: "simple" | "panda" | "stormtrooper";
+	forceIsLight: boolean;
 }
 
 export interface StatusPageMonitor {

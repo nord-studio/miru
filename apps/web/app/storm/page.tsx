@@ -4,8 +4,6 @@ import { statusPages } from "@/lib/db/schema";
 import { user } from "@/lib/db/schema/auth";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
-import SimpleStatusPageDesign from "@/designs/simple";
-import PandaStatusPageDesign from "@/designs/panda";
 import StormtrooperStatusPageDesign from "@/designs/stormtrooper";
 
 export const dynamic = "force-dynamic";
@@ -70,15 +68,7 @@ export default async function Home() {
 
 	return (
 		<>
-			{statusPage.design === "simple" && (
-				<SimpleStatusPageDesign page={statusPage} />
-			)}
-			{statusPage.design === "panda" && (
-				<PandaStatusPageDesign page={statusPage} />
-			)}
-			{statusPage.design === "stormtrooper" && (
-				<StormtrooperStatusPageDesign page={statusPage} />
-			)}
+			<StormtrooperStatusPageDesign page={statusPage} />
 		</>
 	)
 }
