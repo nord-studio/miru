@@ -32,7 +32,6 @@ export default function StatusPageDropdown({
 	VariantProps<typeof buttonVariants>) {
 	const pathname = usePathname();
 	const [deleteOpen, setDeleteOpen] = React.useState(false);
-	const [editOpen, setEditOpen] = React.useState(false);
 	const [currentMember, setCurrentMember] = React.useState<WorkspaceMemberWithUser | null>(null);
 
 	React.useEffect(() => {
@@ -75,17 +74,12 @@ export default function StatusPageDropdown({
 					<DropdownMenuContent align="end">
 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
 						{RankedRoles[currentMember.role] >= RankedRoles.admin && (
-							<Link href={`/admin/${pathname.split("/")[2]}/status-pages/${statusPage.id}`}>
-								<DropdownMenuItem onClick={() => setEditOpen(true)}>
-									Edit
-								</DropdownMenuItem>
+							<Link
+								href={`/admin/${pathname.split("/")[2]}/status-pages/${statusPage.id}`}
+							>
+								<DropdownMenuItem>Details</DropdownMenuItem>
 							</Link>
 						)}
-						<Link
-							href={`/admin/${pathname.split("/")[2]}/status-pages/${statusPage.id}`}
-						>
-							<DropdownMenuItem>Details</DropdownMenuItem>
-						</Link>
 						<DropdownMenuItem
 							onClick={() => {
 								navigator.clipboard.writeText(statusPage.id);

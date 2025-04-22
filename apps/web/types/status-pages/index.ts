@@ -13,7 +13,7 @@ export interface StatusPage {
 	favicon: string | null;
 	brandColor: string | null;
 	design: "simple" | "panda" | "stormtrooper";
-	forceIsLight: boolean;
+	forcedTheme: "auto" | "light" | "dark";
 }
 
 export interface StatusPageMonitor {

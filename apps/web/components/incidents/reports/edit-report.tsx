@@ -82,7 +82,7 @@ export default function EditIncidentReport({ report }: {
 	if (!mounted)
 		return (
 			<>
-				<Button size="icon" variant="secondary">
+				<Button size="icon" variant="outline">
 					<Pencil />
 				</Button>
 			</>
@@ -93,7 +93,7 @@ export default function EditIncidentReport({ report }: {
 			<>
 				<Dialog open={open} onOpenChange={setOpen}>
 					<DialogTrigger asChild>
-						<Button size="icon" variant="secondary">
+						<Button size="icon" variant="outline">
 							<Pencil />
 						</Button>
 					</DialogTrigger>

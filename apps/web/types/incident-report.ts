@@ -7,7 +7,7 @@ export enum IncidentReportStatus {
 
 export interface IncidentReport {
 	id: string;
-	incident_id: string;
+	incidentId: string;
 	message: string;
 	status: IncidentReportStatus;
 	timestamp: Date;

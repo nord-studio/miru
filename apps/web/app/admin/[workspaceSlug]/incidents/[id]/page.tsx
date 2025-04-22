@@ -33,7 +33,7 @@ export default async function IncidentSingletonPage({
 					<p className="text-neutral-500 dark:text-neutral-400">No reports found.</p>
 				</div>
 			) : (
-				<div className="grid gap-3">
+				<div className="grid gap-4">
 					{reports.data.reports.toReversed().map((report, i) => (
 						<IncidentTimelineItem
 							key={i}

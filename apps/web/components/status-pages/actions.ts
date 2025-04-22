@@ -95,11 +95,11 @@ export const editStatusPage = actionClient.schema(z.object({
 	favicon: z.string().optional(),
 	brandColor: z.string().optional(),
 	design: z.enum(["simple", "panda", "stormtrooper"]).default("simple"),
-	forceIsLight: z.boolean().default(false),
+	forcedTheme: z.enum(["auto", "light", "dark"]).default("auto"),
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
 	error: z.boolean(),
 	message: z.string(),
-})).action(async ({ parsedInput: { id, enabled, monitorIds, name, root, workspaceId, domain, design, forceIsLight, brandColor, darkLogo, description, favicon, logo } }) => {
+})).action(async ({ parsedInput: { id, enabled, monitorIds, name, root, workspaceId, domain, design, forcedTheme, brandColor, darkLogo, description, favicon, logo } }) => {
 	const workspace = await db.query.workspaces.findMany({
 		where: () => eq(workspaces.id, workspaceId)
 	});
@@ -146,7 +146,7 @@ export const editStatusPage = actionClient.schema(z.object({
 		favicon: favicon,
 		brandColor: brandColor,
 		design: design,
-		forceIsLight: forceIsLight,
+		forcedTheme
 	}).where(eq(statusPages.id, id)).execute();
 
 	// Delete all monitors and re-add them

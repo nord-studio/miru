@@ -2,14 +2,42 @@ import { Button } from "@/components/ui/button";
 import db from "@/lib/db";
 import { statusPages } from "@/lib/db/schema";
 import { user } from "@/lib/db/schema/auth";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import Link from "next/link";
 import SimpleStatusPageDesign from "@/designs/simple";
 import PandaStatusPageDesign from "@/designs/panda";
 import StormtrooperStatusPageDesign from "@/designs/stormtrooper";
+import { IncidentReportStatus } from "@/types/incident-report";
+import { IncidentWithReportsAndMonitors } from "@/types/incident";
+import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
+
+export async function generateMetadata(): Promise<Metadata> {
+	const statusPage = await db.query.statusPages.findFirst({
+		with: {
+			statusPageMonitors: {
+				with: {
+					monitor: true
+				}
+			}
+		},
+		where: () => eq(statusPages.root, true)
+	});
+
+	if (!statusPage) {
+		return {
+			title: "Miru",
+			description: "A free, open-source and self hostable status and monitoring service.",
+		}
+	} else {
+		return {
+			title: `${statusPage.name} Status`,
+			description: statusPage.description ?? `Welcome to ${statusPage.name}'s status page. Real-time and historical data on system performance.`,
+		}
+	}
+}
 
 export default async function Home() {
 	const fresh = await db
@@ -50,6 +78,35 @@ export default async function Home() {
 		where: () => eq(statusPages.root, true)
 	});
 
+	const openIncidents: IncidentWithReportsAndMonitors[] = await db.query.incidents.findMany({
+		where: () => sql`resolved_at IS NULL`,
+		with: {
+			monitorsToIncidents: {
+				with: {
+					monitor: true
+				}
+			},
+			reports: true
+		}
+	}).then((incidents) => {
+		return incidents.map((incident) => {
+			return {
+				...incident,
+				monitorsToIncidents: incident.monitorsToIncidents.map((mti) => {
+					return {
+						monitor: mti.monitor,
+					}
+				}),
+				reports: incident.reports.map((report) => {
+					return {
+						...report,
+						status: report.status as IncidentReportStatus,
+					}
+				})
+			}
+		})
+	});
+
 	if (!statusPage) {
 		return (
 			<>
@@ -71,7 +128,7 @@ export default async function Home() {
 	return (
 		<>
 			{statusPage.design === "simple" && (
-				<SimpleStatusPageDesign page={statusPage} />
+				<SimpleStatusPageDesign page={statusPage} incidents={openIncidents} />
 			)}
 			{statusPage.design === "panda" && (
 				<PandaStatusPageDesign page={statusPage} />

@@ -76,6 +76,8 @@ export default function CreateIncidentReport({ incident }: {
 					id: t
 				})
 				setOpen(!open)
+				setStatus(IncidentReportStatus.INVESTIGATING)
+				setMessage("")
 			}
 		}).finally(() => setLoading(false))
 	}

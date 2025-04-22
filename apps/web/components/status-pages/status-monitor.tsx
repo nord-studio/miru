@@ -1,14 +1,14 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import db from "@/lib/db";
-import { incidents, pings } from "@/lib/db/schema";
+import { pings } from "@/lib/db/schema";
 import { getMonitorUptime } from "@/lib/db/utils";
 import { cn } from "@/lib/utils";
-import { Incident } from "@/types/incident";
+import { Incident, IncidentWithReportsAndMonitors } from "@/types/incident";
 import { Monitor } from "@/types/monitor";
-import { Ping } from "@/types/ping";
 import { cva } from "class-variance-authority";
 import { format } from "date-fns";
 import { and, eq, sql } from "drizzle-orm";
+import { ArrowRight } from "lucide-react";
 
 interface StatusDayBlock {
 	date: Date;
@@ -18,7 +18,7 @@ interface StatusDayBlock {
 	downtime: number;
 }
 
-export default async function StatusPageMonitor({ monitor }: { monitor: Monitor }) {
+export default async function StatusPageMonitor({ monitor, incidents }: { monitor: Monitor, incidents?: IncidentWithReportsAndMonitors[] }) {
 	const uptime = await getMonitorUptime(monitor.id, 45);
 
 	if (!uptime) {
@@ -41,7 +41,11 @@ export default async function StatusPageMonitor({ monitor }: { monitor: Monitor 
 				date,
 				totalPings: pingData.length ?? 0,
 				failedPings: pingData.filter((ping) => !ping.success).length,
-				incidents: [],
+				incidents: incidents?.filter((incident) => {
+					return incident.monitorsToIncidents.some((monitorToIncident) => {
+						return monitorToIncident.monitor.id === monitor.id && incident.started_at <= date && (incident.resolved_at ? incident.resolved_at >= date : true);
+					});
+				}) ?? [],
 				downtime: 0
 			};
 		})
@@ -104,6 +108,10 @@ export function StatusMonitorBar({ data }: { data: StatusDayBlock }) {
 		variant = "empty";
 	}
 
+	if (data.incidents.length > 0) {
+		variant = "degraded";
+	}
+
 	return (
 		<>
 			<HoverCard
@@ -115,16 +123,17 @@ export function StatusMonitorBar({ data }: { data: StatusDayBlock }) {
 						className={cn(StatusMonitorBarVariants({ variant }))}
 					/>
 				</HoverCardTrigger>
-				<HoverCardContent asChild className="p-2 w-full">
-					<div className="flex flex-col gap-1 items-center w-full">
-						<div className="flex flex-row gap-4 items-center justify-between">
+				<HoverCardContent asChild className="p-0 w-full">
+					<div className="flex flex-col gap-1 items-center w-full max-w-[200px]">
+						<div className="flex flex-row gap-4 items-center justify-between w-full px-2 pt-2">
 							<span className="font-md font-bold text-start">
 								{variant === "empty" && "Empty"}
 								{variant === "operational" && "Operational"}
+								{variant === "degraded" && "Degraded"}
 							</span>
 							<span className="text-neutral-500 dark:text-neutral-400 text-sm">{format(data.date, "dd MMM")}</span>
 						</div>
-						<div className="flex flex-row gap-4 items-center justify-between">
+						<div className={cn("flex flex-row gap-4 items-center justify-between w-full px-2", data.incidents.length <= 0 ? "pb-2" : "pb-1")}>
 							<span className="text-sm">
 								<span className="text-green-500/80 dark:text-green-400/80">
 									{data.totalPings} {" "}
@@ -137,6 +146,21 @@ export function StatusMonitorBar({ data }: { data: StatusDayBlock }) {
 								</span>
 								Failed
 							</span>
+						</div>
+						<div className="flex flex-row gap-4 items-center justify-between">
+							{data.incidents.map((incident) => {
+								return (
+									<div key={incident.id} className="flex flex-col gap-2 items-center w-full group">
+										<hr className="w-full" />
+										<button className="flex flex-row gap-2 items-center justify-between w-full hover:cursor-pointer px-2 pb-2" key={incident.id}>
+											<span className="text-sm text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors">
+												{incident.title.slice(0, 20)}{incident.title.length > 20 ? "..." : ""}
+											</span>
+											<ArrowRight className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+										</button>
+									</div>
+								)
+							})}
 						</div>
 					</div>
 				</HoverCardContent>

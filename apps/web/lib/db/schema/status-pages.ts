@@ -29,8 +29,8 @@ export const statusPages = pgTable("status_pages", {
 	brandColor: text("brand_color").default("#000000").notNull(),
 	/// The design of the status page
 	design: text("design", { enum: ["simple", "panda", "stormtrooper"] }).default("simple").notNull(),
-	/// If the status page should force light mode (panda design only)
-	forceIsLight: boolean("force_is_light").default(false).notNull(),
+	/// Force the brand color to be manually determined to be light or dark
+	forcedTheme: text("theme", { enum: ["auto", "light", "dark"] }).default("auto").notNull(),
 });
 
 export const statusPageMonitors = pgTable("status_page_monitors", {

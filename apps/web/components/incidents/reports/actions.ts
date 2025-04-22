@@ -5,7 +5,7 @@ import { incidentReports, incidents } from "@/lib/db/schema";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
 import { IncidentReport, IncidentReportStatus } from "@/types/incident-report";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
 import { cache } from "react";
@@ -58,10 +58,28 @@ export const createIncidentReport = actionClient
 		})
 	)
 	.action(async ({ parsedInput: { incidentId, status, message } }) => {
+		const incident = await db.query.incidents.findFirst({
+			where: () => eq(incidents.id, incidentId)
+		});
+
+		const sta = status as IncidentReportStatus;
+
+		if (sta === IncidentReportStatus.IDENTIFIED && !incident?.acknowledged_at) {
+			await db.update(incidents).set({
+				acknowledged_at: new Date(),
+			}).where(eq(incidents.id, incidentId));
+		}
+
+		if (sta === IncidentReportStatus.RESOLVED && !incident?.resolved_at) {
+			await db.update(incidents).set({
+				resolved_at: new Date(),
+			}).where(eq(incidents.id, incidentId));
+		}
+
 		const report = await db.insert(incidentReports).values({
 			id: generateId(),
 			incidentId,
-			status: status as IncidentReportStatus,
+			status: sta,
 			message,
 		});
 

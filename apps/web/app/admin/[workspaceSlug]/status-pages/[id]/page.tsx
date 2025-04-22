@@ -1,9 +1,11 @@
 import EditStatusPageForm from "@/app/admin/[workspaceSlug]/status-pages/[id]/form";
+import { getCurrentMember } from "@/components/workspace/actions";
 import db from "@/lib/db";
 import { monitors, statusPages, workspaces } from "@/lib/db/schema";
 import { StatusPageWithMonitorsExtended } from "@/types/status-pages";
+import { RankedRoles } from "@/types/workspace";
 import { eq } from "drizzle-orm"
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export default async function CreateStatusPage({
 	params,
@@ -41,6 +43,16 @@ export default async function CreateStatusPage({
 	}
 
 	const domain = process.env.APP_DOMAIN ?? "localhost:3000";
+
+	const currentMember = await getCurrentMember(workspace.id);
+
+	if (!currentMember) {
+		return redirect("/auth/login");
+	}
+
+	if (RankedRoles[currentMember.role] < RankedRoles.admin) {
+		return notFound();
+	}
 
 	return (
 		<>

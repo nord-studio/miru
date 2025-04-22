@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Sortable, SortableDragHandle, SortableItem } from "@/components/ui/sortable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../tabs";
 import { Monitor } from "@/types/monitor";
-import { CircleCheck, FileQuestion, GripVertical } from "lucide-react";
+import { CircleCheck, Code, FileQuestion, GripVertical, HelpCircle, Moon, Sun } from "lucide-react";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
@@ -22,6 +22,8 @@ import Image from "next/image"
 import ColorPicker from "@/components/status-pages/color-picker";
 import Color, { ColorInstance } from "color";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import Link from "next/link";
 
 export default function EditStatusPageForm({ existing, monitors, workspace, appDomain }: { existing: StatusPageWithMonitorsExtended, monitors: Omit<Monitor, "uptime">[], workspace: Workspace, appDomain: string }) {
 	const [loading, setLoading] = React.useState(false);
@@ -34,7 +36,7 @@ export default function EditStatusPageForm({ existing, monitors, workspace, appD
 	const [darkLogo, setDarkLogo] = React.useState(existing.darkLogo ?? "");
 	const [monitorList, setMonitorList] = React.useState<Omit<Monitor, "uptime">[]>(existing.statusPageMonitors.map((m) => m.monitor));
 	const [design, setDesign] = React.useState(existing.design ?? "simple");
-	const [forceIsLight, setForceIsLight] = React.useState(existing.forceIsLight ?? false);
+	const [forcedTheme, setForcedTheme] = React.useState(existing.forcedTheme ?? false);
 
 	const [brandColor, setBrandColor] = React.useState<ColorInstance>(Color(existing.brandColor ?? "#5865F2"));
 
@@ -59,7 +61,7 @@ export default function EditStatusPageForm({ existing, monitors, workspace, appD
 			monitorIds: monitorList.map((m) => m.id),
 			design: design,
 			brandColor: brandColor.hex(),
-			forceIsLight: forceIsLight,
+			forcedTheme: forcedTheme,
 			description: description
 		}).then((res) => {
 			if (res?.validationErrors) {
@@ -438,23 +440,64 @@ export default function EditStatusPageForm({ existing, monitors, workspace, appD
 									</RadioGroup.Root>
 								</div>
 								<div className="flex flex-col gap-4 items-start w-full pt-2">
-									<div className="items-top flex space-x-2">
-										<Checkbox
-											checked={forceIsLight}
-											onCheckedChange={(v) => setForceIsLight(v === true ? true : false)}
-											disabled={loading}
-										/>
-										<div className="grid gap-1.5 leading-none">
-											<label
-												className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-											>
-												Force bright Mode?
-											</label>
-											<p className="text-sm text-muted-foreground">
-												Force the top half of the page to be bright, even if the brand color is dark.
-											</p>
+									<div className="flex flex-col gap-1">
+										<div className="flex flex-row gap-2 items-center">
+											<Label>Force theme</Label>
+											<Link href="https://miru.nordstud.io/docs/branding/force-theme" target="_blank" rel="noopener noreferrer">
+												<HelpCircle size={16} className="text-neutral-500 dark:text-neutral-400" />
+											</Link>
 										</div>
+										<p className="text-sm text-neutral-500 dark:text-neutral-400">
+											Miru will try its best to determine if the brand color is light or dark. If you want to force it to be light or dark, you can do so here.
+										</p>
 									</div>
+									<RadioGroup.Root
+										defaultValue="auto"
+										className="max-w-md w-full grid grid-cols-3 gap-4"
+									>
+										<RadioGroup.Item
+											key="auto"
+											value="auto"
+											checked={forcedTheme === "auto"}
+											onClick={() => setForcedTheme("auto")}
+											className={cn(
+												"relative group ring-[1px] ring-border rounded py-2 px-3 text-start",
+												"data-[state=checked]:ring-2 data-[state=checked]:ring-neutral-500"
+											)}
+										>
+											<CircleCheck className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-6 w-6 text-primary fill-neutral-500 stroke-white group-data-[state=unchecked]:hidden" />
+											<Code className="mb-2.5 text-muted-foreground" />
+											<span className="font-semibold tracking-tight">Auto</span>
+										</RadioGroup.Item>
+										<RadioGroup.Item
+											key="dark"
+											value="dark"
+											checked={forcedTheme === "dark"}
+											onClick={() => setForcedTheme("dark")}
+											className={cn(
+												"relative group ring-[1px] ring-border rounded py-2 px-3 text-start",
+												"data-[state=checked]:ring-2 data-[state=checked]:ring-neutral-500"
+											)}
+										>
+											<CircleCheck className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-6 w-6 text-primary fill-neutral-500 stroke-white group-data-[state=unchecked]:hidden" />
+											<Moon className="mb-2.5 text-muted-foreground" />
+											<span className="font-semibold tracking-tight">Dark</span>
+										</RadioGroup.Item>
+										<RadioGroup.Item
+											key="light"
+											value="light"
+											checked={forcedTheme === "light"}
+											onClick={() => setForcedTheme("light")}
+											className={cn(
+												"relative group ring-[1px] ring-border rounded py-2 px-3 text-start",
+												"data-[state=checked]:ring-2 data-[state=checked]:ring-neutral-500"
+											)}
+										>
+											<CircleCheck className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-6 w-6 text-primary fill-neutral-500 stroke-white group-data-[state=unchecked]:hidden" />
+											<Sun className="mb-2.5 text-muted-foreground" />
+											<span className="font-semibold tracking-tight">Light</span>
+										</RadioGroup.Item>
+									</RadioGroup.Root>
 								</div>
 							</div>
 							<div className="flex flex-col gap-4 items-start w-full">

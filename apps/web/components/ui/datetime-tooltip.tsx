@@ -33,7 +33,7 @@ export function DateTimeTooltip({
 					{formatInTimeZone(date, "UTC", "LLL dd, y HH:mm (z)")}
 				</TooltipTrigger>
 				<TooltipContent>
-					<p className="font-mono text-muted-foreground text-xs">
+					<p className="font-mono  text-xs">
 						{format(date, "LLL dd, y HH:mm (z)")}
 					</p>
 				</TooltipContent>

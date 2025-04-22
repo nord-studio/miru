@@ -5,9 +5,16 @@ import { MonoStatusBanner } from "@/components/ui/status-banner";
 import StatusPageMonitor from "@/components/status-pages/status-monitor";
 import { ThemeDropdown } from "@/components/theme/dropdown";
 import Color from "color";
+import { cn } from "@/lib/utils";
 
 export default function PandaStatusPageDesign({ page }: { page: StatusPageWithMonitorsExtended }) {
 	const color = Color(page.brandColor || "#5865F2");
+	function isLight() {
+		if (page.forcedTheme === "auto") return color.isLight();
+		if (page.forcedTheme === "light") return true;
+		if (page.forcedTheme === "dark") return false;
+		else return color.isLight();
+	}
 
 	return (
 		<>
@@ -16,27 +23,49 @@ export default function PandaStatusPageDesign({ page }: { page: StatusPageWithMo
 					<div className="flex h-full w-full flex-col gap-8 max-w-[800px] mx-auto">
 						<div className="flex flex-row justify-between gap-2 items-center w-full">
 							<div className="flex flex-col gap-2 items-start w-full">
-								{page.logo ? (
-									<Image
-										src={`/api/assets/${page.logo}`}
-										alt="Logo"
-										width={64}
-										height={64}
-									/>
-								) : (
-									<h1 className="text-4xl font-black font-display">{page.name}</h1>
-								)}
+								<div className={cn("hidden", !isLight() && "block")}>
+									{page.darkLogo ? (
+										<Image
+											src={`/api/assets/${page.darkLogo}`}
+											alt="Dark Logo"
+											width={64}
+											height={64}
+											className={cn("hidden", !isLight() && "block")}
+										/>
+									) : (
+										<h1 className={cn(
+											"text-4xl font-black font-display",
+											isLight() ? "text-neutral-900" : "text-neutral-100"
+										)}>{page.name}</h1>
+									)}
+								</div>
+								<div className={cn("hidden", isLight() && "block")}>
+									{page.logo ? (
+										<Image
+											src={`/api/assets/${page.logo}`}
+											alt="Logo"
+											width={64}
+											height={64}
+											className={cn("hidden", isLight() && "block")}
+										/>
+									) : (
+										<h1 className={cn(
+											"text-4xl font-black font-display",
+											isLight() ? "text-neutral-900" : "text-neutral-100"
+										)}>{page.name}</h1>
+									)}
+								</div>
 							</div>
 							<div className="flex flex-row gap-2 items-center">
-								<Button>
+								<Button variant="link">
 									Report an Issue
 								</Button>
-								<Button className="invert">
+								<Button className={cn(isLight() ? "bg-neutral-900 text-neutral-100" : "bg-neutral-100 text-neutral-900")}>
 									Subscribe
 								</Button>
 							</div>
 						</div>
-						<MonoStatusBanner isLight={page.forceIsLight ? true : color.isLight()} />
+						<MonoStatusBanner isLight={isLight()} />
 					</div>
 				</section>
 				<section className="w-full h-full px-8 pb-8">

@@ -81,16 +81,16 @@ function MonoStatusBanner({
 		<div
 			className={cn(
 				"flex items-center gap-3 rounded-lg border p-3",
-				isLight ? "bg-neutral-100 text-neutral-800 border-neutral-900/10" : "bg-neutral-900 text-neutral-100 border-neutral-800",
+				!isLight ? "bg-neutral-100 text-neutral-800 border-neutral-900/10" : "bg-neutral-900 text-neutral-100 border-neutral-800",
 				className
 			)} {...props}
 		>
 			<span className={cn(
 				"rounded-full border p-1.5 w-fit",
-				isLight ? "border-neutral-200 bg-neutral-100" : "border-neutral-800",
+				!isLight ? "border-neutral-200 bg-neutral-100" : "border-neutral-800",
 				className
 			)}>
-				<StatusIcon variant={variant} className={isLight ? "text-neutral-900" : "text-neutral-100 border-neutral-800"} />
+				<StatusIcon variant={variant} className={!isLight ? "text-neutral-900" : "text-neutral-100 border-neutral-800"} />
 			</span>
 			<div className="flex w-full flex-wrap items-center justify-between gap-4">
 				<h2 className="font-semibold text-xl">
@@ -100,7 +100,7 @@ function MonoStatusBanner({
 					{variant === "maintenance" && "Under Maintenance"}
 				</h2>
 				<p className="text-xs">
-					<DateTimeTooltip date={new Date()} />
+					<DateTimeTooltip date={new Date()} className="" />
 				</p>
 			</div>
 		</div>

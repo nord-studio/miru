@@ -16,7 +16,7 @@ export const incidents = pgTable("incidents", {
 	resolved_at: timestamp("resolved_at"),
 	/// If the incident was auto-resolved
 	auto_resolved: boolean("auto_resolved").notNull().default(false),
-})
+});
 
 export const incidentRelations = relations(incidents, ({ many }) => ({
 	// Many (Monitors) to many (Incidents) relationship
@@ -36,7 +36,7 @@ export const incidentReports = pgTable("incident_reports", {
 	status: text("status", { enum: ["investigating", "identified", "monitoring", "resolved"] }).notNull(),
 	/// When the incident report took place
 	timestamp: timestamp("timestamp").notNull().defaultNow(),
-})
+});
 
 // One (IncidentReport) to one (Incident) relationship
 export const incidentReportsRelations = relations(incidentReports, ({ one }) => ({
@@ -44,4 +44,4 @@ export const incidentReportsRelations = relations(incidentReports, ({ one }) => 
 		fields: [incidentReports.incidentId],
 		references: [incidents.id],
 	})
-}))
+}));

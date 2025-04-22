@@ -25,11 +25,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User } from "@/lib/auth";
 import { Workspace } from "@/types/workspace";
-import { deleteWorkspace } from "@/components/workspace/actions";
+import { deleteWorkspace, wipeWorkspace } from "@/components/workspace/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-export function DeleteWorkspaceConfirm({
+export function WipeWorkspaceConfirm({
 	user,
 	workspace,
 	children,
@@ -64,16 +64,16 @@ export function DeleteWorkspaceConfirm({
 	}, [username, phrase, user, toggleOpen, workspace.name]);
 
 	const handleDelete = async () => {
-		const t = toast.loading("Deleting workspace...");
+		const t = toast.loading("Wiping workspace...");
 
-		await deleteWorkspace({ id: workspace.id }).then((res) => {
+		await wipeWorkspace({ id: workspace.id }).then((res) => {
 			if (res?.data?.error) {
 				return toast.error("Something went wrong!", {
 					id: t,
 					description: res.data.message
 				});
 			} else {
-				toast.success("Workspace deleted successfully!", {
+				toast.success("Workspace wiped successfully!", {
 					id: t,
 				});
 				toggleOpen();
@@ -93,18 +93,17 @@ export function DeleteWorkspaceConfirm({
 						<DialogTrigger asChild>{children}</DialogTrigger>
 						<DialogContent className="p-0 sm:max-w-[425px]">
 							<DialogHeader className="px-6 pt-6">
-								<DialogTitle>Delete Workspace?</DialogTitle>
+								<DialogTitle>Wipe Workspace?</DialogTitle>
 								<DialogDescription asChild>
 									<span>
-										Miru will <b>permanently</b> delete all data associated
-										with your workspace.
+										Miru will <b>permanently</b> delete all data except for workspace settings, members and invites.
 									</span>
 								</DialogDescription>
 							</DialogHeader>
 							<div className="flex flex-col items-start gap-4 px-6 pb-2">
 								<div className="flex w-full flex-col gap-4">
 									<Label htmlFor="name" className="text-sm text-neutral-500 gap-1">
-										To confirm deletion, type your workspace name <b>&quot;{workspace.name}&quot;</b> below:
+										To confirm wipe, type your workspace name <b>&quot;{workspace.name}&quot;</b> below:
 									</Label>
 									<Input
 										value={phrase}
@@ -139,7 +138,7 @@ export function DeleteWorkspaceConfirm({
 					<DrawerTrigger asChild>{children}</DrawerTrigger>
 					<DrawerContent>
 						<DrawerHeader className="p-6 text-left">
-							<DrawerTitle>Delete Workspace?</DrawerTitle>
+							<DrawerTitle>Wipe Workspace?</DrawerTitle>
 							<DrawerDescription>
 								<span>
 									Miru will <b>permanently</b> delete all data associated

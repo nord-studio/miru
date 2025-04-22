@@ -11,7 +11,7 @@ import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { z } from "zod";
 import React, { cache } from "react";
 import { RankedRoles, Workspace } from "@/types/workspace";
-import { workspaceInvites, workspaceMembers, workspaces } from "@/lib/db/schema";
+import { monitors, statusPages, workspaceInvites, workspaceMembers, workspaces } from "@/lib/db/schema";
 import { generateId } from "@/lib/utils";
 import db from "@/lib/db";
 import { flattenValidationErrors } from "next-safe-action";
@@ -165,7 +165,29 @@ export const deleteWorkspace = actionClient.schema(z.object({
 	}
 
 	return { error: false, message: "Workspace deleted successfully" };
-})
+});
+
+export const wipeWorkspace = actionClient.schema(z.object({
+	id: z.string().nonempty()
+})).outputSchema(z.object({
+	error: z.boolean(),
+	message: z.string(),
+})).action(async ({ parsedInput: { id } }) => {
+	const currentUser = await auth.api.getSession({
+		headers: await headers(),
+	});
+
+	if (!currentUser) {
+		return { error: true, message: "You are not logged in" };
+	}
+
+	// Delete all data related to the workspace
+	await db.delete(monitors).where(eq(monitors.workspaceId, id));
+	await db.delete(statusPages).where(eq(statusPages.workspaceId, id));
+	// TODO: Delete notification channels when implemented
+
+	return { error: false, message: "Workspace wiped successfully" };
+});
 
 export const joinWorkspace = actionClient.schema(z.object({
 	inviteToken: z.string().nonempty(),
