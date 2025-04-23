@@ -6,6 +6,7 @@ import StatusPageMonitor from "@/components/status-pages/status-monitor";
 import { ThemeDropdown } from "@/components/theme/dropdown";
 import Color from "color";
 import { cn } from "@/lib/utils";
+import { Menu } from "lucide-react";
 
 export default function StormtrooperStatusPageDesign({ page }: { page: StatusPageWithMonitorsExtended }) {
 	const color = Color(page.brandColor || "#5865F2");
@@ -19,7 +20,7 @@ export default function StormtrooperStatusPageDesign({ page }: { page: StatusPag
 	return (
 		<>
 			<main className="flex flex-col w-full h-screen gap-0">
-				<section className="flex flex-col px-12 pt-12 gap-12 items-center justify-between" style={{ backgroundColor: color.hex() }}>
+				<section className="flex flex-col px-8 pt-12 gap-12 items-center justify-between" style={{ backgroundColor: color.hex() }}>
 					<div className="flex h-full w-full flex-col items-start gap-8 max-w-[800px] mx-auto">
 						<div className="flex flex-row justify-between gap-2 items-center w-full">
 							<div className="flex flex-col gap-2 items-start w-full">
@@ -56,12 +57,17 @@ export default function StormtrooperStatusPageDesign({ page }: { page: StatusPag
 									)}
 								</div>
 							</div>
-							<div className="flex flex-row gap-2 items-center">
-								<Button>
+							<div className="xs:flex hidden flex-row gap-2 items-center">
+								<Button variant="ghost">
 									Report an Issue
 								</Button>
-								<Button className="invert">
+								<Button className={cn(isLight() ? "dark" : "light")}>
 									Subscribe
+								</Button>
+							</div>
+							<div className="flex-row gap-2 items-center flex xs:hidden">
+								<Button size="icon" variant="outline">
+									<Menu className={cn(isLight() ? "text-neutral-900" : "text-neutral-100")} />
 								</Button>
 							</div>
 						</div>
@@ -83,13 +89,13 @@ export default function StormtrooperStatusPageDesign({ page }: { page: StatusPag
 						</div>
 					</div>
 				</section>
-				<section className="flex flex-row gap-2 items-center justify-between w-full max-w-[800px] mx-auto pb-8">
+				<section className="flex flex-row gap-2 items-center justify-between w-full max-w-[800px] mx-auto pb-8 px-8">
 					<ThemeDropdown />
 					<p className="text-neutral-500 dark:text-neutral-400">
 						Powered by Miru <span></span>
 					</p>
 				</section>
-			</main>
+			</main >
 		</>
 	)
 }

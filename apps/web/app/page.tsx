@@ -78,8 +78,9 @@ export default async function Home() {
 		where: () => eq(statusPages.root, true)
 	});
 
-	const openIncidents: IncidentWithReportsAndMonitors[] = await db.query.incidents.findMany({
-		where: () => sql`resolved_at IS NULL`,
+	// Get all incidents from the last 45 days
+	const incids: IncidentWithReportsAndMonitors[] = await db.query.incidents.findMany({
+		where: () => sql`started_at > NOW() - INTERVAL '45 days'`,
 		with: {
 			monitorsToIncidents: {
 				with: {
@@ -128,7 +129,7 @@ export default async function Home() {
 	return (
 		<>
 			{statusPage.design === "simple" && (
-				<SimpleStatusPageDesign page={statusPage} incidents={openIncidents} />
+				<SimpleStatusPageDesign page={statusPage} incidents={incids} />
 			)}
 			{statusPage.design === "panda" && (
 				<PandaStatusPageDesign page={statusPage} />

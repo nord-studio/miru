@@ -153,24 +153,19 @@ export default function EditIncident({
 									/>
 								</div>
 							</div>
-							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
-								<span className="text-neutral-400 dark:text-neutral-600 text-sm">
-									Note: You can update this later.
-								</span>
-								<div className="flex flex-row gap-2 items-center">
-									<DialogClose asChild>
-										<Button
-											variant="outline"
-											type="button"
-											disabled={loading}
-										>
-											Cancel
-										</Button>
-									</DialogClose>
-									<Button disabled={loading} type="submit">
-										{loading ? <Spinner /> : "Update"}
+							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4 rounded-b-md">
+								<DialogClose asChild>
+									<Button
+										variant="outline"
+										type="button"
+										disabled={loading}
+									>
+										Cancel
 									</Button>
-								</div>
+								</DialogClose>
+								<Button disabled={loading} type="submit">
+									{loading ? <Spinner /> : "Update"}
+								</Button>
 							</div>
 						</form>
 					</DialogContent>

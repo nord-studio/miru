@@ -4,7 +4,7 @@ import { cva, VariantProps } from "class-variance-authority";
 import { AlertTriangleIcon, Check, Hammer, Minus } from "lucide-react";
 
 const StatusBannerVariant = cva(
-	"flex items-center gap-3 rounded-lg border p-3",
+	"flex items-center gap-4 sm:gap-3 rounded-lg border p-3",
 	{
 		variants: {
 			variant: {
@@ -54,7 +54,7 @@ function StatusBanner({
 			)}>
 				<StatusIcon variant={variant} />
 			</span>
-			<div className="flex w-full flex-wrap items-center justify-between gap-4">
+			<div className="flex w-full flex-wrap items-center justify-between space-x-4 gap-1 sm:gap-4">
 				<h2 className="font-semibold text-xl">
 					{variant === "operational" && "All Systems Operational"}
 					{variant === "down" && "All Systems Down"}
@@ -80,7 +80,7 @@ function MonoStatusBanner({
 	return (
 		<div
 			className={cn(
-				"flex items-center gap-3 rounded-lg border p-3",
+				"flex items-center gap-4 sm:gap-3 rounded-lg border p-3",
 				!isLight ? "bg-neutral-100 text-neutral-800 border-neutral-900/10" : "bg-neutral-900 text-neutral-100 border-neutral-800",
 				className
 			)} {...props}
@@ -92,7 +92,7 @@ function MonoStatusBanner({
 			)}>
 				<StatusIcon variant={variant} className={!isLight ? "text-neutral-900" : "text-neutral-100 border-neutral-800"} />
 			</span>
-			<div className="flex w-full flex-wrap items-center justify-between gap-4">
+			<div className="flex w-full flex-wrap items-center justify-between space-x-4 gap-1 sm:gap-4">
 				<h2 className="font-semibold text-xl">
 					{variant === "operational" && "All Systems Operational"}
 					{variant === "down" && "All Systems Down"}

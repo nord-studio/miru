@@ -61,7 +61,7 @@ export default function Alert({
 							<DialogTitle>{title}</DialogTitle>
 							<DialogDescription>{description}</DialogDescription>
 						</DialogHeader>
-						<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-200/50 dark:bg-neutral-900/50 p-4">
+						<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-200/50 dark:bg-neutral-900/50 p-4 rounded-b-md">
 							{footer ? (
 								<span className="text-sm text-neutral-600 dark:text-neutral-400">
 									{footer}

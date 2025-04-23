@@ -52,7 +52,7 @@ export default function JoinWorkspace({
 						</DialogHeader>
 						<form onSubmit={onSubmit}>
 							<div className="flex flex-col px-6 pb-4 gap-4">
-								<div className="flex flex-col gap-3 items-start w-full">
+								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Invite Token</Label>
 									<Input
 										disabled={loading}
@@ -101,7 +101,7 @@ export default function JoinWorkspace({
 						</DrawerHeader>
 						<form onSubmit={onSubmit}>
 							<div className="flex flex-col px-4 pb-4 gap-4">
-								<div className="flex flex-col gap-3 items-start w-full">
+								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Invite Token</Label>
 									<Input
 										disabled={loading}
