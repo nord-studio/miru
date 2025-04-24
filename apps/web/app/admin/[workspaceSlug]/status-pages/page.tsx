@@ -4,7 +4,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { getCurrentMember } from "@/components/workspace/actions";
 import db from "@/lib/db";
 import { workspaces } from "@/lib/db/schema";
-import { statusPageMonitors, statusPages } from "@/lib/db/schema/status-pages";
+import { statusPages } from "@/lib/db/schema/status-pages";
 import { StatusPageWithMonitorsExtended } from "@/types/status-pages";
 import { RankedRoles } from "@/types/workspace";
 import { eq } from "drizzle-orm";

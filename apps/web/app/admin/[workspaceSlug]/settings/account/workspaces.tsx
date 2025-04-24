@@ -1,6 +1,6 @@
 "use client"
 
-import LeaveWorkspace from "@/app/admin/[workspaceSlug]/settings/team/leave-workspace"
+import LeaveWorkspaceButton from "@/app/admin/[workspaceSlug]/settings/team/leave-workspace"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { WorkspaceWithMembers } from "@/types/workspace"
 import React from "react"
@@ -27,7 +27,7 @@ export default function WorkspaceSettings({ workspaces }: { workspaces: Workspac
 								<TableCell>
 									<div className="flex flex-row gap-2 justify-end">
 										{workspace.role !== "owner" && (
-											<LeaveWorkspace workspace={workspace.workspace} />
+											<LeaveWorkspaceButton workspace={workspace.workspace} />
 										)}
 									</div>
 								</TableCell>

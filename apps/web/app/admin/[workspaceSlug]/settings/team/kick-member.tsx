@@ -1,24 +1,30 @@
 "use client";
 
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { kickWorkspaceMember } from "@/components/workspace/actions";
 import { WorkspaceMemberWithUser } from "@/types/workspace";
 import React from "react";
 import { toast } from "sonner"
+import { useMediaQuery } from "usehooks-ts";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
+import {
+	Drawer,
+	DrawerContent,
+	DrawerDescription,
+	DrawerHeader,
+	DrawerTitle,
+} from "@/components/ui/drawer";
+import Spinner from "@/components/ui/spinner";
 
-export default function KickWorkspaceMember({ member }: { member: WorkspaceMemberWithUser }) {
+export function KickWorkspaceMember({ member, open, setOpen }: { member: WorkspaceMemberWithUser, open: boolean, setOpen: (open: boolean) => void }) {
 	const [loading, setLoading] = React.useState(false);
+	const isDesktop = useMediaQuery("(min-width: 768px)");
 
 	async function kick() {
 		setLoading(true);
@@ -49,30 +55,77 @@ export default function KickWorkspaceMember({ member }: { member: WorkspaceMembe
 		}).finally(() => setLoading(false))
 	}
 
+	if (isDesktop) {
+		return (
+			<>
+				<Dialog open={open} onOpenChange={setOpen}>
+					<DialogContent className="gap-0 p-0 sm:max-w-[425px]">
+						<DialogHeader className="p-6">
+							<DialogTitle>Kick {member.user.name}?</DialogTitle>
+							<DialogDescription>Are you sure you want to kick this member from the workspace? You will need to re-invite them if you want them to rejoin later.</DialogDescription>
+						</DialogHeader>
+						<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-200/50 dark:bg-neutral-900/50 p-4 rounded-b-lg">
+							<Button variant="outline" disabled={loading} onClick={() => setOpen(false)}>
+								Cancel
+							</Button>
+							<div className="flex flex-row gap-4">
+								<Button variant="destructive" disabled={loading} onClick={async () => {
+									await kick();
+								}}>
+									{loading ? "Kicking" : "Kick"}
+									{loading && <Spinner />}
+								</Button>
+							</div>
+						</div>
+					</DialogContent>
+				</Dialog>
+			</>
+		);
+	} else {
+		return (
+			<>
+				<Drawer open={open} onOpenChange={setOpen}>
+					<DrawerContent>
+						<DrawerHeader>
+							<DrawerTitle>Kick {member.user.name}?</DrawerTitle>
+							<DrawerDescription>Are you sure you want to kick this member from the workspace? You will need to re-invite them if you want them to rejoin later.</DrawerDescription>
+						</DrawerHeader>
+						<div className="flex w-full flex-row justify-between gap-2 border-t p-4">
+							<Button variant="outline" disabled={loading} onClick={() => setOpen(false)}>
+								Cancel
+							</Button>
+							<Button variant="destructive" disabled={loading} onClick={async () => {
+								await kick();
+							}}>
+								{loading ? "Kicking" : "Kick"}
+								{loading && <Spinner />}
+							</Button>
+						</div>
+					</DrawerContent>
+				</Drawer>
+			</>
+		)
+	}
+}
+
+export default function KickWorkspaceMemberButton({ member }: { member: WorkspaceMemberWithUser }) {
+	const [open, setOpen] = React.useState(false);
+	const [mounted, setMounted] = React.useState(false);
+
+	React.useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	if (!mounted) {
+		return <Button variant="destructive" size="sm">Kick</Button>;
+	}
+
 	return (
 		<>
-			<AlertDialog>
-				<AlertDialogTrigger asChild>
-					<Button size="sm" variant="destructive">
-						Kick
-					</Button>
-				</AlertDialogTrigger>
-				<AlertDialogContent>
-					<AlertDialogHeader>
-						<AlertDialogTitle>Kick {member.user.name}?</AlertDialogTitle>
-						<AlertDialogDescription>
-							Are you sure you want to kick {member.user.name} from the workspace?
-							You will need to re-invite them if you want them to rejoin later.
-						</AlertDialogDescription>
-					</AlertDialogHeader>
-					<AlertDialogFooter>
-						<AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
-						<AlertDialogAction asChild>
-							<Button disabled={loading} variant="destructive" onClick={async () => await kick()}>Kick {member.user.name}</Button>
-						</AlertDialogAction>
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</AlertDialog>
+			<KickWorkspaceMember member={member} open={open} setOpen={setOpen} />
+			<Button variant="destructive" size="sm" onClick={() => setOpen(true)}>
+				Kick
+			</Button>
 		</>
 	)
 }

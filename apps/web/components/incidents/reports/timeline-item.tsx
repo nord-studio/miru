@@ -59,7 +59,7 @@ export default function IncidentTimelineItem({
 								const t = toast.loading("Deleting report...");
 								deleteIncidentReport({
 									id: report.id,
-									incidentId: report.incident_id,
+									incidentId: report.incidentId,
 								}).then((res) => {
 									if (res?.data?.error) {
 										toast.error("Something went wrong!", {

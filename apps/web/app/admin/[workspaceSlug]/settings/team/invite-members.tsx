@@ -23,10 +23,10 @@ export default function InviteMembers({ workspace, members, currentMember, child
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [loading, setLoading] = React.useState(false);
   const [mode, setMode] = React.useState<"email" | "select" | null>(null);
+  const [role, setRole] = React.useState<"member" | "admin" | "owner">("member");
 
   // Via email
   const [email, setEmail] = React.useState("");
-  const [role, setRole] = React.useState<"member" | "admin" | "owner">("member");
 
   // Via select
   const [selectOpen, setSelectOpen] = React.useState(false);
@@ -71,6 +71,8 @@ export default function InviteMembers({ workspace, members, currentMember, child
         toast.success("Member invited successfully!", {
           id: t
         });
+        setEmail("");
+        setRole("member");
         setMode(null);
         setOpen(false);
       }).finally(() => setLoading(false))
@@ -105,6 +107,8 @@ export default function InviteMembers({ workspace, members, currentMember, child
         toast.success("Member invited successfully!", {
           id: t
         });
+        setSelectedUser(null);
+        setRole("member");
         setMode(null);
         setOpen(false);
       }).finally(() => setLoading(false))
@@ -140,7 +144,7 @@ export default function InviteMembers({ workspace, members, currentMember, child
                       onValueChange={(value) => setRole(value as "member" | "admin" | "owner")}
                       required
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue>{role.slice(0, 1).toUpperCase() + role.slice(1)}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
@@ -155,7 +159,7 @@ export default function InviteMembers({ workspace, members, currentMember, child
                     </Select>
                   </div>
                 </div>
-                <div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
+                <div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4 rounded-b-lg">
                   <Button
                     variant="outline"
                     type="button"
@@ -165,7 +169,8 @@ export default function InviteMembers({ workspace, members, currentMember, child
                     Back
                   </Button>
                   <Button disabled={loading} type="submit">
-                    {loading ? <Spinner /> : "Invite"}
+                    {loading ? "Inviting" : "Invite"}
+                    {loading && <Spinner />}
                   </Button>
                 </div>
               </form>
@@ -201,7 +206,7 @@ export default function InviteMembers({ workspace, members, currentMember, child
                       onValueChange={(value) => setRole(value as "member" | "admin" | "owner")}
                       required
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue>{role.slice(0, 1).toUpperCase() + role.slice(1)}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
@@ -226,7 +231,8 @@ export default function InviteMembers({ workspace, members, currentMember, child
                     Back
                   </Button>
                   <Button disabled={loading} type="submit">
-                    {loading ? <Spinner /> : "Invite"}
+                    {loading ? "Inviting" : "Invite"}
+                    {loading && <Spinner />}
                   </Button>
                 </div>
               </form>
@@ -305,7 +311,7 @@ export default function InviteMembers({ workspace, members, currentMember, child
                       value={role}
                       onValueChange={(value) => setRole(value as "member" | "admin" | "owner")}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue>{role}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
@@ -320,7 +326,7 @@ export default function InviteMembers({ workspace, members, currentMember, child
                     </Select>
                   </div>
                 </div>
-                <div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
+                <div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4 rounded-b-lg">
                   <Button
                     variant="outline"
                     type="button"
@@ -330,7 +336,8 @@ export default function InviteMembers({ workspace, members, currentMember, child
                     Back
                   </Button>
                   <Button disabled={loading} type="submit">
-                    {loading ? <Spinner /> : "Invite"}
+                    {loading ? "Inviting" : "Invite"}
+                    {loading && <Spinner />}
                   </Button>
                 </div>
               </form>
@@ -407,7 +414,7 @@ export default function InviteMembers({ workspace, members, currentMember, child
                       value={role}
                       onValueChange={(value) => setRole(value as "member" | "admin" | "owner")}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue>{role}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
@@ -432,7 +439,8 @@ export default function InviteMembers({ workspace, members, currentMember, child
                     Back
                   </Button>
                   <Button disabled={loading} type="submit">
-                    {loading ? <Spinner /> : "Invite"}
+                    {loading ? "Inviting" : "Invite"}
+                    {loading && <Spinner />}
                   </Button>
                 </div>
               </form>
@@ -442,21 +450,63 @@ export default function InviteMembers({ workspace, members, currentMember, child
       );
     }
   } else {
-    return (
-      <>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
+    if (isDesktop) {
+      return (
+        <>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              {children}
+            </DialogTrigger>
+            <DialogContent className="p-0 sm:max-w-[425px]">
+              <DialogHeader className="px-6 pt-6">
+                <DialogTitle>Invite Member</DialogTitle>
+                <DialogDescription>
+                  Invite a member to join this workspace.
+                  They will be sent an email with an invite link.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col px-6 py-3 gap-4">
+                <div className="flex flex-col gap-3">
+                  <Button onClick={() => setMode("email")}>
+                    Invite via Email
+                  </Button>
+                  <Button onClick={() => setMode("select")} variant="secondary">
+                    Invite existing user
+                  </Button>
+                </div>
+              </div>
+              <div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4 rounded-b-lg">
+                <div className="flex flex-row gap-2 items-center">
+                  <DialogClose asChild>
+                    <Button
+                      variant="outline"
+                      type="button"
+                      disabled={loading}
+                    >
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </>
+      )
+    } else {
+      return (
+        <Drawer open={open} onOpenChange={setOpen}>
+          <DrawerTrigger asChild>
             {children}
-          </DialogTrigger>
-          <DialogContent className="p-0 sm:max-w-[425px]">
-            <DialogHeader className="px-6 pt-6">
-              <DialogTitle>Invite Member</DialogTitle>
-              <DialogDescription>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Invite Members</DrawerTitle>
+              <DrawerDescription>
                 Invite a member to join this workspace.
                 They will be sent an email with an invite link.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex flex-col px-6 py-3 gap-4">
+              </DrawerDescription>
+            </DrawerHeader>
+            <div className="flex flex-col px-4 pt-3 pb-6 gap-4">
               <div className="flex flex-col gap-3">
                 <Button onClick={() => setMode("email")}>
                   Invite via Email
@@ -468,20 +518,19 @@ export default function InviteMembers({ workspace, members, currentMember, child
             </div>
             <div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
               <div className="flex flex-row gap-2 items-center">
-                <DialogClose asChild>
-                  <Button
-                    variant="outline"
-                    type="button"
-                    disabled={loading}
-                  >
-                    Cancel
-                  </Button>
-                </DialogClose>
+                <Button
+                  variant="outline"
+                  type="button"
+                  disabled={loading}
+                  onClick={() => setOpen(false)}
+                >
+                  Cancel
+                </Button>
               </div>
             </div>
-          </DialogContent>
-        </Dialog>
-      </>
-    )
+          </DrawerContent>
+        </Drawer>
+      )
+    }
   }
 }

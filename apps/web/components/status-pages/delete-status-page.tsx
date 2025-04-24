@@ -19,7 +19,7 @@ export default function DeleteStatusPage({
 	return (
 		<Alert
 			title="Delete Status Page?"
-			description="Are you sure you want to delete this status page?"
+			description="Are you sure you want to delete this status page? This action cannot be undone."
 			open={open}
 			setOpen={setOpen}
 			onCancel={() => setOpen(false)}

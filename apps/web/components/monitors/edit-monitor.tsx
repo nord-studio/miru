@@ -40,7 +40,7 @@ export function EditMonitorButton({
 	monitor,
 	...props
 }: {
-	monitor: Omit<Monitor, "uptime">;
+	monitor: Monitor;
 } & React.ComponentProps<"button"> &
 	VariantProps<typeof buttonVariants>) {
 	const [open, setOpen] = React.useState(false);
@@ -77,7 +77,7 @@ export default function EditMonitor({
 	open,
 	setOpen,
 }: {
-	monitor: Omit<Monitor, "uptime">;
+	monitor: Monitor;
 	open: boolean;
 	setOpen: (open: boolean) => void;
 }) {
@@ -202,7 +202,7 @@ export default function EditMonitor({
 									</Select>
 								</div>
 							</div>
-							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 rounded-b-md p-4">
+							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 rounded-b-lg p-4">
 								<DialogClose asChild>
 									<Button
 										variant="outline"
@@ -213,7 +213,8 @@ export default function EditMonitor({
 									</Button>
 								</DialogClose>
 								<Button disabled={loading} type="submit">
-									{loading ? <Spinner /> : "Update"}
+									{loading ? "Updating" : "Update"}
+									{loading && <Spinner />}
 								</Button>
 							</div>
 						</form>
@@ -325,7 +326,8 @@ export default function EditMonitor({
 										</Button>
 									</DialogClose>
 									<Button disabled={loading} type="submit">
-										{loading ? <Spinner /> : "Update"}
+										{loading ? "Updating" : "Update"}
+										{loading && <Spinner />}
 									</Button>
 								</div>
 							</div>

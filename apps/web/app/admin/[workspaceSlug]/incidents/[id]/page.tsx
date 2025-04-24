@@ -18,13 +18,8 @@ export default async function IncidentSingletonPage({
 	const reports = await getIncidentWithReports(id);
 
 	if (!reports?.data?.reports) {
-		return (
-			<>
-				{/* TODO: Add empty state */}
-			</>
-		)
+		return notFound();
 	}
-
 
 	return (
 		<>
@@ -34,9 +29,9 @@ export default async function IncidentSingletonPage({
 				</div>
 			) : (
 				<div className="grid gap-4">
-					{reports.data.reports.toReversed().map((report, i) => (
+					{reports.data.reports.map((report, i) => (
 						<IncidentTimelineItem
-							key={i}
+							key={report.id}
 							editable={true}
 							report={report}
 							last={i === reports.data!.reports!.length - 1}

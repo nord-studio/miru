@@ -7,12 +7,12 @@ import { ThemeDropdown } from "@/components/theme/dropdown";
 import { cn } from "@/lib/utils";
 import { IncidentWithReportsAndMonitors } from "@/types/incident";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Bell, Megaphone, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 
 export default function SimpleStatusPageDesign({ page, incidents }: { page: StatusPageWithMonitorsExtended, incidents: IncidentWithReportsAndMonitors[] }) {
 	let variant: "operational" | "degraded" | "down" = "operational";
 
-	const allOpenIncids = incidents.filter((incid) => incid.resolved_at === null);
+	const allOpenIncids = incidents.filter((incid) => incid.resolvedAt === null);
 
 	// Go through the list of incidents and get ALL the monitors that are in the incidents, if ALL the monitors in the status page have an open incident, set the variant to "down"
 	if (allOpenIncids.length > 0) {
@@ -42,25 +42,25 @@ export default function SimpleStatusPageDesign({ page, incidents }: { page: Stat
 									<Image
 										src={`/api/assets/${page.logo}`}
 										alt="Logo"
-										width={64}
+										width={180}
 										height={64}
-										className={cn(page.darkLogo && "block dark:hidden")}
+										className={cn(page.darkLogo && "block dark:hidden w-40 h-12 object-left object-contain")}
 									/>
 									{page.darkLogo && (
 										<Image
 											src={`/api/assets/${page.darkLogo}`}
 											alt="Dark Logo"
-											width={64}
+											width={180}
 											height={64}
-											className="hidden dark:block"
+											className="hidden dark:block w-40 h-12 object-left object-contain"
 										/>
 									)}
 								</>
 							) : (
-								<h1 className="text-4xl font-black font-display">{page.name}</h1>
+								<h1 className="text-2xl sm:text-3xl md:text-4xl font-black font-display">{page.name}</h1>
 							)}
 						</div>
-						<div className="flex-row gap-2 items-center hidden sm:flex">
+						<div className="flex-row gap-2 items-center hidden xs:flex">
 							<Tooltip>
 								<TooltipContent>
 									Coming Soon
@@ -77,12 +77,12 @@ export default function SimpleStatusPageDesign({ page, incidents }: { page: Stat
 								</TooltipContent>
 								<TooltipTrigger asChild>
 									<Button>
-										<Bell />Subscribe
+										Subscribe
 									</Button>
 								</TooltipTrigger>
 							</Tooltip>
 						</div>
-						<div className="flex-row gap-2 items-center flex sm:hidden">
+						<div className="flex-row gap-2 items-center flex xs:hidden">
 							<Button variant="outline" size="icon">
 								<Menu />
 							</Button>

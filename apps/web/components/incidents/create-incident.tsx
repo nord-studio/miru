@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { Activity, Check, Fingerprint, PlusIcon, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
@@ -45,7 +45,7 @@ import { IncidentReportStatus } from "@/types/incident-report";
 export default function CreateIncident({
 	monitors,
 }: {
-	monitors: Omit<Monitor, "uptime">[];
+	monitors: Monitor[];
 }) {
 	const [open, setOpen] = useState(false);
 	const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -53,7 +53,7 @@ export default function CreateIncident({
 	const [mounted, setMounted] = useState(false);
 
 	const [title, setTitle] = useState("");
-	const [monitorList, setMonitorList] = useState<Omit<Monitor, "uptime">[]>([]);
+	const [monitorList, setMonitorList] = useState<Monitor[]>([]);
 	const [message, setMessage] = useState("");
 	const [status, setStatus] = useState<IncidentReportStatus>(
 		IncidentReportStatus.INVESTIGATING
@@ -145,6 +145,7 @@ export default function CreateIncident({
 										monitors={monitors}
 										value={monitorList}
 										setValue={setMonitorList}
+										disabled={loading}
 										min={1}
 									/>
 								</div>
@@ -170,6 +171,7 @@ export default function CreateIncident({
 													IncidentReportStatus.INVESTIGATING
 												}
 											>
+												<Search />
 												Investigating
 											</SelectItem>
 											<SelectItem
@@ -177,6 +179,7 @@ export default function CreateIncident({
 													IncidentReportStatus.IDENTIFIED
 												}
 											>
+												<Fingerprint />
 												Identified
 											</SelectItem>
 											<SelectItem
@@ -184,11 +187,13 @@ export default function CreateIncident({
 													IncidentReportStatus.MONITORING
 												}
 											>
+												<Activity />
 												Monitoring
 											</SelectItem>
 											<SelectItem
 												value={IncidentReportStatus.RESOLVED}
 											>
+												<Check />
 												Resolved
 											</SelectItem>
 										</SelectContent>
@@ -201,6 +206,7 @@ export default function CreateIncident({
 									<Textarea
 										placeholder="Type your message here."
 										value={message}
+										disabled={loading}
 										onChange={(e) =>
 											setMessage(e.target.value)
 										}
@@ -208,23 +214,19 @@ export default function CreateIncident({
 								</div>
 							</div>
 							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
-								<span className="text-neutral-400 dark:text-neutral-600 text-sm">
-									You can edit this later.
-								</span>
-								<div className="flex flex-row gap-2 items-center">
-									<DialogClose asChild>
-										<Button
-											variant="outline"
-											type="button"
-											disabled={loading}
-										>
-											Cancel
-										</Button>
-									</DialogClose>
-									<Button disabled={loading} type="submit">
-										{loading ? <Spinner /> : "Create"}
+								<DialogClose asChild>
+									<Button
+										variant="outline"
+										type="button"
+										disabled={loading}
+									>
+										Cancel
 									</Button>
-								</div>
+								</DialogClose>
+								<Button disabled={loading} type="submit">
+									{loading ? "Creating" : "Create"}
+									{loading && <Spinner />}
+								</Button>
 							</div>
 						</form>
 					</DialogContent>
@@ -290,6 +292,7 @@ export default function CreateIncident({
 													IncidentReportStatus.INVESTIGATING
 												}
 											>
+												<Search />
 												Investigating
 											</SelectItem>
 											<SelectItem
@@ -297,6 +300,7 @@ export default function CreateIncident({
 													IncidentReportStatus.IDENTIFIED
 												}
 											>
+												<Fingerprint />
 												Identified
 											</SelectItem>
 											<SelectItem
@@ -304,11 +308,13 @@ export default function CreateIncident({
 													IncidentReportStatus.MONITORING
 												}
 											>
+												<Activity />
 												Monitoring
 											</SelectItem>
 											<SelectItem
 												value={IncidentReportStatus.RESOLVED}
 											>
+												<Check />
 												Resolved
 											</SelectItem>
 										</SelectContent>
@@ -329,23 +335,19 @@ export default function CreateIncident({
 								</div>
 							</div>
 							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
-								<span className="text-neutral-400 dark:text-neutral-600 text-sm">
-									You can edit this later.
-								</span>
-								<div className="flex flex-row gap-2 items-center">
-									<DrawerClose asChild>
-										<Button
-											variant="outline"
-											type="button"
-											disabled={loading}
-										>
-											Cancel
-										</Button>
-									</DrawerClose>
-									<Button disabled={loading} type="submit">
-										{loading ? <Spinner /> : "Create"}
+								<DrawerClose asChild>
+									<Button
+										variant="outline"
+										type="button"
+										disabled={loading}
+									>
+										Cancel
 									</Button>
-								</div>
+								</DrawerClose>
+								<Button disabled={loading} type="submit">
+									{loading ? "Creating" : "Create"}
+									{loading && <Spinner />}
+								</Button>
 							</div>
 						</form>
 					</DrawerContent>

@@ -20,7 +20,7 @@ import Alert from "@/components/ui/alert";
 export default function MonitorSingletonSettingsForm({
 	monitor,
 }: {
-	monitor: Omit<Monitor, "uptime">;
+	monitor: Monitor;
 }) {
 	const [mounted, setMounted] = useState(false);
 	const [loading, setLoading] = useState(false);

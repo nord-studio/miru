@@ -29,7 +29,7 @@ export default function MonitorActionsDropdown({
 	workspaceId,
 	...props
 }: {
-	monitor: Omit<Monitor, "uptime">;
+	monitor: Monitor;
 	workspaceId: string;
 } & React.ComponentProps<"button"> &
 	VariantProps<typeof buttonVariants>) {

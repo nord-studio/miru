@@ -42,8 +42,6 @@ export default async function CreateStatusPage({
 		return notFound();
 	}
 
-	const domain = process.env.APP_DOMAIN ?? "localhost:3000";
-
 	const currentMember = await getCurrentMember(workspace.id);
 
 	if (!currentMember) {
@@ -68,7 +66,7 @@ export default async function CreateStatusPage({
 						</p>
 					</div>
 				</div>
-				<EditStatusPageForm existing={statusPage} monitors={mons} workspace={workspace} appDomain={domain} />
+				<EditStatusPageForm existing={statusPage} monitors={mons} workspace={workspace} />
 			</div >
 		</>
 	)

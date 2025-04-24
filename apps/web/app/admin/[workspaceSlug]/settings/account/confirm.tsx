@@ -24,10 +24,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User } from "@/lib/auth";
-import { TriangleAlertIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth/client";
+import Spinner from "@/components/ui/spinner";
 
 export function DeleteAccountConfirm({
 	user,
@@ -39,6 +39,7 @@ export function DeleteAccountConfirm({
 	const [password, setPassword] = React.useState("");
 	const [enabled, setEnabled] = React.useState(false);
 	const [mounted, setMounted] = React.useState(false);
+	const [loading, setLoading] = React.useState(false);
 	const router = useRouter();
 
 	const toggleOpen = React.useCallback(() => {
@@ -62,10 +63,12 @@ export function DeleteAccountConfirm({
 	}, [username, password, user, toggleOpen]);
 
 	const handleDelete = async () => {
+		setLoading(true);
 		const t = toast.loading("Deleting account...");
 
 		await authClient.deleteUser({ password }).then((res) => {
 			if (res.error) {
+				setLoading(false);
 				return toast.error("Something went wrong!", {
 					id: t,
 					description: res.error.message
@@ -78,7 +81,7 @@ export function DeleteAccountConfirm({
 				toggleOpen();
 				return router.push("/auth/login");
 			}
-		})
+		});
 	}
 
 	const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -109,18 +112,12 @@ export function DeleteAccountConfirm({
 								<span>
 									Miru will <b>permanently</b> delete all data associated with
 									your account. This includes all workspaces you own, as well as their monitors, incidents, status pages and more.
-									<div className="my-4 flex flex-row items-center gap-2 rounded-md border border-red-500 p-2 text-red-500 dark:border-red-700">
-										<TriangleAlertIcon className="h-4 w-4 text-red-500 dark:text-red-700" />
-										<span>
-											This action is <b>not</b> reversible.
-										</span>
-									</div>
 								</span>
 							</DialogDescription>
 						</DialogHeader>
 						<div className="flex flex-col items-start gap-4 px-6 pb-2">
 							<div className="flex w-full flex-col gap-2">
-								<Label htmlFor="name" className="text-sm text-neutral-500 gap-1">
+								<Label htmlFor="name" className="text-sm text-neutral-500 dark:text-neutral-400 gap-1">
 									To confirm deletion, enter your password below:
 								</Label>
 								<Input
@@ -134,20 +131,21 @@ export function DeleteAccountConfirm({
 								/>
 							</div>
 						</div>
-						<div className="flex w-full flex-row justify-between border-t bg-neutral-200 p-3 dark:bg-neutral-900">
-							<Button variant="outline" onClick={toggleOpen}>
+						<div className="flex w-full flex-row justify-between border-t bg-neutral-200 p-3 dark:bg-neutral-900 rounded-b-lg">
+							<Button variant="outline" onClick={toggleOpen} disabled={loading}>
 								Cancel
 							</Button>
 							<Button
 								variant="destructive"
-								disabled={!enabled}
+								disabled={!enabled || loading}
 								onClick={() => handleDelete()}
 							>
+								{loading && <Spinner />}
 								Confirm Deletion
 							</Button>
 						</div>
 					</DialogContent>
-				</Dialog>
+				</Dialog >
 			</>
 		);
 	}
@@ -163,21 +161,13 @@ export function DeleteAccountConfirm({
 				<DrawerContent>
 					<DrawerHeader className="p-6 text-left">
 						<DrawerTitle>Delete Account</DrawerTitle>
-						<DrawerDescription asChild>
-							<span>
-								Miru will <b>permanently</b> delete all data associated with
-								your account. This includes all workspaces you own, as well as their monitors, incidents, status pages and more.
-								<div className="my-4 flex flex-row items-center gap-2 rounded-md border border-red-500 p-2 text-red-500 dark:border-red-700">
-									<TriangleAlertIcon className="h-4 w-4 text-red-500 dark:text-red-700" />
-									<span>
-										This action is <b>not</b> reversible.
-									</span>
-								</div>
-							</span>
+						<DrawerDescription>
+							Miru will <b>permanently</b> delete all data associated with
+							your account. This includes all workspaces you own, as well as their monitors, incidents, status pages and more.
 						</DrawerDescription>
-						<div className="flex flex-col items-start gap-4">
-							<div className="flex w-full flex-col gap-1">
-								<Label className="text-sm text-neutral-500">
+						<div className="flex flex-col items-start gap-4 mt-4">
+							<div className="flex w-full flex-col gap-2">
+								<Label className="text-sm text-neutral-500 dark:text-neutral-400">
 									To verify, please enter your password below:
 								</Label>
 								<Input
@@ -188,14 +178,15 @@ export function DeleteAccountConfirm({
 						</div>
 					</DrawerHeader>
 					<DrawerFooter className="flex w-full flex-row justify-between border-t bg-neutral-200 p-3 dark:bg-neutral-900">
-						<Button variant="outline" onClick={toggleOpen}>
+						<Button variant="outline" onClick={toggleOpen} disabled={loading}>
 							Cancel
 						</Button>
 						<Button
 							variant="destructive"
-							onClick={() => alert("Your workspace has been deleted!")}
-							disabled={!enabled}
+							onClick={() => handleDelete()}
+							disabled={!enabled || loading}
 						>
+							{loading && <Spinner />}
 							Delete Account
 						</Button>
 					</DrawerFooter>

@@ -101,7 +101,7 @@ export function WorkspaceSwitcher({ workspaces }: { workspaces: WorkspaceWithMem
 										/>
 									</CommandItem>
 								))}
-								<hr className="w-full bg-black/10 dark:bg-white/10 my-1" />
+								<hr className="w-full my-1" />
 								<CommandItem
 									onSelect={() => setOpenCreate(true)}
 								>

@@ -16,12 +16,12 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Workspace } from "@/types/workspace";
 
-export default function NewStatusPageForm({ monitors, workspace }: { monitors: Omit<Monitor, "uptime">[], workspace: Workspace }) {
+export default function NewStatusPageForm({ monitors, workspace }: { monitors: Monitor[], workspace: Workspace }) {
 	const [loading, setLoading] = React.useState(false);
 	const [name, setName] = React.useState("");
 	const [root, setRoot] = React.useState(false);
 	const [domain, setDomain] = React.useState("");
-	const [monitorList, setMonitorList] = React.useState<Omit<Monitor, "uptime">[]>([]);
+	const [monitorList, setMonitorList] = React.useState<Monitor[]>([]);
 	const router = useRouter();
 
 	async function onSubmit() {
@@ -157,7 +157,7 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: O
 											}}
 										>
 											<div className="w-full space-y-2 py-4">
-												{monitorList.map((field, index) => (
+												{monitorList.map((field) => (
 													<SortableItem key={field.id} value={field.id} asChild>
 														<div className="flex flex-row gap-2 items-center w-full py-2 pl-4 pr-2 border border-neutral-100 dark:border-neutral-800 rounded-md">
 															<div className="flex flex-row gap-3 items-center w-full">

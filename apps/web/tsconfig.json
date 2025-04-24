@@ -27,16 +27,14 @@
       "@/*": [
         "./*"
       ]
-    },
+    }
   },
   "include": [
-    "apps/web/next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "../../drizzle.config.ts"
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
-  ],
+  ]
 }

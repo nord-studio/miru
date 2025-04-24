@@ -1,6 +1,5 @@
 
 import { auth } from "@/lib/auth";
-import { user } from "@/lib/db/schema";
 import minio from "@/lib/minio";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";

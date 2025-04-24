@@ -25,7 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User } from "@/lib/auth";
 import { Workspace } from "@/types/workspace";
-import { deleteWorkspace, wipeWorkspace } from "@/components/workspace/actions";
+import { wipeWorkspace } from "@/components/workspace/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -103,7 +103,7 @@ export function WipeWorkspaceConfirm({
 							<div className="flex flex-col items-start gap-4 px-6 pb-2">
 								<div className="flex w-full flex-col gap-4">
 									<Label htmlFor="name" className="text-sm text-neutral-500 gap-1">
-										To confirm wipe, type your workspace name <b>&quot;{workspace.name}&quot;</b> below:
+										To confirm wipe, type your workspace name &quot;{workspace.name}&quot; below:
 									</Label>
 									<Input
 										value={phrase}
@@ -112,7 +112,7 @@ export function WipeWorkspaceConfirm({
 									/>
 								</div>
 							</div>
-							<div className="flex w-full flex-row justify-between border-t bg-neutral-200 p-3 dark:bg-neutral-900">
+							<div className="flex w-full flex-row justify-between border-t bg-neutral-200 p-3 dark:bg-neutral-900 rounded-b-lg">
 								<Button variant="outline" onClick={toggleOpen}>
 									Cancel
 								</Button>

@@ -19,13 +19,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { cn, MAX_FILE_SIZE } from "@/lib/utils";
 import Image from "next/image"
-import ColorPicker from "@/components/status-pages/color-picker";
-import Color, { ColorInstance } from "color";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Link from "next/link";
+import { ColorPicker } from "@/components/ui/color-picker";
 
-export default function EditStatusPageForm({ existing, monitors, workspace, appDomain }: { existing: StatusPageWithMonitorsExtended, monitors: Omit<Monitor, "uptime">[], workspace: Workspace, appDomain: string }) {
+export default function EditStatusPageForm({ existing, monitors, workspace }: { existing: StatusPageWithMonitorsExtended, monitors: Monitor[], workspace: Workspace }) {
 	const [loading, setLoading] = React.useState(false);
 
 	const [name, setName] = React.useState(existing.name);
@@ -34,11 +31,10 @@ export default function EditStatusPageForm({ existing, monitors, workspace, appD
 	const [domain, setDomain] = React.useState(existing.domain ?? "");
 	const [logo, setLogo] = React.useState(existing.logo ?? "");
 	const [darkLogo, setDarkLogo] = React.useState(existing.darkLogo ?? "");
-	const [monitorList, setMonitorList] = React.useState<Omit<Monitor, "uptime">[]>(existing.statusPageMonitors.map((m) => m.monitor));
+	const [monitorList, setMonitorList] = React.useState<Monitor[]>(existing.statusPageMonitors.map((m) => m.monitor));
 	const [design, setDesign] = React.useState(existing.design ?? "simple");
 	const [forcedTheme, setForcedTheme] = React.useState(existing.forcedTheme ?? false);
-
-	const [brandColor, setBrandColor] = React.useState<ColorInstance>(Color(existing.brandColor ?? "#5865F2"));
+	const [brandColor, setBrandColor] = React.useState<string>(existing.brandColor ?? "#5865F2");
 
 	const [mounted, setMounted] = React.useState(false);
 
@@ -60,7 +56,7 @@ export default function EditStatusPageForm({ existing, monitors, workspace, appD
 			domain: domain,
 			monitorIds: monitorList.map((m) => m.id),
 			design: design,
-			brandColor: brandColor.hex(),
+			brandColor: brandColor,
 			forcedTheme: forcedTheme,
 			description: description
 		}).then((res) => {
@@ -233,12 +229,12 @@ export default function EditStatusPageForm({ existing, monitors, workspace, appD
 										placeholder="Nord Studio"
 										disabled={loading}
 									/>
-									<p className="text-sm text-neutral-500 dark:text-nuetral-400">The name of your status page. This is used at the top of the page when a logo hasn't been uploaded.</p>
+									<p className="text-sm text-neutral-500 dark:text-neutral-400">The name of your status page. This is used at the top of the page when a logo hasn&apos;t been uploaded.</p>
 								</div>
 								<div className="gap-2 flex flex-col items-start w-full">
 									<Label>Description</Label>
 									<Input placeholder={existing.description ?? ""} value={description} onChange={(e) => setDescription(e.target.value)} />
-									<p className="text-sm text-neutral-500 dark:text-nuetral-400">Provide your users information about this status page.</p>
+									<p className="text-sm text-neutral-500 dark:text-neutral-400">Provide your users information about this status page.</p>
 								</div>
 								<div className="flex flex-col gap-4 items-start w-full">
 									<Label>Root Domain</Label>
@@ -439,66 +435,6 @@ export default function EditStatusPageForm({ existing, monitors, workspace, appD
 										</div>
 									</RadioGroup.Root>
 								</div>
-								<div className="flex flex-col gap-4 items-start w-full pt-2">
-									<div className="flex flex-col gap-1">
-										<div className="flex flex-row gap-2 items-center">
-											<Label>Force theme</Label>
-											<Link href="https://miru.nordstud.io/docs/branding/force-theme" target="_blank" rel="noopener noreferrer">
-												<HelpCircle size={16} className="text-neutral-500 dark:text-neutral-400" />
-											</Link>
-										</div>
-										<p className="text-sm text-neutral-500 dark:text-neutral-400">
-											Miru will try its best to determine if the brand color is light or dark. If you want to force it to be light or dark, you can do so here.
-										</p>
-									</div>
-									<RadioGroup.Root
-										defaultValue="auto"
-										className="max-w-md w-full grid grid-cols-3 gap-4"
-									>
-										<RadioGroup.Item
-											key="auto"
-											value="auto"
-											checked={forcedTheme === "auto"}
-											onClick={() => setForcedTheme("auto")}
-											className={cn(
-												"relative group ring-[1px] ring-border rounded py-2 px-3 text-start",
-												"data-[state=checked]:ring-2 data-[state=checked]:ring-neutral-500"
-											)}
-										>
-											<CircleCheck className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-6 w-6 text-primary fill-neutral-500 stroke-white group-data-[state=unchecked]:hidden" />
-											<Code className="mb-2.5 text-muted-foreground" />
-											<span className="font-semibold tracking-tight">Auto</span>
-										</RadioGroup.Item>
-										<RadioGroup.Item
-											key="dark"
-											value="dark"
-											checked={forcedTheme === "dark"}
-											onClick={() => setForcedTheme("dark")}
-											className={cn(
-												"relative group ring-[1px] ring-border rounded py-2 px-3 text-start",
-												"data-[state=checked]:ring-2 data-[state=checked]:ring-neutral-500"
-											)}
-										>
-											<CircleCheck className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-6 w-6 text-primary fill-neutral-500 stroke-white group-data-[state=unchecked]:hidden" />
-											<Moon className="mb-2.5 text-muted-foreground" />
-											<span className="font-semibold tracking-tight">Dark</span>
-										</RadioGroup.Item>
-										<RadioGroup.Item
-											key="light"
-											value="light"
-											checked={forcedTheme === "light"}
-											onClick={() => setForcedTheme("light")}
-											className={cn(
-												"relative group ring-[1px] ring-border rounded py-2 px-3 text-start",
-												"data-[state=checked]:ring-2 data-[state=checked]:ring-neutral-500"
-											)}
-										>
-											<CircleCheck className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-6 w-6 text-primary fill-neutral-500 stroke-white group-data-[state=unchecked]:hidden" />
-											<Sun className="mb-2.5 text-muted-foreground" />
-											<span className="font-semibold tracking-tight">Light</span>
-										</RadioGroup.Item>
-									</RadioGroup.Root>
-								</div>
 							</div>
 							<div className="flex flex-col gap-4 items-start w-full">
 								<div className="flex flex-col gap-1">
@@ -509,9 +445,72 @@ export default function EditStatusPageForm({ existing, monitors, workspace, appD
 								<div className="flex flex-wrap gap-4">
 									<div className="flex flex-col gap-2 items-start">
 										<span className="text-sm text-neutral-500 dark:text-neutral-400">Brand Color</span>
-										<ColorPicker value={brandColor} setValue={setBrandColor} />
+										<div className="flex flex-row gap-0">
+											<ColorPicker value={brandColor} onChange={(v) => setBrandColor(v)} className="border-r-0 rounded-r-none" disableInput={true} />
+											<Input value={brandColor} onChange={(e) => setBrandColor(e.target.value)} className="border-l-0 rounded-l-none" />
+										</div>
 									</div>
 								</div>
+							</div>
+							<div className="flex flex-col gap-4 items-start w-full pt-2">
+								<div className="flex flex-col gap-1">
+									<div className="flex flex-row gap-2 items-center">
+										<Label>Force theme</Label>
+										<Link href="https://miru.nordstud.io/docs/branding/force-theme" target="_blank" rel="noopener noreferrer">
+											<HelpCircle size={16} className="text-neutral-500 dark:text-neutral-400" />
+										</Link>
+									</div>
+									<p className="text-sm text-neutral-500 dark:text-neutral-400">
+										Miru will try to determine if the brand color is light or dark. You can override this here.
+									</p>
+								</div>
+								<RadioGroup.Root
+									defaultValue="auto"
+									className="max-w-md w-full grid grid-cols-3 gap-4"
+								>
+									<RadioGroup.Item
+										key="auto"
+										value="auto"
+										checked={forcedTheme === "auto"}
+										onClick={() => setForcedTheme("auto")}
+										className={cn(
+											"relative group ring-[1px] ring-border rounded py-2 px-3 text-start",
+											"data-[state=checked]:ring-2 data-[state=checked]:ring-neutral-500"
+										)}
+									>
+										<CircleCheck className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-6 w-6 text-primary fill-neutral-500 stroke-white group-data-[state=unchecked]:hidden" />
+										<Code className="mb-2.5 text-muted-foreground" />
+										<span className="font-semibold tracking-tight">Auto</span>
+									</RadioGroup.Item>
+									<RadioGroup.Item
+										key="dark"
+										value="dark"
+										checked={forcedTheme === "dark"}
+										onClick={() => setForcedTheme("dark")}
+										className={cn(
+											"relative group ring-[1px] ring-border rounded py-2 px-3 text-start",
+											"data-[state=checked]:ring-2 data-[state=checked]:ring-neutral-500"
+										)}
+									>
+										<CircleCheck className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-6 w-6 text-primary fill-neutral-500 stroke-white group-data-[state=unchecked]:hidden" />
+										<Moon className="mb-2.5 text-muted-foreground" />
+										<span className="font-semibold tracking-tight">Dark</span>
+									</RadioGroup.Item>
+									<RadioGroup.Item
+										key="light"
+										value="light"
+										checked={forcedTheme === "light"}
+										onClick={() => setForcedTheme("light")}
+										className={cn(
+											"relative group ring-[1px] ring-border rounded py-2 px-3 text-start",
+											"data-[state=checked]:ring-2 data-[state=checked]:ring-neutral-500"
+										)}
+									>
+										<CircleCheck className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-6 w-6 text-primary fill-neutral-500 stroke-white group-data-[state=unchecked]:hidden" />
+										<Sun className="mb-2.5 text-muted-foreground" />
+										<span className="font-semibold tracking-tight">Light</span>
+									</RadioGroup.Item>
+								</RadioGroup.Root>
 							</div>
 							<div className="flex flex-col gap-4 items-start w-full">
 								<div className="flex flex-col gap-1">
@@ -545,7 +544,7 @@ export default function EditStatusPageForm({ existing, monitors, workspace, appD
 							<div className="flex flex-col gap-4 items-start w-full">
 								<div className="flex flex-col gap-1">
 									<Label>Logo (dark mode)</Label>
-									<p className="text-sm text-neutral-500 dark:text-neutral-400">The logo to use when the status page is in dark mode. Applies to simple design only.</p>
+									<p className="text-sm text-neutral-500 dark:text-neutral-400">The logo to use when the page or brand color is dark.</p>
 								</div>
 								<div className="flex flex-row gap-4 items-center w-full">
 									{darkLogo ? (

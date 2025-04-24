@@ -1,4 +1,4 @@
-import { Inter, Manrope } from "next/font/google";
+import { Geist, Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/provider";
 import { Metadata } from "next";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,8 +14,8 @@ const inter = Inter({
 	display: "swap",
 });
 
-const manrope = Manrope({
-	variable: "--font-manrope",
+const geist = Geist({
+	variable: "--font-geist",
 	subsets: ["latin"],
 	display: "swap",
 });
@@ -34,7 +34,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body
-				className={`${inter.variable} ${manrope.variable} antialiased bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-sans flex flex-col items-center min-h-screen`}
+				className={`${inter.variable} ${geist.variable} antialiased bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-sans flex flex-col items-center min-h-screen`}
 			>
 				<div className="flex flex-col min-h-screen w-full" data-vaul-drawer-wrapper="">
 					<ThemeProvider

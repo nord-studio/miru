@@ -251,6 +251,7 @@ SortableItem.displayName = "SortableItem";
 
 interface SortableDragHandleProps extends ButtonProps {
 	withHandle?: boolean;
+	className?: string;
 }
 
 const SortableDragHandle = React.forwardRef<

@@ -58,15 +58,15 @@ export default function StormtrooperStatusPageDesign({ page }: { page: StatusPag
 								</div>
 							</div>
 							<div className="xs:flex hidden flex-row gap-2 items-center">
-								<Button variant="ghost">
+								<Button variant="link" className={cn(isLight() ? "text-neutral-900" : "text-neutral-100")}>
 									Report an Issue
 								</Button>
-								<Button className={cn(isLight() ? "dark" : "light")}>
+								<Button variant="outline" className={cn("bg-input/30 dark border-input hover:bg-input/60 dark:hover:bg-input/60", isLight() ? "text-neutral-900 hover:text-neutral-900" : "text-neutral-100")}>
 									Subscribe
 								</Button>
 							</div>
 							<div className="flex-row gap-2 items-center flex xs:hidden">
-								<Button size="icon" variant="outline">
+								<Button size="icon" variant="outline" className="bg-input/30 dark border-input hover:bg-input/50">
 									<Menu className={cn(isLight() ? "text-neutral-900" : "text-neutral-100")} />
 								</Button>
 							</div>
@@ -89,13 +89,15 @@ export default function StormtrooperStatusPageDesign({ page }: { page: StatusPag
 						</div>
 					</div>
 				</section>
-				<section className="flex flex-row gap-2 items-center justify-between w-full max-w-[800px] mx-auto pb-8 px-8">
-					<ThemeDropdown />
-					<p className="text-neutral-500 dark:text-neutral-400">
-						Powered by Miru <span></span>
-					</p>
+				<section className="w-full pb-8 px-8">
+					<div className="flex flex-row gap-2 items-center justify-between w-full max-w-[800px] mx-auto">
+						<ThemeDropdown />
+						<p className="text-neutral-500 dark:text-neutral-400">
+							Powered by Miru <span></span>
+						</p>
+					</div>
 				</section>
-			</main >
+			</main>
 		</>
 	)
 }

@@ -85,7 +85,7 @@ export default function ManageMember({ member, currentMember }: { member: Worksp
 										value={member.role}
 										onValueChange={(value) => setRole(value as "member" | "admin" | "owner")}
 									>
-										<SelectTrigger>
+										<SelectTrigger className="w-full">
 											<SelectValue>{role}</SelectValue>
 										</SelectTrigger>
 										<SelectContent>
@@ -98,7 +98,7 @@ export default function ManageMember({ member, currentMember }: { member: Worksp
 									</Select>
 								</div>
 							</div>
-							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
+							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4 rounded-b-lg">
 								<DialogClose asChild>
 									<Button
 										variant="outline"

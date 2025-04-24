@@ -64,7 +64,7 @@ export default function JoinWorkspace({
 									/>
 								</div>
 							</div>
-							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
+							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4 rounded-b-lg">
 								<DialogClose asChild>
 									<Button
 										variant="outline"
@@ -75,12 +75,8 @@ export default function JoinWorkspace({
 									</Button>
 								</DialogClose>
 								<Button disabled={loading} type="submit">
-									{loading ? (
-										<>
-											<Spinner />
-											<span className="ml-2">Joining...</span>
-										</>
-									) : "Join"}
+									{loading ? "Joining" : "Join"}
+									{loading && <Spinner />}
 								</Button>
 							</div>
 						</form>
@@ -124,12 +120,8 @@ export default function JoinWorkspace({
 									</Button>
 								</DialogClose>
 								<Button disabled={loading} type="submit">
-									{loading ? (
-										<>
-											<Spinner />
-											<span className="ml-2">Joining...</span>
-										</>
-									) : "Join"}
+									{loading ? "Joining" : "Join"}
+									{loading && <Spinner />}
 								</Button>
 							</div>
 						</form>

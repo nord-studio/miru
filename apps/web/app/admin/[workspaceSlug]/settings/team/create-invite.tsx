@@ -38,7 +38,7 @@ function InviteTokenMesage({ open, setOpen, token, url }: { open: boolean, setOp
 								<CopyToClipboardInput content={url} />
 							</div>
 						</div>
-						<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
+						<div className="flex flex-row gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4 rounded-b-lg">
 							<DialogClose asChild>
 								<Button
 									variant="outline"
@@ -63,7 +63,7 @@ function InviteTokenMesage({ open, setOpen, token, url }: { open: boolean, setOp
 								Please take note of your invite token / URL. You will not be able to see it again.
 							</DrawerDescription>
 						</DrawerHeader>
-						<div className="flex flex-col px-6 pb-4 gap-4">
+						<div className="flex flex-col px-4 pb-6 pt-2 gap-4">
 							<div className="flex flex-col gap-2 items-start w-full">
 								<Label>Invite Token</Label>
 								<CopyToClipboardInput content={token} />
@@ -73,13 +73,13 @@ function InviteTokenMesage({ open, setOpen, token, url }: { open: boolean, setOp
 								<CopyToClipboardInput content={url} />
 							</div>
 						</div>
-						<div className="flex flex-row items-end w-full gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
+						<div className="flex flex-row w-full gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
 							<DrawerClose asChild>
 								<Button
 									variant="outline"
 									type="button"
 								>
-									Back
+									Close
 								</Button>
 							</DrawerClose>
 						</div>
@@ -158,21 +158,12 @@ export default function CreateInviteToken({ workspace, appUrl, currentMember, ch
 						<form onSubmit={onSubmit}>
 							<div className="flex flex-col px-6 pb-4 gap-4">
 								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Invite Token</Label>
-									<CopyToClipboardInput content={inviteToken} />
-								</div>
-								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Invite URL</Label>
-									<CopyToClipboardInput content={`${process.env.NODE_ENV === "development" ? "http" : "https"}://${appUrl}/join/${inviteToken}`} />
-								</div>
-								<hr />
-								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Role</Label>
 									<Select
 										value={role}
 										onValueChange={(value) => setRole(value as "member" | "admin" | "owner")}
 									>
-										<SelectTrigger>
+										<SelectTrigger className="w-full">
 											<SelectValue>{role}</SelectValue>
 										</SelectTrigger>
 										<SelectContent>
@@ -187,7 +178,7 @@ export default function CreateInviteToken({ workspace, appUrl, currentMember, ch
 									</Select>
 								</div>
 							</div>
-							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
+							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4 rounded-b-lg">
 								<DialogClose asChild>
 									<Button
 										variant="outline"
@@ -198,7 +189,8 @@ export default function CreateInviteToken({ workspace, appUrl, currentMember, ch
 									</Button>
 								</DialogClose>
 								<Button disabled={loading} type="submit">
-									{loading ? <Spinner /> : "Create"}
+									{loading ? "Creating" : "Create"}
+									{loading && <Spinner />}
 								</Button>
 							</div>
 						</form>
@@ -224,21 +216,12 @@ export default function CreateInviteToken({ workspace, appUrl, currentMember, ch
 						<form onSubmit={onSubmit}>
 							<div className="flex flex-col px-6 pb-4 gap-4">
 								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Invite Token</Label>
-									<CopyToClipboardInput content={inviteToken} />
-								</div>
-								<div className="flex flex-col gap-2 items-start w-full">
-									<Label>Invite URL</Label>
-									<CopyToClipboardInput content={`${appUrl}/join/${inviteToken}`} />
-								</div>
-								<hr />
-								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Role</Label>
 									<Select
 										value={role}
 										onValueChange={(value) => setRole(value as "member" | "admin" | "owner")}
 									>
-										<SelectTrigger>
+										<SelectTrigger className="w-full">
 											<SelectValue>{role}</SelectValue>
 										</SelectTrigger>
 										<SelectContent>
@@ -254,7 +237,7 @@ export default function CreateInviteToken({ workspace, appUrl, currentMember, ch
 								</div>
 							</div>
 							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
-								<DialogClose asChild>
+								<DrawerClose asChild>
 									<Button
 										variant="outline"
 										type="button"
@@ -262,9 +245,10 @@ export default function CreateInviteToken({ workspace, appUrl, currentMember, ch
 									>
 										Cancel
 									</Button>
-								</DialogClose>
+								</DrawerClose>
 								<Button disabled={loading} type="submit">
-									{loading ? <Spinner /> : "Create"}
+									{loading ? "Creating" : "Create"}
+									{loading && <Spinner />}
 								</Button>
 							</div>
 						</form>

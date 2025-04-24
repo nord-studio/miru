@@ -54,7 +54,7 @@ export default async function MonitorSingletonLayout({
 						</h1>
 						<p className="text-neutral-500 dark:text-neutral-400">
 							Currently {latestReport.status} • Started at{" "}
-							{new Date(incident.started_at).toLocaleString()}
+							{new Date(incident.startedAt).toLocaleString()}
 						</p>
 					</div>
 					<div className="flex flex-row gap-3 items-center">

@@ -57,17 +57,17 @@ export default function PandaStatusPageDesign({ page }: { page: StatusPageWithMo
 									)}
 								</div>
 							</div>
-							<div className="flex-row gap-2 items-center hidden xs:flex">
+							<div className="xs:flex hidden flex-row gap-2 items-center">
 								<Button variant="link" className={cn(isLight() ? "text-neutral-900" : "text-neutral-100")}>
 									Report an Issue
 								</Button>
-								<Button className={cn(isLight() ? "bg-neutral-900 text-neutral-100" : "bg-neutral-100 text-neutral-900")}>
+								<Button variant="outline" className={cn("bg-input/30 dark border-input hover:bg-input/60 dark:hover:bg-input/60", isLight() ? "text-neutral-900 hover:text-neutral-900" : "text-neutral-100")}>
 									Subscribe
 								</Button>
 							</div>
 							<div className="flex-row gap-2 items-center flex xs:hidden">
-								<Button variant="outline" size="icon">
-									<Menu />
+								<Button size="icon" variant="outline" className="bg-input/30 dark border-input hover:bg-input/50">
+									<Menu className={cn(isLight() ? "text-neutral-900" : "text-neutral-100")} />
 								</Button>
 							</div>
 						</div>

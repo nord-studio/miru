@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Trash } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -27,14 +27,14 @@ export default function IncidentActionsDropdown({
 	...props
 }: {
 	incident: IncidentWithMonitor;
-	monitors?: Omit<Monitor, "uptime">[];
+	monitors?: Monitor[];
 } & React.ComponentProps<"button"> &
 	VariantProps<typeof buttonVariants>) {
 	const pathname = usePathname();
 	const [deleteOpen, setDeleteOpen] = React.useState(false);
 	const [editOpen, setEditOpen] = React.useState(false);
 	const [allMonitors, setAllMonitors] = React.useState<
-		Omit<Monitor, "uptime">[]
+		Monitor[]
 	>([]);
 
 	React.useEffect(() => {
@@ -89,12 +89,12 @@ export default function IncidentActionsDropdown({
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem
-							className="text-red-500 hover:text-black dark:hover:text-white hover:bg-red-500 dark:hover:bg-red-600"
+							variant="destructive"
 							onClick={() => {
 								setDeleteOpen(true);
 							}}
 						>
-							Delete
+							<Trash /> Delete
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

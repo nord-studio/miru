@@ -43,7 +43,7 @@ export default async function StatusPageMonitor({ monitor, incidents }: { monito
 				failedPings: pingData.filter((ping) => !ping.success).length,
 				incidents: incidents?.filter((incident) => {
 					return incident.monitorsToIncidents.some((monitorToIncident) => {
-						return monitorToIncident.monitor.id === monitor.id && incident.started_at <= date;
+						return monitorToIncident.monitor.id === monitor.id && incident.startedAt <= date;
 					});
 				}) ?? [],
 				downtime: 0

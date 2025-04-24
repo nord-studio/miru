@@ -26,15 +26,15 @@ export default function MonitorSelection({
 	min = 0,
 	disabled = false,
 }: {
-	monitors: Omit<Monitor, "uptime">[];
-	value: Omit<Monitor, "uptime">[];
-	setValue: React.Dispatch<React.SetStateAction<Omit<Monitor, "uptime">[]>>;
+	monitors: Monitor[];
+	value: Monitor[];
+	setValue: React.Dispatch<React.SetStateAction<Monitor[]>>;
 	min?: number;
 	disabled?: boolean;
 }) {
 	const [open, setOpen] = React.useState(false);
 
-	const toggleSelect = (monitor: Omit<Monitor, "uptime">) => {
+	const toggleSelect = (monitor: Monitor) => {
 		setValue((prev) =>
 			prev.some((g) => g.id === monitor.id)
 				? prev.filter((g) => g.id !== monitor.id)
@@ -89,7 +89,7 @@ export default function MonitorSelection({
 									}
 								>
 									<Check
-										className={`mr-2 h-4 w-4 ${value.includes(monitor)
+										className={`mr-2 h-4 w-4 ${value.some(m => m.id === monitor.id)
 											? "opacity-100"
 											: "opacity-0"
 											}`}

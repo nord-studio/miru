@@ -9,13 +9,13 @@ export const incidents = pgTable("incidents", {
 	// The title of the incident
 	title: text("title").notNull(),
 	/// When the incident was started
-	started_at: timestamp("started_at").notNull().defaultNow(),
+	startedAt: timestamp("started_at").notNull().defaultNow(),
 	/// When the incident was acknowledged
-	acknowledged_at: timestamp("acknowledged_at"),
+	acknowledgedAt: timestamp("acknowledged_at"),
 	/// When the incident was resolved
-	resolved_at: timestamp("resolved_at"),
+	resolvedAt: timestamp("resolved_at"),
 	/// If the incident was auto-resolved
-	auto_resolved: boolean("auto_resolved").notNull().default(false),
+	autoResolved: boolean("auto_resolved").notNull().default(false),
 });
 
 export const incidentRelations = relations(incidents, ({ many }) => ({

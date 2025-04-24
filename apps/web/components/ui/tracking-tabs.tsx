@@ -54,7 +54,7 @@ export default function TrackingTabs({ links, bottomBorder = false }: {
         setActiveIndex(index)
       }
     }, 100)
-  }, [pathname])
+  }, [pathname, links])
 
   const getHoverHighlightStyle = () => {
     if (hoveredIndex === null) {

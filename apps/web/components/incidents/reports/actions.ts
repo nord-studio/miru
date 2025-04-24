@@ -5,13 +5,12 @@ import { incidentReports, incidents } from "@/lib/db/schema";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
 import { IncidentReport, IncidentReportStatus } from "@/types/incident-report";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
-import { cache } from "react";
 import { z } from "zod";
 
-export const getIncidentWithReports = cache(actionClient.schema(z.string().nonempty()).action(async ({ parsedInput: id }) => {
+export const getIncidentWithReports = actionClient.schema(z.string().nonempty()).action(async ({ parsedInput: id }) => {
 	const incident = await db
 		.select()
 		.from(incidents)
@@ -27,17 +26,18 @@ export const getIncidentWithReports = cache(actionClient.schema(z.string().nonem
 		with: {
 			incidentId: true
 		},
-		where: (reports, { eq }) => (eq(reports.incidentId, id))
+		where: (reports, { eq }) => (eq(reports.incidentId, id)),
+		orderBy: (reports, { desc }) => (desc(reports.timestamp)),
 	}).then((res) => res.map((r) => ({
 		id: r.id,
-		incident_id: r.incidentId.id, // Map incidentId to incident_id
+		incidentId: r.incidentId, // Map incidentId to incident_id
 		status: r.status as IncidentReportStatus,
 		message: r.message,
 		timestamp: r.timestamp,
 	})));
 
 	return { reports };
-}));
+});
 
 export const createIncidentReport = actionClient
 	.schema(
@@ -64,15 +64,15 @@ export const createIncidentReport = actionClient
 
 		const sta = status as IncidentReportStatus;
 
-		if (sta === IncidentReportStatus.IDENTIFIED && !incident?.acknowledged_at) {
+		if (sta === IncidentReportStatus.IDENTIFIED && !incident?.acknowledgedAt) {
 			await db.update(incidents).set({
-				acknowledged_at: new Date(),
+				acknowledgedAt: new Date(),
 			}).where(eq(incidents.id, incidentId));
 		}
 
-		if (sta === IncidentReportStatus.RESOLVED && !incident?.resolved_at) {
+		if (sta === IncidentReportStatus.RESOLVED && !incident?.resolvedAt) {
 			await db.update(incidents).set({
-				resolved_at: new Date(),
+				resolvedAt: new Date(),
 			}).where(eq(incidents.id, incidentId));
 		}
 
@@ -113,11 +113,12 @@ export const deleteIncidentReport = actionClient
 			where: (reports, { eq }) => (eq(reports.incidentId, incidentId))
 		}).then((res) => res.map((r) => ({
 			id: r.id,
-			incident_id: r.incidentId.id, // Map incidentId to incident_id
+			incidentId: r.incidentId, // Map incidentId to incident_id
 			status: r.status as IncidentReportStatus,
 			message: r.message,
 			timestamp: r.timestamp,
 		})));
+
 		if (reports.length <= 1) {
 			return { error: true, message: "Cannot delete the last report." };
 		}
