@@ -17,12 +17,14 @@ export async function getMonitorUptime(monitorId: string, days: number) {
 
 	const data = await db.execute(query);
 
-	return data.rows.map((row: Record<string, unknown>) => {
-		return {
-			monitor_id: row.monitor_id as string,
-			uptime_percentage: parseInt(Number(row.uptime_percentage).toFixed(2)),
-		};
-	});
+	if (data.rows.length === 0) {
+		return null;
+	}
+
+	return {
+		monitor_id: data.rows[0].monitor_id,
+		uptime_percentage: parseInt(Number(data.rows[0].uptime_percentage).toFixed(2)),
+	};
 }
 
 /// Get the percentile latency
@@ -77,7 +79,7 @@ export async function getSingleMonitorLatencyPercentiles(monitorId: string, days
 		percentile_cont(0.95) WITHIN GROUP (ORDER BY latency) AS p95,
 		percentile_cont(0.99) WITHIN GROUP (ORDER BY latency) AS p99
 	FROM pings 
-	WHERE monitor_id = '${monitorId}' AND created_at >= NOW() - INTERVAL '${days} days';`);
+	WHERE monitor_id = '${monitorId}' AND success = true AND created_at >= NOW() - INTERVAL '${days} days';`);
 
 	const data = await db.execute(query);
 

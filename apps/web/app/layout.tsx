@@ -1,4 +1,4 @@
-import { Inter, Manrope } from "next/font/google";
+import { Geist, Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/provider";
 import { Metadata } from "next";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,6 +6,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import ResponsiveToaster from "@/components/responsive-toaster";
 
 import "./globals.css";
+import "react-image-crop/dist/ReactCrop.css";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -13,8 +14,8 @@ const inter = Inter({
 	display: "swap",
 });
 
-const manrope = Manrope({
-	variable: "--font-manrope",
+const geist = Geist({
+	variable: "--font-geist",
 	subsets: ["latin"],
 	display: "swap",
 });
@@ -33,9 +34,9 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body
-				className={`${inter.variable} ${manrope.variable} antialiased bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-sans flex flex-col items-center w-full min-h-screen`}
+				className={`${inter.variable} ${geist.variable} antialiased bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-sans flex flex-col items-center min-h-screen`}
 			>
-				<div className="flex flex-col min-h-screen w-full max-w-[1200px]" data-vaul-drawer-wrapper="">
+				<div className="flex flex-col min-h-screen w-full" data-vaul-drawer-wrapper="">
 					<ThemeProvider
 						attribute="class"
 						defaultTheme="system"

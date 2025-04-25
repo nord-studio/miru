@@ -22,6 +22,9 @@ export default async function MonitorSingletonPage({
 		.then((res) => res[0]);
 
 	const uptime = await getMonitorUptime(id, 7);
+	if (!uptime) {
+		return null;
+	}
 	const percentiles = await getSingleMonitorLatencyPercentiles(id, 7);
 
 	if (!monitor) {
@@ -33,7 +36,7 @@ export default async function MonitorSingletonPage({
 			<div className="grid grid-flow-row grid-cols-6 gap-4">
 				<StatChip
 					title="Uptime"
-					value={uptime[0].uptime_percentage.toString()}
+					value={uptime.uptime_percentage.toString()}
 					measurement="%"
 				/>
 				<StatChip

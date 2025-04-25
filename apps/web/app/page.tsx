@@ -1,48 +1,35 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import db from "@/lib/db";
-import { user } from "@/lib/db/schema/auth";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-
-export default async function Home() {
-	const fresh = await db
-		.select()
-		.from(user)
-		.limit(1)
-		.then((res) => res.length === 0);
-
+export default function RootPage() {
 	return (
-		<main className="max-w-[800px] flex flex-col items-center justify-center h-screen mx-auto gap-6">
-			{fresh ? (
-				<>
-					<div className="flex flex-col items-center">
-						<h1 className="text-3xl font-display font-black text-neutral-900 dark:text-neutral-100">
-							Welcome to Miru!
-						</h1>
-						<p>
-							It looks like you haven&apos;t setup Miru yet. Click
-							the button below to get started.
-						</p>
-					</div>
-					<Link href="/auth/register?fresh=true">
-						<Button>Create Account</Button>
+		<>
+			<main className="max-w-[800px] flex flex-col items-center justify-center h-screen mx-auto gap-8">
+				<div className="flex flex-col items-center gap-4">
+					<h1 className="text-3xl font-display font-black text-neutral-900 dark:text-neutral-100">
+						(・_・ヾ)
+					</h1>
+					<h1 className="text-3xl font-display font-black text-neutral-900 dark:text-neutral-100">
+						Uh... Hi?
+					</h1>
+					<p className="text-center text-neutral-500 dark:text-neutral-400">
+						This page doesn&apos;t do anything, and it will never do anything. It is used as a fallback for if anything breaks. <br />
+						But the fact you are seeing this means that something <i>did</i> break...
+					</p>
+				</div>
+				<div className="flex flex-row gap-3 items-center">
+					<Button variant="outline" onClick={() => window.location.reload()}>
+						Refresh
+					</Button>
+					<Link href="https://github.com/nord-studio/miru/issues/new">
+						<Button>
+							Report an Issue
+						</Button>
 					</Link>
-				</>
-			) : (
-				<>
-					<div className="flex flex-col items-center">
-						<h1 className="text-3xl font-display font-black text-neutral-900 dark:text-neutral-100">
-							This is awkward...
-						</h1>
-						<p>
-							A status page hasn&apos;t been setup yet. Please
-							check back later.
-						</p>
-					</div>
-				</>
-			)}
-		</main>
-	);
+				</div>
+			</main>
+		</>
+	)
 }

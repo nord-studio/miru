@@ -46,11 +46,9 @@ export default async function Navbar({ workspaceSlug }: { workspaceSlug: string 
 		<nav className="flex flex-col items-start gap-3 w-full md:pb-2">
 			<div className="flex flex-row gap-2 items-center justify-start w-full">
 				<div className="flex flex-row gap-3 md:gap-4 items-center justify-start w-full md:pl-2">
-					<div className="flex-row gap-2 items-center hidden md:flex">
-						<h2 className="text-lg font-black font-display text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
-							見る
+					<div className="flex-row items-center hidden md:flex">
+						<h2 className="text-lg font-black font-display text-neutral-500 dark:text-neutral-400 whitespace-nowrap after:content-['見る'] hover:after:content-['Miru']">
 						</h2>
-						<span>/</span>
 					</div>
 					<WorkspaceSwitcher workspaces={filteredWorkspaces} />
 				</div>

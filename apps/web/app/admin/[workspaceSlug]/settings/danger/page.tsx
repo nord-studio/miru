@@ -1,4 +1,5 @@
-import { DeleteWorkspaceConfirm } from "@/app/admin/[workspaceSlug]/settings/danger/confirm";
+import { DeleteWorkspaceConfirm } from "@/app/admin/[workspaceSlug]/settings/danger/delete-confirm";
+import { WipeWorkspaceConfirm } from "@/app/admin/[workspaceSlug]/settings/danger/wipe-confirm";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import db from "@/lib/db";
@@ -56,6 +57,24 @@ export default async function WorkspaceDangerSettingsPage({
 							<DeleteWorkspaceConfirm user={session?.user} workspace={workspace}>
 								<Button variant="destructive">Delete Workspace</Button>
 							</DeleteWorkspaceConfirm>
+						</div>
+					</div>
+					<div className="flex w-full flex-col rounded-md border border-red-500/40">
+						<div className="flex flex-col gap-4 border-b border-red-500/40 p-6">
+							<div className="flex flex-col gap-2">
+								<h1 className="text-xl font-bold">Wipe Workspace</h1>
+								<p className="text-sm">
+									Permanently wipe all data except for workspace settings, members and invites.
+									This action is not reversible, so
+									please continue with caution.
+								</p>
+							</div>
+						</div>
+						<div className="flex flex-row items-center justify-between gap-4 bg-red-500/10 p-4">
+							<div />
+							<WipeWorkspaceConfirm user={session?.user} workspace={workspace}>
+								<Button variant="destructive">Wipe Workspace</Button>
+							</WipeWorkspaceConfirm>
 						</div>
 					</div>
 				</div>

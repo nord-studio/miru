@@ -13,6 +13,7 @@ import {
 	BookTextIcon,
 	CodeIcon,
 	LogOut,
+	MapIcon,
 	UserIcon,
 } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
@@ -131,6 +132,15 @@ export default function UserDropdown({ user }: { user: User }) {
 										<CodeIcon className="mr-2 h-4 w-4" />
 										API
 									</DropdownMenuItem>
+									<Link
+										href="https://github.com/orgs/nord-studio/projects/7"
+										target="_blank"
+									>
+										<DropdownMenuItem>
+											<MapIcon className="mr-2 h-4 w-4" />
+											Roadmap
+										</DropdownMenuItem>
+									</Link>
 									<DropdownMenuSeparator />
 									<DropdownMenuItem
 										onClick={() => {
@@ -221,6 +231,18 @@ export default function UserDropdown({ user }: { user: User }) {
 											<CodeIcon className="mr-3 h-4 w-4" />
 											<span>API</span>
 										</div>
+										<Link
+											href="https://github.com/orgs/nord-studio/projects/7"
+											className="w-full"
+											target="_blank"
+										>
+											<DrawerClose className="w-full">
+												<div className="text-md flex w-full cursor-default select-none items-center p-4 outline-hidden transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-disabled:pointer-events-none data-disabled:opacity-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50">
+													<MapIcon className="mr-3 h-4 w-4" />
+													<span>Roadmap</span>
+												</div>
+											</DrawerClose>
+										</Link>
 										<hr className="w-full border-b border-black/10 dark:border-white/10" />
 										<DrawerClose className="w-full">
 											<div

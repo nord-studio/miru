@@ -37,17 +37,17 @@ export function EditIncidentButton({
 	...props
 }: {
 	incident: IncidentWithMonitor;
-	monitors: Omit<Monitor, "uptime">[];
+	monitors: Monitor[];
 } & React.ComponentProps<"button"> &
 	VariantProps<typeof buttonVariants>) {
 	const [open, setOpen] = useState(false);
-	const [moutned, setMounted] = useState(false);
+	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
 		setMounted(true);
 	}, []);
 
-	if (!moutned) {
+	if (!mounted) {
 		return (
 			<>
 				<Button {...props}>
@@ -81,16 +81,14 @@ export default function EditIncident({
 	setOpen,
 }: {
 	incident: IncidentWithMonitor;
-	monitors: Omit<Monitor, "uptime">[];
+	monitors: Monitor[];
 	open: boolean;
 	setOpen: (open: boolean) => void;
 }) {
 	const isDesktop = useMediaQuery("(min-width: 768px)");
 	const [loading, setLoading] = useState(false);
 	const [title, setTitle] = useState(incident.title);
-	const [monitorIds, setMonitorIds] = useState(
-		incident.monitors.map((m) => m.id)
-	);
+	const [monitorList, setMonitorList] = useState<Monitor[]>(incident.monitors.map((m) => m));
 
 	async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -98,7 +96,7 @@ export default function EditIncident({
 
 		const res = await editIncident({
 			id: incident.id,
-			data: { title, monitors: monitorIds },
+			data: { title, monitors: monitorList.map((m) => m.id) },
 		});
 
 		if (res?.serverError) {
@@ -149,30 +147,27 @@ export default function EditIncident({
 									<Label>Affected Monitors</Label>
 									<MonitorSelection
 										monitors={monitors}
-										setValue={setMonitorIds}
-										value={monitorIds}
+										value={monitorList}
+										setValue={setMonitorList}
+										disabled={loading}
 										min={1}
 									/>
 								</div>
 							</div>
-							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
-								<span className="text-neutral-400 dark:text-neutral-600 text-sm">
-									Note: You can update this later.
-								</span>
-								<div className="flex flex-row gap-2 items-center">
-									<DialogClose asChild>
-										<Button
-											variant="outline"
-											type="button"
-											disabled={loading}
-										>
-											Cancel
-										</Button>
-									</DialogClose>
-									<Button disabled={loading} type="submit">
-										{loading ? <Spinner /> : "Update"}
+							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4 rounded-b-lg">
+								<DialogClose asChild>
+									<Button
+										variant="outline"
+										type="button"
+										disabled={loading}
+									>
+										Cancel
 									</Button>
-								</div>
+								</DialogClose>
+								<Button disabled={loading} type="submit">
+									{loading && <Spinner />}
+									{loading ? "Updating..." : "Update"}
+								</Button>
 							</div>
 						</form>
 					</DialogContent>
@@ -203,6 +198,15 @@ export default function EditIncident({
 										disabled={loading}
 									/>
 								</div>
+								<div className="flex flex-col gap-2 items-start w-full">
+									<Label>Affected Monitors</Label>
+									<MonitorSelection
+										monitors={monitors}
+										value={monitorList}
+										setValue={setMonitorList}
+										min={1}
+									/>
+								</div>
 							</div>
 							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
 								<span className="text-neutral-400 dark:text-neutral-600 text-sm">
@@ -219,7 +223,8 @@ export default function EditIncident({
 										</Button>
 									</DialogClose>
 									<Button disabled={loading} type="submit">
-										{loading ? <Spinner /> : "Update"}
+										{loading ? "Updating" : "Update"}
+										{loading && <Spinner />}
 									</Button>
 								</div>
 							</div>

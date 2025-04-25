@@ -27,11 +27,11 @@ export default function IncidentTimelineItem({
 			<div
 				className={cn(
 					"group -m-2 relative flex gap-4 border border-transparent p-2",
-					editable && "hover:rounded-lg hover:bg-accent/40",
+					editable && "hover:rounded-lg hover:border-border hover:shadow hover:bg-muted/80 dark:hover:bg-muted/40",
 				)}
 			>
 				<div className="relative">
-					<div className="rounded-full border border-border bg-background p-2">
+					<div className="rounded-full border bg-background p-2">
 						{report.status === IncidentReportStatus.IDENTIFIED && (
 							<FingerprintIcon className="size-4" />
 						)}
@@ -46,7 +46,7 @@ export default function IncidentTimelineItem({
 						)}
 					</div>
 					{!last && (
-						<div className="absolute inset-x-0 mx-auto h-full w-[2px] bg-muted" />
+						<div className="absolute inset-x-0 mx-auto h-full w-[2px] bg-black/10 dark:bg-white/10" />
 					)}
 				</div>
 				<div className="mt-1 grid flex-1">
@@ -59,7 +59,7 @@ export default function IncidentTimelineItem({
 								const t = toast.loading("Deleting report...");
 								deleteIncidentReport({
 									id: report.id,
-									incidentId: report.incident_id,
+									incidentId: report.incidentId,
 								}).then((res) => {
 									if (res?.data?.error) {
 										toast.error("Something went wrong!", {
@@ -85,7 +85,7 @@ export default function IncidentTimelineItem({
 						<p className="font-medium text-sm">{report.status.slice(0, 1).toUpperCase() + report.status.slice(1)}</p>
 						<p className="mt-px text-muted-foreground text-xs">
 							<code>
-								{format(new Date(), "LLL dd, y HH:mm")}
+								{format(report.timestamp, "LLL dd, y HH:mm")}
 							</code>
 						</p>
 					</div>

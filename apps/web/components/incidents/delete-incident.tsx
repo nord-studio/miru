@@ -19,8 +19,7 @@ export default function DeleteIncident({
 	return (
 		<Alert
 			title="Delete Incident"
-			description="Are you sure you want to delete this incident?"
-			footer="This action cannot be undone."
+			description="Are you sure you want to delete this incident? This action cannot be undone."
 			open={open}
 			setOpen={setOpen}
 			onCancel={() => setOpen(false)}

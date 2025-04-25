@@ -212,7 +212,7 @@ export default function CreateMonitor() {
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Domain / URL</Label>
-									<div className="flex flex-row gap-3 items-center w-full">
+									<div className="flex flex-row gap-2 items-center w-full">
 										<Input
 											placeholder="tygr.dev"
 											disabled={loading}
@@ -223,7 +223,7 @@ export default function CreateMonitor() {
 										/>
 										<Button
 											type="button"
-											variant="secondary"
+											variant="outline"
 											onClick={handleMonitorTest}
 										>
 											Test
@@ -262,25 +262,20 @@ export default function CreateMonitor() {
 									</Select>
 								</div>
 							</div>
-							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
-								<span className="text-neutral-400 dark:text-neutral-600 text-sm">
-									You can edit this later.
-								</span>
-								<div className="flex flex-row gap-2 items-center">
-									<DialogClose asChild>
-										<Button
-											variant="outline"
-											type="button"
-											disabled={loading}
-										>
-											Cancel
-										</Button>
-									</DialogClose>
-									<Button disabled={loading} type="submit" className="flex flex-row gap-2 items-center">
-										{loading ? "Creating" : "Create"}
-										{loading && <Spinner />}
+							<div className="flex flex-row items-center justify-between gap-4 border-t rounded-b-lg bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
+								<DialogClose asChild>
+									<Button
+										variant="outline"
+										type="button"
+										disabled={loading}
+									>
+										Cancel
 									</Button>
-								</div>
+								</DialogClose>
+								<Button disabled={loading} type="submit" className="flex flex-row gap-2 items-center">
+									{loading ? "Creating" : "Create"}
+									{loading && <Spinner />}
+								</Button>
 							</div>
 						</form>
 					</DialogContent>
@@ -354,7 +349,7 @@ export default function CreateMonitor() {
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Domain / URL</Label>
-									<div className="flex flex-row gap-3 items-center w-full">
+									<div className="flex flex-row gap-2 items-center w-full">
 										<Input
 											placeholder="tygr.dev"
 											disabled={loading}
@@ -365,7 +360,7 @@ export default function CreateMonitor() {
 										/>
 										<Button
 											type="button"
-											variant="secondary"
+											variant="outline"
 											onClick={handleMonitorTest}
 										>
 											Test
@@ -419,7 +414,8 @@ export default function CreateMonitor() {
 										</Button>
 									</DrawerClose>
 									<Button disabled={loading} type="submit">
-										{loading ? <Spinner /> : "Create"}
+										{loading ? "Creating" : "Create"}
+										{loading && <Spinner />}
 									</Button>
 								</div>
 							</div>

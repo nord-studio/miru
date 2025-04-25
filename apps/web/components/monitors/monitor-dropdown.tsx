@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Trash } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -29,7 +29,7 @@ export default function MonitorActionsDropdown({
 	workspaceId,
 	...props
 }: {
-	monitor: Omit<Monitor, "uptime">;
+	monitor: Monitor;
 	workspaceId: string;
 } & React.ComponentProps<"button"> &
 	VariantProps<typeof buttonVariants>) {
@@ -142,12 +142,12 @@ export default function MonitorActionsDropdown({
 							<>
 								<DropdownMenuSeparator />
 								<DropdownMenuItem
-									className="text-red-500 hover:text-black dark:hover:text-white hover:bg-red-500 dark:hover:bg-red-600"
+									variant="destructive"
 									onClick={() => {
 										setDeleteOpen(true);
 									}}
 								>
-									Delete
+									<Trash /> Delete
 								</DropdownMenuItem>
 							</>
 						)}

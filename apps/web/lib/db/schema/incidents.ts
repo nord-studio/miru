@@ -1,6 +1,6 @@
 import { monitorsToIncidents } from "@/lib/db/schema";
 import { generateId } from "@/lib/utils";
-import { relations } from "drizzle-orm";
+import { relations } from "drizzle-orm/relations";
 import { pgTable, text, timestamp, boolean, varchar } from "drizzle-orm/pg-core";
 
 export const incidents = pgTable("incidents", {
@@ -9,14 +9,14 @@ export const incidents = pgTable("incidents", {
 	// The title of the incident
 	title: text("title").notNull(),
 	/// When the incident was started
-	started_at: timestamp("started_at").notNull().defaultNow(),
+	startedAt: timestamp("started_at").notNull().defaultNow(),
 	/// When the incident was acknowledged
-	acknowledged_at: timestamp("acknowledged_at"),
+	acknowledgedAt: timestamp("acknowledged_at"),
 	/// When the incident was resolved
-	resolved_at: timestamp("resolved_at"),
+	resolvedAt: timestamp("resolved_at"),
 	/// If the incident was auto-resolved
-	auto_resolved: boolean("auto_resolved").notNull().default(false),
-})
+	autoResolved: boolean("auto_resolved").notNull().default(false),
+});
 
 export const incidentRelations = relations(incidents, ({ many }) => ({
 	// Many (Monitors) to many (Incidents) relationship
@@ -36,7 +36,7 @@ export const incidentReports = pgTable("incident_reports", {
 	status: text("status", { enum: ["investigating", "identified", "monitoring", "resolved"] }).notNull(),
 	/// When the incident report took place
 	timestamp: timestamp("timestamp").notNull().defaultNow(),
-})
+});
 
 // One (IncidentReport) to one (Incident) relationship
 export const incidentReportsRelations = relations(incidentReports, ({ one }) => ({
@@ -44,4 +44,4 @@ export const incidentReportsRelations = relations(incidentReports, ({ one }) => 
 		fields: [incidentReports.incidentId],
 		references: [incidents.id],
 	})
-}))
+}));

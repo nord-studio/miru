@@ -61,7 +61,7 @@ export const columns: ColumnDef<IncidentWithMonitor>[] = [
 		cell: ({ row }) => {
 			return (
 				<p className="font-medium" suppressHydrationWarning={true}>
-					{new Date(row.original.started_at).toLocaleString()}
+					{new Date(row.original.startedAt).toLocaleString()}
 				</p>
 			);
 		},
@@ -72,9 +72,9 @@ export const columns: ColumnDef<IncidentWithMonitor>[] = [
 		cell: ({ row }) => {
 			return (
 				<p className="font-medium" suppressHydrationWarning={true}>
-					{row.original.acknowledged_at
+					{row.original.acknowledgedAt
 						? new Date(
-							row.original.acknowledged_at
+							row.original.acknowledgedAt
 						).toLocaleString()
 						: "N/A"}
 				</p>
@@ -87,8 +87,8 @@ export const columns: ColumnDef<IncidentWithMonitor>[] = [
 		cell: ({ row }) => {
 			return (
 				<p className="font-medium" suppressHydrationWarning={true}>
-					{row.original.resolved_at
-						? new Date(row.original.resolved_at).toLocaleString()
+					{row.original.resolvedAt
+						? new Date(row.original.resolvedAt).toLocaleString()
 						: "N/A"}
 				</p>
 			);

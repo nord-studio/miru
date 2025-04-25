@@ -19,7 +19,7 @@ export default function DeleteMonitor({
 	return (
 		<Alert
 			title="Delete Monitor"
-			description="Are you sure you want to delete this monitor?"
+			description="Are you sure you want to delete this monitor? This action cannot be undone."
 			open={open}
 			setOpen={setOpen}
 			onCancel={() => setOpen(false)}

@@ -21,7 +21,7 @@ export default function PingDetails({ ping }: { ping: Ping }) {
 							Response
 						</TabsTrigger>
 					</TabsList>
-					<TabsContent value="headers" className="w-full">
+					<TabsContent value="headers" className="max-w-[877px]">
 						<table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-800">
 							<thead className="bg-neutral-100 dark:bg-neutral-900">
 								<tr>

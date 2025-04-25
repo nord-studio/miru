@@ -47,10 +47,13 @@ export default function TrackingTabs({ links, bottomBorder = false }: {
 
   // Update active tab on pathname change
   useEffect(() => {
-    const index = links.findIndex((link) => link.href === pathname)
-    if (index !== -1) {
-      setActiveIndex(index)
-    }
+    // Adding a timeout ensures that the border is set after the DOM has updated
+    setTimeout(() => {
+      const index = links.findIndex((link) => pathname.includes(link.href))
+      if (index !== -1) {
+        setActiveIndex(index)
+      }
+    }, 100)
   }, [pathname, links])
 
   const getHoverHighlightStyle = () => {
