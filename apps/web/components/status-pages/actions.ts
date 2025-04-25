@@ -15,16 +15,39 @@ import { z } from "zod";
 import { zfd } from "zod-form-data"
 
 export const createStatusPage = actionClient.schema(z.object({
+	id: z.string().optional(),
 	workspaceId: z.string(),
 	name: z.string(),
 	enabled: z.boolean().default(false),
 	root: z.boolean().default(false),
 	domain: z.string().optional(),
 	monitorIds: z.array(z.string()),
+	description: z.string().optional(),
+	logo: z.string().optional(),
+	darkLogo: z.string().optional(),
+	favicon: z.string().optional(),
+	brandColor: z.string().optional(),
+	design: z.enum(["simple", "panda", "stormtrooper"]).default("simple"),
+	forcedTheme: z.enum(["auto", "light", "dark"]).default("auto"),
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
 	error: z.boolean(),
 	message: z.string(),
-})).action(async ({ parsedInput: { enabled, monitorIds, name, root, workspaceId, domain } }) => {
+})).action(async ({ parsedInput: {
+	id,
+	monitorIds,
+	name,
+	root,
+	workspaceId,
+	enabled,
+	domain,
+	design,
+	forcedTheme,
+	brandColor,
+	darkLogo,
+	description,
+	favicon,
+	logo
+} }) => {
 	const workspace = await db.query.workspaces.findMany({
 		where: () => eq(workspaces.id, workspaceId)
 	});
@@ -45,13 +68,36 @@ export const createStatusPage = actionClient.schema(z.object({
 		return { error: true, message: "There is already a root status page" };
 	}
 
+	if (!root && !domain) {
+		return { error: true, message: "Please provide a domain or enable root" };
+	}
+
+	const existing = await db.query.statusPages.findMany({
+		where: (statusPages, { eq }) => and(
+			eq(statusPages.name, name),
+			eq(statusPages.workspaceId, workspaceId)
+		)
+	});
+
+	if (existing.length > 0) {
+		return { error: true, message: "Status page with this name already exists" };
+	}
+
 	const statusPage = await db.insert(statusPages).values({
+		id: id || generateId(),
 		name: name,
 		workspaceId: workspaceId,
 		domain: root ? null : domain,
 		root: root,
 		enabled: enabled,
-	}).returning().then((res) => res[0]);
+		description: description,
+		logo: logo,
+		darkLogo: darkLogo,
+		favicon: favicon,
+		brandColor: brandColor,
+		design: design,
+		forcedTheme: forcedTheme,
+	}).onConflictDoNothing().returning().then((res) => res[0]);
 
 	if (!statusPage) {
 		return { error: true, message: "Failed to create status page" };
@@ -133,6 +179,10 @@ export const editStatusPage = actionClient.schema(z.object({
 
 	if (root && alreadyRoot && alreadyRoot.id !== id) {
 		return { error: true, message: "There is already a root status page" };
+	}
+
+	if (!root && !domain) {
+		return { error: true, message: "Please provide a domain or enable root" };
 	}
 
 	await db.update(statusPages).set({
@@ -295,5 +345,106 @@ export const removeLogo = actionClient.schema(z.object({
 	return {
 		error: false,
 		message: "Logo removed successfully",
+	}
+});
+
+export const uploadFavicon = actionClient.schema(zfd.formData({
+	// Status page ID
+	id: zfd.text(),
+	// Logo to upload
+	file: zfd.file(),
+}), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
+	error: z.boolean(),
+	message: z.string(),
+	id: z.string().optional(),
+})).action(async ({ parsedInput: { file, id } }) => {
+	const res = await auth.api.getSession({
+		headers: await headers()
+	});
+
+	if (!res || !res.user) {
+		return { error: true, message: "Unauthorized" };
+	}
+
+	if (!file) {
+		return { error: true, message: "No file was selected." };
+	}
+
+	if (file.size > MAX_FILE_SIZE) {
+		return { error: true, message: "Please upload a file smaller than 12MB." };
+	}
+
+	if (file.type !== "image/vnd.microsoft.icon") {
+		return { error: true, message: "Please upload a valid favicon." };
+	}
+
+	const statusPage = await db.query.statusPages.findMany({
+		where: () => eq(statusPages.id, id)
+	});
+
+	if (!statusPage) {
+		return { error: true, message: "Status page not found" };
+	}
+
+	const assetId = generateId();
+
+	await publicBucketExists();
+
+	await minio.putObject("public", assetId, Buffer.from(await file.arrayBuffer()), file.size, {
+		"Content-Type": "image/vnd.microsoft.icon"
+	});
+
+	if (!statusPage[0].favicon) {
+		await db.update(statusPages).set({
+			favicon: assetId,
+		}).where(eq(statusPages.id, id)).execute();
+	} else {
+		await minio.removeObject("public", statusPage[0].favicon);
+		await db.update(statusPages).set({
+			favicon: assetId,
+		}).where(eq(statusPages.id, id)).execute();
+	}
+
+	return {
+		error: false,
+		message: "Favicon uploaded successfully",
+		id: assetId
+	}
+});
+
+export const removeFavicon = actionClient.schema(z.object({
+	id: z.string(),
+}), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
+	error: z.boolean(),
+	message: z.string(),
+})).action(async ({ parsedInput: { id } }) => {
+	const res = await auth.api.getSession({
+		headers: await headers()
+	});
+
+	if (!res || !res.user) {
+		return { error: true, message: "Unauthorized" };
+	}
+
+	const statusPage = await db.query.statusPages.findMany({
+		where: () => eq(statusPages.id, id)
+	});
+
+	if (!statusPage) {
+		return { error: true, message: "Status page not found" };
+	}
+
+	if (!statusPage[0].favicon) {
+		return { error: true, message: "Favicon not found" };
+	}
+
+	await minio.removeObject("public", statusPage[0].favicon);
+	await db.update(statusPages).set({
+		favicon: null,
+	}).where(eq(statusPages.id, id)).execute();
+
+	return {
+		error: false,
+		message: "Favicon removed successfully",
 	}
 });

@@ -26,6 +26,11 @@ export async function generateMetadata(): Promise<Metadata> {
 		where: () => eq(statusPages.root, true)
 	});
 
+	const appDoman = process.env.NEXT_PUBLIC_APP_DOMAIN || "localhost:3000";
+	const secure = process.env.NODE_ENV === "development" ? "http" : "https";
+	const appUrl = `${secure}://${appDoman}`;
+	const favicon = `${appUrl}/api/assets/${statusPage?.favicon}`;
+
 	if (!statusPage) {
 		return {
 			title: "Miru",
@@ -35,6 +40,9 @@ export async function generateMetadata(): Promise<Metadata> {
 		return {
 			title: `${statusPage.name} Status`,
 			description: statusPage.description ?? `Welcome to ${statusPage.name}'s status page. Real-time and historical data on system performance.`,
+			icons: [
+				{ rel: "icon", url: statusPage.favicon ? favicon : `${appUrl}/favicon.ico`, sizes: "32x32", type: "image/vnd.microsoft.icon" },
+			]
 		}
 	}
 }

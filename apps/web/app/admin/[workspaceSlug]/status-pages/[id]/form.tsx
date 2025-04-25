@@ -11,7 +11,7 @@ import { CircleCheck, Code, FileQuestion, GripVertical, HelpCircle, Moon, Sun } 
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
-import { editStatusPage, removeLogo, uploadLogo } from "@/components/status-pages/actions";
+import { editStatusPage, removeFavicon, removeLogo, uploadFavicon, uploadLogo } from "@/components/status-pages/actions";
 import { toast } from "sonner";
 import { StatusPageWithMonitorsExtended } from "@/types/status-pages";
 import { Workspace } from "@/types/workspace";
@@ -31,6 +31,7 @@ export default function EditStatusPageForm({ existing, monitors, workspace }: { 
 	const [domain, setDomain] = React.useState(existing.domain ?? "");
 	const [logo, setLogo] = React.useState(existing.logo ?? "");
 	const [darkLogo, setDarkLogo] = React.useState(existing.darkLogo ?? "");
+	const [favicon, setFavicon] = React.useState(existing.favicon ?? "");
 	const [monitorList, setMonitorList] = React.useState<Monitor[]>(existing.statusPageMonitors.map((m) => m.monitor));
 	const [design, setDesign] = React.useState(existing.design ?? "simple");
 	const [forcedTheme, setForcedTheme] = React.useState(existing.forcedTheme ?? false);
@@ -91,8 +92,9 @@ export default function EditStatusPageForm({ existing, monitors, workspace }: { 
 
 	const logoInputRef = React.useRef<HTMLInputElement>(null);
 	const logoDarkInputRef = React.useRef<HTMLInputElement>(null);
+	const faviconInputRef = React.useRef<HTMLInputElement>(null);
 
-	const upload = async (file: FileList | null, dark: boolean) => {
+	const onLogoSubmit = async (file: FileList | null, dark: boolean) => {
 		if (!file || file.length === 0) {
 			return;
 		}
@@ -150,7 +152,7 @@ export default function EditStatusPageForm({ existing, monitors, workspace }: { 
 		}
 	};
 
-	const remove = async (dark: boolean) => {
+	const onLogoRemove = async (dark: boolean) => {
 		setLoading(true);
 
 		const t = toast.loading("Removing logo...");
@@ -192,6 +194,97 @@ export default function EditStatusPageForm({ existing, monitors, workspace }: { 
 		} else {
 			setLogo("");
 		}
+	};
+
+	const onFaviconSubmit = async (file: FileList | null) => {
+		if (!file || file.length === 0) {
+			return;
+		}
+
+		if (file[0].size > MAX_FILE_SIZE) {
+			return toast.error("Please upload a file smaller than 12MB");
+		}
+
+		setLoading(true);
+		const t = toast.loading("Uploading logo...");
+
+		const formData = new FormData();
+		formData.append("file", file[0]);
+		formData.append("id", existing.id);
+
+		const res = await uploadFavicon(formData);
+
+		if (res?.validationErrors) {
+			setLoading(false);
+			return toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
+				description: res.validationErrors[Object.keys(res.validationErrors)[0] as keyof typeof res.validationErrors]?.[0],
+				id: t
+			});
+		}
+
+		if (res?.data?.error) {
+			setLoading(false);
+			return toast.error("Something went wrong!", {
+				description: res.data.message,
+				id: t
+			});
+		}
+
+		if (res?.serverError) {
+			setLoading(false);
+			return toast.error("Something went wrong!", {
+				description: res.serverError,
+				id: t
+			});
+		}
+
+		setLoading(false);
+		toast.success("Success!", {
+			description: res?.data?.message,
+			id: t
+		});
+
+		setFavicon(res?.data?.id ?? "");
+	};
+
+	const onFaviconRemove = async () => {
+		setLoading(true);
+
+		const t = toast.loading("Removing favicon...");
+
+		const res = await removeFavicon({ id: existing.id });
+
+		if (res?.validationErrors) {
+			setLoading(false);
+			return toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
+				description: res.validationErrors[Object.keys(res.validationErrors)[0] as keyof typeof res.validationErrors]?.[0],
+				id: t
+			});
+		}
+
+		if (res?.data?.error) {
+			setLoading(false);
+			return toast.error("Something went wrong!", {
+				description: res.data.message,
+				id: t
+			});
+		}
+
+		if (res?.serverError) {
+			setLoading(false);
+			return toast.error("Something went wrong!", {
+				description: res.serverError,
+				id: t
+			});
+		}
+
+		setLoading(false);
+		toast.success("Success!", {
+			description: res?.data?.message,
+			id: t
+		});
+
+		setFavicon("");
 	};
 
 	return (
@@ -527,7 +620,7 @@ export default function EditStatusPageForm({ existing, monitors, workspace }: { 
 										</div>
 									)}
 									<div className="flex flex-col gap-2 items-start">
-										<input type="file" accept="image/png, image/jpeg, image/webp" id="logo" className="hidden" ref={logoInputRef} onChange={async (e) => await upload(e.target.files, false)} />
+										<input type="file" accept="image/png, image/jpeg, image/webp" id="logo" className="hidden" ref={logoInputRef} onChange={async (e) => await onLogoSubmit(e.target.files, false)} />
 										<Button disabled={loading} onClick={() => {
 											if (logoInputRef.current) {
 												logoInputRef.current.click();
@@ -535,7 +628,7 @@ export default function EditStatusPageForm({ existing, monitors, workspace }: { 
 										}}>
 											Upload
 										</Button>
-										<Button variant="secondary" disabled={loading || !logo} onClick={async () => await remove(false)}>
+										<Button variant="secondary" disabled={loading || !logo} onClick={async () => await onLogoRemove(false)}>
 											Remove
 										</Button>
 									</div>
@@ -556,7 +649,7 @@ export default function EditStatusPageForm({ existing, monitors, workspace }: { 
 										</div>
 									)}
 									<div className="flex flex-col gap-2 items-start">
-										<input type="file" accept="image/png, image/jpeg, image/webp" className="hidden" ref={logoDarkInputRef} onChange={async (e) => await upload(e.target.files, true)} />
+										<input type="file" accept="image/png, image/jpeg, image/webp" className="hidden" ref={logoDarkInputRef} onChange={async (e) => await onLogoSubmit(e.target.files, true)} />
 										<Button disabled={loading} onClick={() => {
 											if (logoDarkInputRef.current) {
 												logoDarkInputRef.current.click();
@@ -564,7 +657,38 @@ export default function EditStatusPageForm({ existing, monitors, workspace }: { 
 										}}>
 											Upload
 										</Button>
-										<Button variant="secondary" disabled={loading || !darkLogo} onClick={async () => await remove(true)}>
+										<Button variant="secondary" disabled={loading || !darkLogo} onClick={async () => await onLogoRemove(true)}>
+											Remove
+										</Button>
+									</div>
+								</div>
+							</div>
+							<div className="flex flex-col gap-4 items-start w-full">
+								<div className="flex flex-col gap-1">
+									<Label>Favicon</Label>
+									<p className="text-sm text-neutral-500 dark:text-neutral-400">Upload a favicon for your status page to use (ico files only).</p>
+								</div>
+								<div className="flex flex-row gap-4 items-center w-full">
+									{favicon ? (
+										<div className="max-w-32 max-h-32 size-32 border rounded-md gap-2 text-center flex flex-col items-center justify-center">
+											<Image src={`/api/assets/${favicon}`} alt="Favicon" width={32} height={32} />
+										</div>
+									) : (
+										<div className="max-w-32 max-h-32 w-32 h-32 border rounded-md gap-2 text-center flex flex-col items-center justify-center">
+											<FileQuestion className="text-neutral-500 dark:text-neutral-400" />
+											<p className="text-sm text-neutral-500 dark:text-neutral-400">No favicon <br />uploaded</p>
+										</div>
+									)}
+									<div className="flex flex-col gap-2 items-start">
+										<input type="file" accept=".ico" className="hidden" ref={faviconInputRef} onChange={async (e) => await onFaviconSubmit(e.target.files)} />
+										<Button disabled={loading} onClick={() => {
+											if (faviconInputRef.current) {
+												faviconInputRef.current.click();
+											}
+										}}>
+											Upload
+										</Button>
+										<Button variant="secondary" disabled={loading || !favicon} onClick={async () => await onFaviconRemove()}>
 											Remove
 										</Button>
 									</div>
