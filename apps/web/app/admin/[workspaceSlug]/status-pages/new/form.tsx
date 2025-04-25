@@ -37,6 +37,7 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 	const [design, setDesign] = React.useState<"simple" | "panda" | "stormtrooper">("simple");
 	const [forcedTheme, setForcedTheme] = React.useState<"auto" | "light" | "dark">("auto");
 	const [brandColor, setBrandColor] = React.useState<string>("#5865F2");
+	const [enabled, setEnabled] = React.useState(false);
 	const router = useRouter();
 
 	const logoInputRef = React.useRef<HTMLInputElement>(null);
@@ -260,6 +261,7 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 			darkLogo: darkLogo,
 			design: design,
 			forcedTheme: forcedTheme,
+			enabled: enabled,
 		}).then((res) => {
 			if (res?.validationErrors) {
 				toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
@@ -335,7 +337,27 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 									<p className="text-sm text-neutral-500 dark:text-neutral-400">Provide your users information about this status page.</p>
 								</div>
 								<div className="flex flex-col gap-4 items-start w-full">
-									<Label>Root Domain</Label>
+									<Label>Enabled</Label>
+									<div className="items-top flex space-x-2">
+										<Checkbox
+											checked={enabled}
+											onCheckedChange={(v) => setEnabled(v === true ? true : false)}
+											disabled={loading}
+										/>
+										<div className="grid gap-1.5 leading-none">
+											<label
+												className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+											>
+												Enable Status Page?
+											</label>
+											<p className="text-sm text-muted-foreground">
+												Enable or disable this status page. This will not delete the page, but it will hide it from the public.
+											</p>
+										</div>
+									</div>
+								</div>
+								<div className="flex flex-col gap-4 items-start w-full">
+									<Label>Domains</Label>
 									<div className="items-top flex space-x-2">
 										<Checkbox
 											checked={root}

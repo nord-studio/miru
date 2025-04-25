@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
 	const appUrl = `${secure}://${appDoman}`;
 	const favicon = `${appUrl}/api/assets/${statusPage?.favicon}`;
 
-	if (!statusPage) {
+	if (!statusPage || statusPage.enabled === false) {
 		return {
 			title: "Miru",
 			description: "A free, open-source and self hostable status and monitoring service.",
@@ -86,6 +86,27 @@ export default async function Home() {
 		where: () => eq(statusPages.root, true)
 	});
 
+	if (!statusPage || statusPage.enabled === false) {
+		return (
+			<>
+				<main className="max-w-[800px] flex flex-col items-center justify-center h-screen mx-auto gap-6">
+					<div className="flex flex-col items-center gap-3">
+						<h1 className="text-3xl font-display font-black text-neutral-900 dark:text-neutral-100">
+							(￣▽￣*)ゞ
+						</h1>
+						<h1 className="text-3xl font-display font-black text-neutral-900 dark:text-neutral-100">
+							This is awkward...
+						</h1>
+						<p>
+							A status page hasn&apos;t been set up yet or has been disabled for the time being. Please
+							check back later.
+						</p>
+					</div>
+				</main>
+			</>
+		)
+	}
+
 	// Get all incidents from the last 45 days
 	const incids: IncidentWithReportsAndMonitors[] = await db.query.incidents.findMany({
 		where: () => sql`started_at > NOW() - INTERVAL '45 days'`,
@@ -115,24 +136,6 @@ export default async function Home() {
 			}
 		})
 	});
-
-	if (!statusPage) {
-		return (
-			<>
-				<main className="max-w-[800px] flex flex-col items-center justify-center h-screen mx-auto gap-6">
-					<div className="flex flex-col items-center">
-						<h1 className="text-3xl font-display font-black text-neutral-900 dark:text-neutral-100">
-							This is awkward...
-						</h1>
-						<p>
-							A status page hasn&apos;t been setup yet. Please
-							check back later.
-						</p>
-					</div>
-				</main>
-			</>
-		)
-	}
 
 	return (
 		<>
