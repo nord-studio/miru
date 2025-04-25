@@ -1,153 +1,35 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import db from "@/lib/db";
-import { statusPages } from "@/lib/db/schema";
-import { user } from "@/lib/db/schema/auth";
-import { eq, sql } from "drizzle-orm";
 import Link from "next/link";
-import SimpleStatusPageDesign from "@/designs/simple";
-import PandaStatusPageDesign from "@/designs/panda";
-import StormtrooperStatusPageDesign from "@/designs/stormtrooper";
-import { IncidentReportStatus } from "@/types/incident-report";
-import { IncidentWithReportsAndMonitors } from "@/types/incident";
-import { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-
-export async function generateMetadata(): Promise<Metadata> {
-	const statusPage = await db.query.statusPages.findFirst({
-		with: {
-			statusPageMonitors: {
-				with: {
-					monitor: true
-				}
-			}
-		},
-		where: () => eq(statusPages.root, true)
-	});
-
-	const appDoman = process.env.NEXT_PUBLIC_APP_DOMAIN || "localhost:3000";
-	const secure = process.env.NODE_ENV === "development" ? "http" : "https";
-	const appUrl = `${secure}://${appDoman}`;
-	const favicon = `${appUrl}/api/assets/${statusPage?.favicon}`;
-
-	if (!statusPage || statusPage.enabled === false) {
-		return {
-			title: "Miru",
-			description: "A free, open-source and self hostable status and monitoring service.",
-		}
-	} else {
-		return {
-			title: `${statusPage.name} Status`,
-			description: statusPage.description ?? `Welcome to ${statusPage.name}'s status page. Real-time and historical data on system performance.`,
-			icons: [
-				{ rel: "icon", url: statusPage.favicon ? favicon : `${appUrl}/favicon.ico`, sizes: "32x32", type: "image/vnd.microsoft.icon" },
-			]
-		}
-	}
-}
-
-export default async function Home() {
-	const fresh = await db
-		.select()
-		.from(user)
-		.limit(1)
-		.then((res) => res.length === 0);
-
-	if (fresh) {
-		return (
-			<>
-				<main className="max-w-[800px] flex flex-col items-center justify-center h-screen mx-auto gap-6">
-					<div className="flex flex-col items-center">
-						<h1 className="text-3xl font-display font-black text-neutral-900 dark:text-neutral-100">
-							Welcome to Miru!
-						</h1>
-						<p>
-							It looks like you haven&apos;t setup Miru yet. Click
-							the button below to get started.
-						</p>
-					</div>
-					<Link href="/auth/register?fresh=true">
-						<Button>Create Account</Button>
-					</Link>
-				</main>
-			</>
-		)
-	}
-
-	const statusPage = await db.query.statusPages.findFirst({
-		with: {
-			statusPageMonitors: {
-				with: {
-					monitor: true
-				}
-			}
-		},
-		where: () => eq(statusPages.root, true)
-	});
-
-	if (!statusPage || statusPage.enabled === false) {
-		return (
-			<>
-				<main className="max-w-[800px] flex flex-col items-center justify-center h-screen mx-auto gap-6">
-					<div className="flex flex-col items-center gap-3">
-						<h1 className="text-3xl font-display font-black text-neutral-900 dark:text-neutral-100">
-							(￣▽￣*)ゞ
-						</h1>
-						<h1 className="text-3xl font-display font-black text-neutral-900 dark:text-neutral-100">
-							This is awkward...
-						</h1>
-						<p>
-							A status page hasn&apos;t been set up yet or has been disabled for the time being. Please
-							check back later.
-						</p>
-					</div>
-				</main>
-			</>
-		)
-	}
-
-	// Get all incidents from the last 45 days
-	const incids: IncidentWithReportsAndMonitors[] = await db.query.incidents.findMany({
-		where: () => sql`started_at > NOW() - INTERVAL '45 days'`,
-		with: {
-			monitorsToIncidents: {
-				with: {
-					monitor: true
-				}
-			},
-			reports: true
-		}
-	}).then((incidents) => {
-		return incidents.map((incident) => {
-			return {
-				...incident,
-				monitorsToIncidents: incident.monitorsToIncidents.map((mti) => {
-					return {
-						monitor: mti.monitor,
-					}
-				}),
-				reports: incident.reports.map((report) => {
-					return {
-						...report,
-						status: report.status as IncidentReportStatus,
-					}
-				})
-			}
-		})
-	});
-
+export default function RootPage() {
 	return (
 		<>
-			{statusPage.design === "simple" && (
-				<SimpleStatusPageDesign page={statusPage} incidents={incids} />
-			)}
-			{statusPage.design === "panda" && (
-				<PandaStatusPageDesign page={statusPage} />
-			)}
-			{statusPage.design === "stormtrooper" && (
-				<StormtrooperStatusPageDesign page={statusPage} />
-			)}
+			<main className="max-w-[800px] flex flex-col items-center justify-center h-screen mx-auto gap-8">
+				<div className="flex flex-col items-center gap-4">
+					<h1 className="text-3xl font-display font-black text-neutral-900 dark:text-neutral-100">
+						(・_・ヾ)
+					</h1>
+					<h1 className="text-3xl font-display font-black text-neutral-900 dark:text-neutral-100">
+						Uh... Hi?
+					</h1>
+					<p className="text-center text-neutral-500 dark:text-neutral-400">
+						This page doesn&apos;t do anything, and it will never do anything. It is used as a fallback for if anything breaks. <br />
+						But the fact you are seeing this means that something <i>did</i> break...
+					</p>
+				</div>
+				<div className="flex flex-row gap-3 items-center">
+					<Button variant="outline" onClick={() => window.location.reload()}>
+						Refresh
+					</Button>
+					<Link href="https://github.com/nord-studio/miru/issues/new">
+						<Button>
+							Report an Issue
+						</Button>
+					</Link>
+				</div>
+			</main>
 		</>
 	)
 }

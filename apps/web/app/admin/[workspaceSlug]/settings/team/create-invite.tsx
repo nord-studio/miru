@@ -135,7 +135,7 @@ export default function CreateInviteToken({ workspace, appUrl, currentMember, ch
 	if (isDesktop) {
 		return (
 			<>
-				<InviteTokenMesage open={finished} setOpen={setFinished} token={inviteToken} url={`${process.env.NODE_ENV === "development" ? "http" : "https"}://${appUrl}/join/${inviteToken}`} />
+				<InviteTokenMesage open={finished} setOpen={setFinished} token={inviteToken} url={`${process.env.APP_ENV === "development" ? "http" : "https"}://${appUrl}/join/${inviteToken}`} />
 				<Dialog open={open} onOpenChange={() => {
 					if (open === false) {
 						setOpen(!open);
@@ -201,7 +201,7 @@ export default function CreateInviteToken({ workspace, appUrl, currentMember, ch
 	} else {
 		return (
 			<>
-				<InviteTokenMesage open={finished} setOpen={setFinished} token={inviteToken} url={`${process.env.NODE_ENV === "development" ? "http" : "https"}://${appUrl}/join/${inviteToken}`} />
+				<InviteTokenMesage open={finished} setOpen={setFinished} token={inviteToken} url={`${process.env.APP_ENV === "development" ? "http" : "https"}://${appUrl}/join/${inviteToken}`} />
 				<Drawer open={open} onOpenChange={setOpen}>
 					<DrawerTrigger asChild>
 						{children}

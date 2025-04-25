@@ -35,7 +35,7 @@ export default async function sendEmailVerification(
 			user: process.env.SMTP_USER,
 			pass: process.env.SMTP_PASSWORD,
 		},
-		debug: process.env.NODE_ENV === "development",
+		debug: process.env.APP_ENV === "development",
 	} as SMTPTransport.Options);
 
 	const body = await render(<VerifyAccountEmail url={url} />);
@@ -56,7 +56,7 @@ interface VerifyAccountEmailProps {
 	url: string;
 }
 
-const baseUrl = process.env.NODE_ENV === "production" ?
+const baseUrl = process.env.APP_ENV === "production" ?
 	`https://${process.env.APP_DOMAIN}` :
 	"http://localhost:3000";
 

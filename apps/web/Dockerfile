@@ -1,4 +1,4 @@
-FROM node:22-alpine AS base
+FROM node:23-alpine AS base
 
 # Install libc6-compat
 RUN apk update ; apk add --no-cache libc6-compat
@@ -30,9 +30,8 @@ COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 # Set default PUBLIC environment variables
-ARG NEXT_PUBLIC_URL
-ENV NEXT_PUBLIC_URL $NEXT_PUBLIC_URL
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV APP_ENV="production"
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build the project
 COPY --from=builder /app/out/full/ .
@@ -60,7 +59,7 @@ COPY --from=installer /app/apps/web/public ./public
 EXPOSE 3000
 
 ENV HOSTNAME=0.0.0.0
-ENV PORT 3000
+ENV PORT=3000
 
 USER nextjs
 CMD ["pnpm", "start"]

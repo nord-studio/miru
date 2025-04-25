@@ -48,7 +48,7 @@ export default async function sendResetPasswordEmail(
 			user: process.env.SMTP_USER,
 			pass: process.env.SMTP_PASSWORD,
 		},
-		debug: process.env.NODE_ENV === "development",
+		debug: process.env.APP_ENV === "development",
 	} as SMTPTransport.Options);
 
 	const body = await render(<ResetPasswordEmail url={url} />);

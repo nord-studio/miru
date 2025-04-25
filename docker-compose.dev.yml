@@ -1,52 +1,48 @@
 volumes:
-  database:
+    database:
+
+networks:
+    miru:
+        driver: bridge
 
 services:
-  database:
-    container_name: database
-    image: postgres:17.3
-    ports:
-      - "5432:5432"
-    volumes:
-      - database:/var/lib/postgresql/data
-    environment:
-      POSTGRES_PASSWORD: VerySecurePassword123
-      POSTGRES_USER: miru
-      POSTGRES_DB: miru
+    database:
+        container_name: database
+        image: postgres:17.3
+        ports:
+            - "5432:5432"
+        volumes:
+            - database:/var/lib/postgresql/data
+        environment:
+            POSTGRES_PASSWORD: VerySecurePassword123
+            POSTGRES_USER: miru
+            POSTGRES_DB: miru
+        networks:
+            - miru
 
-  monitor:
-    container_name: monitor
-    build:
-      context: .
-      dockerfile: ./apps/monitor/Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
-      - DATABASE_SSL=false
-    depends_on:
-      - database
+    monitor:
+        container_name: monitor
+        build:
+            context: .
+            dockerfile: ./apps/monitor/Dockerfile
+        ports:
+            - "8080:8080"
+        env_file: ./.env
+        depends_on:
+            - database
+        networks:
+            - miru
 
-  web:
-    container_name: web
-    build:
-      context: .
-      dockerfile: ./apps/web/Dockerfile
-    ports:
-      - "3000:3000"
-    environment:
-      - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
-      - DATABASE_SSL=false
-      - BETTER_AUTH_SECRET=secret
-      - APP_DOMAIN=mini:3000
-      - MONITOR_URL=http://monitor:8080
-      - ENABLE_EMAIL=
-      - SMTP_HOST=
-      - SMTP_PORT=
-      - SMTP_SECURE=
-      - SMTP_USER=
-      - SMTP_PASSWORD=
-      - SMTP_FROM=
-    depends_on:
-      - database
-      - monitor
+    web:
+        container_name: web
+        build:
+            context: .
+            dockerfile: ./apps/web/Dockerfile
+        ports:
+            - "3000:3000"
+        env_file: ./.env
+        depends_on:
+            - database
+            - monitor
+        networks:
+            - miru

@@ -247,112 +247,11 @@ export const deleteStatusPage = actionClient.schema(z.object({
 	return { error: false, message: "Status page deleted" };
 });
 
-export const uploadLogo = actionClient.schema(zfd.formData({
-	// Status page ID
-	id: zfd.text(),
-	// Logo to upload
+export const uploadAsset = actionClient.schema(zfd.formData({
+	// Asset to upload
 	file: zfd.file(),
-	// If the logo is used for dark mode
-	dark: zfd.text().default("false"),
-}), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
-	error: z.boolean(),
-	message: z.string(),
+	// Optional id for the asset
 	id: z.string().optional(),
-})).action(async ({ parsedInput: { file, dark, id } }) => {
-	const res = await auth.api.getSession({
-		headers: await headers()
-	});
-
-	if (!res || !res.user) {
-		return { error: true, message: "Unauthorized" };
-	}
-
-	if (!file) {
-		return { error: true, message: "No file was selected." };
-	}
-
-	if (file.size > MAX_FILE_SIZE) {
-		return { error: true, message: "Please upload a file smaller than 12MB." };
-	}
-
-	const statusPage = await db.query.statusPages.findMany({
-		where: () => eq(statusPages.id, id)
-	});
-
-	if (!statusPage) {
-		return { error: true, message: "Status page not found" };
-	}
-
-	const assetId = generateId();
-
-	await publicBucketExists();
-
-	await minio.putObject("public", assetId, Buffer.from(await file.arrayBuffer()), file.size, {
-		"Content-Type": file.type
-	});
-
-	if (dark === "true") {
-		await db.update(statusPages).set({
-			darkLogo: assetId,
-		}).where(eq(statusPages.id, id)).execute();
-	} else {
-		await db.update(statusPages).set({
-			logo: assetId,
-		}).where(eq(statusPages.id, id)).execute();
-	}
-
-	return {
-		error: false,
-		message: "Logo uploaded successfully",
-		id: assetId
-	}
-});
-
-export const removeLogo = actionClient.schema(z.object({
-	id: z.string(),
-	// If the logo is used for dark mode
-	dark: z.boolean().default(false),
-}), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
-	error: z.boolean(),
-	message: z.string(),
-})).action(async ({ parsedInput: { id, dark } }) => {
-	const res = await auth.api.getSession({
-		headers: await headers()
-	});
-
-	if (!res || !res.user) {
-		return { error: true, message: "Unauthorized" };
-	}
-
-	const statusPage = await db.query.statusPages.findMany({
-		where: () => eq(statusPages.id, id)
-	});
-
-	if (!statusPage) {
-		return { error: true, message: "Status page not found" };
-	}
-
-	if (dark) {
-		await db.update(statusPages).set({
-			darkLogo: null,
-		}).where(eq(statusPages.id, id)).execute();
-	} else {
-		await db.update(statusPages).set({
-			logo: null,
-		}).where(eq(statusPages.id, id)).execute();
-	}
-
-	return {
-		error: false,
-		message: "Logo removed successfully",
-	}
-});
-
-export const uploadFavicon = actionClient.schema(zfd.formData({
-	// Status page ID
-	id: zfd.text(),
-	// Logo to upload
-	file: zfd.file(),
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
 	error: z.boolean(),
 	message: z.string(),
@@ -374,45 +273,23 @@ export const uploadFavicon = actionClient.schema(zfd.formData({
 		return { error: true, message: "Please upload a file smaller than 12MB." };
 	}
 
-	if (file.type !== "image/vnd.microsoft.icon") {
-		return { error: true, message: "Please upload a valid favicon." };
-	}
-
-	const statusPage = await db.query.statusPages.findMany({
-		where: () => eq(statusPages.id, id)
-	});
-
-	if (!statusPage) {
-		return { error: true, message: "Status page not found" };
-	}
-
-	const assetId = generateId();
+	const assetId = id || generateId();
 
 	await publicBucketExists();
 
 	await minio.putObject("public", assetId, Buffer.from(await file.arrayBuffer()), file.size, {
-		"Content-Type": "image/vnd.microsoft.icon"
+		"Content-Type": file.type
 	});
-
-	if (!statusPage[0].favicon) {
-		await db.update(statusPages).set({
-			favicon: assetId,
-		}).where(eq(statusPages.id, id)).execute();
-	} else {
-		await minio.removeObject("public", statusPage[0].favicon);
-		await db.update(statusPages).set({
-			favicon: assetId,
-		}).where(eq(statusPages.id, id)).execute();
-	}
 
 	return {
 		error: false,
-		message: "Favicon uploaded successfully",
+		message: "Asset uploaded successfully",
 		id: assetId
 	}
 });
 
-export const removeFavicon = actionClient.schema(z.object({
+export const deleteAsset = actionClient.schema(z.object({
+	// Asset to delete
 	id: z.string(),
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
 	error: z.boolean(),
@@ -426,25 +303,10 @@ export const removeFavicon = actionClient.schema(z.object({
 		return { error: true, message: "Unauthorized" };
 	}
 
-	const statusPage = await db.query.statusPages.findMany({
-		where: () => eq(statusPages.id, id)
-	});
-
-	if (!statusPage) {
-		return { error: true, message: "Status page not found" };
-	}
-
-	if (!statusPage[0].favicon) {
-		return { error: true, message: "Favicon not found" };
-	}
-
-	await minio.removeObject("public", statusPage[0].favicon);
-	await db.update(statusPages).set({
-		favicon: null,
-	}).where(eq(statusPages.id, id)).execute();
+	await minio.removeObject("public", id);
 
 	return {
 		error: false,
-		message: "Favicon removed successfully",
+		message: "Asset deleted successfully",
 	}
 });

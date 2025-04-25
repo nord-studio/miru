@@ -1,6 +1,6 @@
 "use client";
 
-import { createStatusPage, removeFavicon, uploadFavicon } from "@/components/status-pages/actions";
+import { createStatusPage, uploadAsset, deleteAsset } from "@/components/status-pages/actions";
 import { useRouter } from "next/navigation";
 import MonitorSelection from "@/components/monitors/monitor-select";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -13,7 +13,6 @@ import { CircleCheck, Code, FileQuestion, GripVertical, HelpCircle, Moon, Sun } 
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
-import { removeLogo, uploadLogo } from "@/components/status-pages/actions";
 import { toast } from "sonner";
 import { Workspace } from "@/types/workspace";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -36,7 +35,7 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 	const [monitorList, setMonitorList] = React.useState<Monitor[]>([]);
 	const [design, setDesign] = React.useState<"simple" | "panda" | "stormtrooper">("simple");
 	const [forcedTheme, setForcedTheme] = React.useState<"auto" | "light" | "dark">("auto");
-	const [brandColor, setBrandColor] = React.useState<string>("#5865F2");
+	const [brandColor, setBrandColor] = React.useState<string>("#81a1c1");
 	const [enabled, setEnabled] = React.useState(false);
 	const router = useRouter();
 
@@ -44,7 +43,7 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 	const logoDarkInputRef = React.useRef<HTMLInputElement>(null);
 	const faviconInputRef = React.useRef<HTMLInputElement>(null);
 
-	const upload = async (file: FileList | null, dark: boolean) => {
+	const upload = async (file: FileList | null, type: "logo" | "favicon", dark?: boolean) => {
 		if (!file || file.length === 0) {
 			return;
 		}
@@ -54,16 +53,12 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 		}
 
 		setLoading(true);
-		const t = toast.loading("Uploading logo...");
+		const t = toast.loading(`Uploading ${type}...`);
 
 		const formData = new FormData();
 		formData.append("file", file[0]);
-		formData.append("id", id);
-		if (dark) {
-			formData.append("dark", "true");
-		}
 
-		const res = await uploadLogo(formData);
+		const res = await uploadAsset(formData);
 
 		if (res?.validationErrors) {
 			setLoading(false);
@@ -91,23 +86,28 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 
 		setLoading(false);
 		toast.success("Success!", {
-			description: res?.data?.message,
+			description: `Uploaded ${type} successfully!`,
 			id: t
 		});
 
-		if (dark) {
-			setDarkLogo(res?.data?.id ?? "");
+
+		if (type === "favicon") {
+			setFavicon(res?.data?.id ?? "");
 		} else {
-			setLogo(res?.data?.id ?? "");
+			if (dark) {
+				setDarkLogo(res?.data?.id ?? "");
+			} else {
+				setLogo(res?.data?.id ?? "");
+			}
 		}
 	};
 
-	const remove = async (dark: boolean) => {
+	const remove = async (type: "logo" | "favicon", dark?: boolean) => {
 		setLoading(true);
 
-		const t = toast.loading("Removing logo...");
+		const t = toast.loading(`Removing ${type}...`);
 
-		const res = await removeLogo({ id: id, dark });
+		const res = await deleteAsset({ id: type === "favicon" ? favicon : dark ? darkLogo : logo });
 
 		if (res?.validationErrors) {
 			setLoading(false);
@@ -135,106 +135,19 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 
 		setLoading(false);
 		toast.success("Success!", {
-			description: res?.data?.message,
+			description: `Removed ${type} successfully!`,
 			id: t
 		});
 
-		if (dark) {
-			setDarkLogo("");
+		if (type === "favicon") {
+			setFavicon("");
 		} else {
-			setLogo("");
+			if (dark) {
+				setDarkLogo("");
+			} else {
+				setLogo("");
+			}
 		}
-	};
-
-	const onFaviconSubmit = async (file: FileList | null) => {
-		if (!file || file.length === 0) {
-			return;
-		}
-
-		if (file[0].size > MAX_FILE_SIZE) {
-			return toast.error("Please upload a file smaller than 12MB");
-		}
-
-		setLoading(true);
-		const t = toast.loading("Uploading logo...");
-
-		const formData = new FormData();
-		formData.append("file", file[0]);
-		formData.append("id", id);
-
-		const res = await uploadFavicon(formData);
-
-		if (res?.validationErrors) {
-			setLoading(false);
-			return toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
-				description: res.validationErrors[Object.keys(res.validationErrors)[0] as keyof typeof res.validationErrors]?.[0],
-				id: t
-			});
-		}
-
-		if (res?.data?.error) {
-			setLoading(false);
-			return toast.error("Something went wrong!", {
-				description: res.data.message,
-				id: t
-			});
-		}
-
-		if (res?.serverError) {
-			setLoading(false);
-			return toast.error("Something went wrong!", {
-				description: res.serverError,
-				id: t
-			});
-		}
-
-		setLoading(false);
-		toast.success("Success!", {
-			description: res?.data?.message,
-			id: t
-		});
-
-		setFavicon(res?.data?.id ?? "");
-	};
-
-	const onFaviconRemove = async () => {
-		setLoading(true);
-
-		const t = toast.loading("Removing favicon...");
-
-		const res = await removeFavicon({ id: id });
-
-		if (res?.validationErrors) {
-			setLoading(false);
-			return toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
-				description: res.validationErrors[Object.keys(res.validationErrors)[0] as keyof typeof res.validationErrors]?.[0],
-				id: t
-			});
-		}
-
-		if (res?.data?.error) {
-			setLoading(false);
-			return toast.error("Something went wrong!", {
-				description: res.data.message,
-				id: t
-			});
-		}
-
-		if (res?.serverError) {
-			setLoading(false);
-			return toast.error("Something went wrong!", {
-				description: res.serverError,
-				id: t
-			});
-		}
-
-		setLoading(false);
-		toast.success("Success!", {
-			description: res?.data?.message,
-			id: t
-		});
-
-		setFavicon("");
 	};
 
 	const [mounted, setMounted] = React.useState(false);
@@ -254,7 +167,7 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 			name: name,
 			description: description,
 			root: root,
-			monitorIds: monitors.map(monitor => monitor.id),
+			monitorIds: monitorList.map((monitor) => monitor.id),
 			brandColor: brandColor,
 			domain: root ? undefined : domain,
 			logo: logo,
@@ -647,7 +560,19 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 										</div>
 									)}
 									<div className="flex flex-col gap-2 items-start">
-										<input type="file" accept="image/png, image/jpeg, image/webp" id="logo" className="hidden" ref={logoInputRef} onChange={async (e) => await upload(e.target.files, false)} />
+										<input
+											type="file"
+											accept="image/png, image/jpeg, image/webp"
+											id="logo"
+											className="hidden"
+											ref={logoInputRef}
+											onChange={async (e) => {
+												await upload(e.target.files, "logo", false);
+												if (logoInputRef.current) {
+													logoInputRef.current.value = ""; // Reset input value
+												}
+											}}
+										/>
 										<Button disabled={loading} onClick={() => {
 											if (logoInputRef.current) {
 												logoInputRef.current.click();
@@ -655,7 +580,7 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 										}}>
 											Upload
 										</Button>
-										<Button variant="secondary" disabled={loading || !logo} onClick={async () => await remove(false)}>
+										<Button variant="secondary" disabled={loading || !logo} onClick={async () => await remove("logo", false)}>
 											Remove
 										</Button>
 									</div>
@@ -676,7 +601,12 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 										</div>
 									)}
 									<div className="flex flex-col gap-2 items-start">
-										<input type="file" accept="image/png, image/jpeg, image/webp" className="hidden" ref={logoDarkInputRef} onChange={async (e) => await upload(e.target.files, true)} />
+										<input type="file" accept="image/png, image/jpeg, image/webp" className="hidden" ref={logoDarkInputRef} onChange={async (e) => {
+											await upload(e.target.files, "logo", true);
+											if (logoDarkInputRef.current) {
+												logoDarkInputRef.current.value = ""; // Reset input value
+											}
+										}} />
 										<Button disabled={loading} onClick={() => {
 											if (logoDarkInputRef.current) {
 												logoDarkInputRef.current.click();
@@ -684,7 +614,7 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 										}}>
 											Upload
 										</Button>
-										<Button variant="secondary" disabled={loading || !darkLogo} onClick={async () => await remove(true)}>
+										<Button variant="secondary" disabled={loading || !darkLogo} onClick={async () => await remove("logo", true)}>
 											Remove
 										</Button>
 									</div>
@@ -707,7 +637,12 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 										</div>
 									)}
 									<div className="flex flex-col gap-2 items-start">
-										<input type="file" accept=".ico" className="hidden" ref={faviconInputRef} onChange={async (e) => await onFaviconSubmit(e.target.files)} />
+										<input type="file" accept=".ico" className="hidden" ref={faviconInputRef} onChange={async (e) => {
+											await upload(e.target.files, "favicon");
+											if (faviconInputRef.current) {
+												faviconInputRef.current.value = ""; // Reset input value
+											}
+										}} />
 										<Button disabled={loading} onClick={() => {
 											if (faviconInputRef.current) {
 												faviconInputRef.current.click();
@@ -715,7 +650,7 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 										}}>
 											Upload
 										</Button>
-										<Button variant="secondary" disabled={loading || !favicon} onClick={async () => await onFaviconRemove()}>
+										<Button variant="secondary" disabled={loading || !favicon} onClick={async () => await remove("favicon")}>
 											Remove
 										</Button>
 									</div>
