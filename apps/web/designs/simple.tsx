@@ -5,32 +5,13 @@ import { StatusBanner } from "@/components/ui/status-banner";
 import StatusPageMonitor from "@/components/status-pages/status-monitor";
 import { ThemeDropdown } from "@/components/theme/dropdown";
 import { cn } from "@/lib/utils";
-import { IncidentWithReportsAndMonitors } from "@/types/incident";
+import { IncidentWithReports, IncidentWithReportsAndMonitors } from "@/types/incident";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Menu } from "lucide-react";
+import IncidentTimelineItem from "@/components/incidents/reports/timeline-item";
+import BackButton from "@/components/back-button";
 
-export default function SimpleStatusPageDesign({ page, incidents }: { page: StatusPageWithMonitorsExtended, incidents: IncidentWithReportsAndMonitors[] }) {
-	let variant: "operational" | "degraded" | "down" = "operational";
-
-	const allOpenIncids = incidents.filter((incid) => incid.resolvedAt === null);
-
-	// Go through the list of incidents and get ALL the monitors that are in the incidents, if ALL the monitors in the status page have an open incident, set the variant to "down"
-	if (allOpenIncids.length > 0) {
-		const allIncidents = page.statusPageMonitors.every((monitor) => {
-			return allOpenIncids.some((incident) => {
-				return incident.monitorsToIncidents.some((monitorToIncident) => {
-					return monitor.monitor.id === monitorToIncident.monitor.id;
-				});
-			});
-		});
-
-		if (allIncidents) {
-			variant = "down";
-		} else {
-			variant = "degraded";
-		}
-	}
-
+export function SimpleStatusPageShell({ page, header, children }: { page: StatusPageWithMonitorsExtended, header: React.ReactNode, children: React.ReactNode }) {
 	return (
 		<>
 			<main className="flex flex-col gap-16 items-center justify-center h-screen mx-auto py-8 px-4 sm:px-8 w-full max-w-[800px]">
@@ -88,23 +69,9 @@ export default function SimpleStatusPageDesign({ page, incidents }: { page: Stat
 							</Button>
 						</div>
 					</div>
-					<StatusBanner variant={variant} />
+					{header}
 					<div className="flex flex-col gap-8 items-start w-full">
-						{page.statusPageMonitors.map((monitor) => {
-							const incids = incidents.filter((incident) => {
-								return incident.monitorsToIncidents.some((monitorToIncident) => {
-									return monitorToIncident.monitor.id === monitor.monitor.id;
-								});
-							});
-
-							return (
-								<StatusPageMonitor
-									monitor={monitor.monitor}
-									key={monitor.id}
-									incidents={incids}
-								/>
-							)
-						})}
+						{children}
 					</div>
 				</div>
 				<div className="flex flex-row gap-2 items-center justify-between w-full">
@@ -114,6 +81,58 @@ export default function SimpleStatusPageDesign({ page, incidents }: { page: Stat
 					</p>
 				</div>
 			</main>
+		</>
+	)
+}
+
+export default function SimpleStatusPageDesign({ page, incidents }: { page: StatusPageWithMonitorsExtended, incidents: IncidentWithReportsAndMonitors[] }) {
+	let variant: "operational" | "degraded" | "down" = "operational";
+
+	const allOpenIncids = incidents.filter((incid) =>
+		incid.resolvedAt === null &&
+		incid.monitorsToIncidents.some((monitorToIncident) =>
+			page.statusPageMonitors.some((monitor) =>
+				monitor.monitor.id === monitorToIncident.monitor.id
+			)
+		)
+	);
+
+	// Go through the list of incidents and get ALL the monitors that are in the incidents, if ALL the monitors in the status page have an open incident, set the variant to "down"
+	if (allOpenIncids.length > 0) {
+		const allIncidents = page.statusPageMonitors.every((monitor) => {
+			return allOpenIncids.some((incident) => {
+				return incident.monitorsToIncidents.some((monitorToIncident) => {
+					return monitor.monitor.id === monitorToIncident.monitor.id;
+				});
+			});
+		});
+
+		if (allIncidents) {
+			variant = "down";
+		} else {
+			variant = "degraded";
+		}
+	}
+
+	return (
+		<>
+			<SimpleStatusPageShell page={page} header={<StatusBanner variant={variant} />}>
+				{page.statusPageMonitors.map((monitor) => {
+					const incids = incidents.filter((incident) => {
+						return incident.monitorsToIncidents.some((monitorToIncident) => {
+							return monitorToIncident.monitor.id === monitor.monitor.id;
+						});
+					});
+
+					return (
+						<StatusPageMonitor
+							monitor={monitor.monitor}
+							key={monitor.id}
+							incidents={incids}
+						/>
+					)
+				})}
+			</SimpleStatusPageShell>
 		</>
 	)
 }

@@ -4,8 +4,8 @@ import { nextCookies } from "better-auth/next-js";
 import { emailOTP, username } from "better-auth/plugins"
 import { passkey } from "better-auth/plugins/passkey"
 import sendResetPasswordEmail from "@/lib/email/reset-password";
-import db from "../db";
 import sendEmailVerification from "@/lib/email/verify-email";
+import db from "../db";
 
 export const auth = betterAuth({
 	appName: "miru",

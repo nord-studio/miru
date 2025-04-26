@@ -9,6 +9,7 @@ import { cva } from "class-variance-authority";
 import { format } from "date-fns";
 import { and, eq, sql } from "drizzle-orm";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 interface StatusDayBlock {
 	date: Date;
@@ -152,12 +153,14 @@ export function StatusMonitorBar({ data }: { data: StatusDayBlock }) {
 								return (
 									<div key={incident.id} className="flex flex-col gap-2 items-center w-full group">
 										<hr className="w-full" />
-										<button className="flex flex-row gap-2 items-center justify-between w-full hover:cursor-pointer px-2 pb-2" key={incident.id}>
-											<span className="text-sm text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors">
-												{incident.title.slice(0, 20)}{incident.title.length > 20 ? "..." : ""}
-											</span>
-											<ArrowRight className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
-										</button>
+										<Link href={`/incidents/${incident.id}`} className="w-full">
+											<button className="flex flex-row gap-2 items-center justify-between w-full hover:cursor-pointer px-2 pb-2" key={incident.id}>
+												<span className="text-sm text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors">
+													{incident.title.slice(0, 20)}{incident.title.length > 20 ? "..." : ""}
+												</span>
+												<ArrowRight className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+											</button>
+										</Link>
 									</div>
 								)
 							})}

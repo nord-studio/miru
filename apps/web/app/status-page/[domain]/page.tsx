@@ -15,50 +15,8 @@ type Props = {
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
-export async function generateMetadata({ params }: { params: Promise<{ domain: string }> }): Promise<Metadata> {
-	const domain = decodeURIComponent((await params).domain);
-
-	const statusPage = await db.query.statusPages.findFirst({
-		with: {
-			statusPageMonitors: {
-				with: {
-					monitor: true
-				}
-			}
-		},
-		where: sql`(domain = ${domain} OR (root = true AND domain IS NULL))`,
-		orderBy: sql`CASE WHEN domain = ${domain} THEN 0 ELSE 1 END`,
-	});
-
-	const appDomain = process.env.APP_DOMAIN || "localhost:3000";
-	const secure = process.env.APP_ENV === "development" ? "http" : "https";
-	const appUrl = `${secure}://${appDomain}`;
-	const favicon = `${appUrl}/api/assets/${statusPage?.favicon}`;
-
-	if (!statusPage || statusPage.enabled === false) {
-		return {
-			title: "Miru",
-			description: "A free, open-source and self hostable status and monitoring service.",
-		}
-	} else {
-		return {
-			title: `${statusPage.name} Status`,
-			description: statusPage.description ?? `Welcome to ${statusPage.name}'s status page. Real-time and historical data on system performance.`,
-			icons: [
-				{ rel: "icon", url: statusPage.favicon ? favicon : `${appUrl}/favicon.ico`, sizes: "32x32", type: "image/vnd.microsoft.icon" },
-			]
-		}
-	}
-}
-
 export default async function StatusPage({ params }: Props) {
 	const domain = decodeURIComponent((await params).domain);
-
-	const appDomain = process.env.APP_DOMAIN ?? "localhost:3000";
-	const root = domain === appDomain;
-
-	console.log("Domain: ", domain);
-	console.log("Root: ", root);
 
 	const statusPage = await db.query.statusPages.findFirst({
 		where: sql`(domain = ${domain} OR (root = true AND domain IS NULL))`,
@@ -128,10 +86,10 @@ export default async function StatusPage({ params }: Props) {
 				<SimpleStatusPageDesign page={statusPage} incidents={incids} />
 			)}
 			{statusPage.design === "panda" && (
-				<PandaStatusPageDesign page={statusPage} />
+				<PandaStatusPageDesign page={statusPage} incidents={incids} />
 			)}
 			{statusPage.design === "stormtrooper" && (
-				<StormtrooperStatusPageDesign page={statusPage} />
+				<StormtrooperStatusPageDesign page={statusPage} incidents={incids} />
 			)}
 		</>
 	)
