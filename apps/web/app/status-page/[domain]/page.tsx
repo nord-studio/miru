@@ -2,7 +2,6 @@ import db from "@/lib/db";
 import { IncidentWithReportsAndMonitors } from "@/types/incident";
 import { IncidentReportStatus } from "@/types/incident-report";
 import { sql } from "drizzle-orm";
-import { Metadata } from "next";
 
 import PandaStatusPageDesign from "@/designs/panda";
 import SimpleStatusPageDesign from "@/designs/simple";
