@@ -8,6 +8,10 @@ export default async function AdminRootPage() {
 		headers: await headers(),
 	});
 
+	if (!currentUser) {
+		return redirect("/auth/login");
+	}
+
 	const rawWrkspcs = await db.query.workspaces.findMany({
 		with: {
 			members: true,

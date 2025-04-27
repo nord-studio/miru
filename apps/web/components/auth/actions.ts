@@ -3,12 +3,15 @@
 import { auth } from "@/lib/auth";
 import db from "@/lib/db";
 import { user, workspaceInvites, workspaceMembers, workspaces } from "@/lib/db/schema";
+import { actionClient } from "@/lib/safe-action";
 import { verifyEmailInput } from "@/lib/utils";
 import { ActionResult } from "@/types/form";
 import { eq } from "drizzle-orm";
+import { flattenValidationErrors } from "next-safe-action";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
+import { z } from "zod";
 
 export async function logIn(prevState: ActionResult, formData: FormData) {
 	const email = formData.get("email");
@@ -218,3 +221,41 @@ export const getCurrentUser = cache(async () => {
 
 	return currentUser;
 })
+
+export const updatePassword = actionClient.schema(z.object({
+	id: z.string(),
+	password: z.string().min(8).max(255),
+	passwordConfirm: z.string().min(8).max(255),
+}), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
+	error: z.boolean(),
+	message: z.string()
+})).action(async ({ parsedInput: { id, password, passwordConfirm } }) => {
+	if (password !== passwordConfirm) {
+		return {
+			error: true,
+			message: "Passwords do not match."
+		}
+	}
+
+	const currentUser = await db.query.user.findFirst({
+		where: () => eq(user.id, id),
+	});
+
+	if (!currentUser) {
+		return {
+			error: true,
+			message: "Unauthorized"
+		}
+	}
+
+	const ctx = await auth.$context;
+
+	const hash = await ctx.password.hash(password);
+
+	await ctx.internalAdapter.updatePassword(currentUser.id, hash);
+
+	return {
+		error: false,
+		message: "Password updated successfully."
+	}
+});

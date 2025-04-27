@@ -49,7 +49,7 @@ export default async function UserAccountPage() {
 							Update your email, password and other security settings.
 						</p>
 					</div>
-					<SecurityUserSettings />
+					<SecurityUserSettings user={user.user} />
 				</div>
 				<div className="flex flex-col gap-4 w-full">
 					<div className="flex flex-col">

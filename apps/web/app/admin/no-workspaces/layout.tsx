@@ -9,6 +9,10 @@ export default async function NoWorkspacesLayout({ children }: { children: React
 		headers: await headers(),
 	});
 
+	if (!currentUser) {
+		return redirect("/auth/login");
+	}
+
 	const rawWrkspcs = await db.query.workspaces.findMany({
 		with: {
 			members: true,
