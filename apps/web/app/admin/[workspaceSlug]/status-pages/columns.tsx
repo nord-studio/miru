@@ -61,7 +61,7 @@ export const columns: ColumnDef<StatusPageWithMonitorsExtended>[] = [
 		cell: ({ row }) => {
 			let root: string | null = null;
 			if (typeof window !== "undefined") {
-				root = process.env.APP_ENV === "development" ? `http://${window.location.host}` : `https://${window.location.host}`
+				root = `http://${window.location.host}`;
 			}
 			const [mounted, setMounted] = React.useState(false);
 
@@ -75,7 +75,7 @@ export const columns: ColumnDef<StatusPageWithMonitorsExtended>[] = [
 
 			return (
 				<Link
-					href={row.original.root ? root ?? "" : `${process.env.APP_ENV === "development" ? "http://" : "https://"}${row.original.domain}`}
+					href={row.original.root ? root ?? "" : `http://${row.original.domain}`}
 					className="w-fit flex flex-row gap-1 items-center"
 					target="_blank"
 				>

@@ -56,9 +56,9 @@ interface VerifyAccountEmailProps {
 	url: string;
 }
 
-const baseUrl = process.env.APP_ENV === "production" ?
-	`https://${process.env.APP_DOMAIN}` :
-	"http://localhost:3000";
+const baseUrl = process.env.APP_ENV === "development" ?
+	`http://localhost:3000` :
+	`https://${process.env.APP_DOMAIN}`;
 
 const VerifyAccountEmail = ({
 	url,

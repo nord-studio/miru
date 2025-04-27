@@ -1,0 +1,85 @@
+---
+title: "Monitors"
+description: "An automated way to keep track of your services' status."
+---
+
+## What are monitors?
+
+Monitors are an automated way to keep track of your services' status, uptime and performance.
+They keep track of every single ping made to your service and track status codes, latency, headers, responses and more.
+
+Miru also provides you with percentile calculations based on pings, so you can see how your service is performing over time.
+
+## Creating a monitor
+
+In order to create a monitor, you need to have the `admin` role or higher in your workspace.
+
+Head over to the admin panel and navigate to the **Monitors** section using the tabs on the navigation bar, from there you can click **Create Monitor** to start the process of setting up your monitor.
+
+![Monitor creation screen](/concepts/monitors/create-monitor.png)
+
+### Name
+
+The name of your monitor is entirely up to you, but keep in mind that it will be displayed on any status pages that you link to this monitor.
+We recommend using a name that describes the service you're monitoring, for example `API`, `Website`, `Database`, etc.
+
+### Type
+
+Monitors currently support the `HTTP` and `TCP` protocols, but we plan to add more in the future.
+
+### Domain / URL
+
+This is the domain or URL that will be sent to the monitoring service to check the status of your service.
+Bear in mind that URLs are a little buggy at the moment, so if you can, use a domain instead.
+
+You can also append ports to the domain, for example `gateway.campsite.chat:443`, but this is not required.
+
+### Interval
+
+The interval is the time between each ping made to your service. We recommend using the default value of `5 Minutes` as this gives you a good balance between frequent pings but not too frequent that it can trigger any sort of rate limiting.
+
+## Viewing your monitor
+
+Once you've created your monitor, Miru will automatically start pinging your service and tracking the status codes, latency, headers and responses.
+
+### Actions
+
+You can perform various actions on your monitor by clicking the three dots on the right of the monitor name in the list of monitors.
+You can find the following actions:
+
+-   **Edit**: Edit the monitor settings.
+-   **Details**: View the monitor details.
+-   **Test**: Test the monitor by pinging your monitor (This won't store the ping in the logs).
+-   **Ping**: Manually ping your monitor (This will store the ping in the logs).
+-   **Copy ID**: Copy the ID of the monitor to your clipboard.
+-   **Delete**: Delete the monitor.
+
+### Overview
+
+![Monitor overview screen](/concepts/monitors/overview.png)
+
+The overview screen shows you the uptime of your service and various latency percentiles based on the pings made to your service.
+We plan on adding more graphs and other data in the future, but for now this is all we have.
+
+### Ping Logs
+
+![Monitor ping logs screen](/concepts/monitors/ping-logs.png)
+
+The ping logs screen contains a table with all the pings ever made to your service. You can filter the table by the last day, week, 2 weeks, etc.
+You can also display more or less pings on each page, and navigate between pages at the bottom of the table.
+
+Clicking on a successful ping will show you the details of the ping, including the response headers and the response body. This could be useful to debug your service if you notice any issues.
+
+### Settings
+
+![Monitor settings screen](/concepts/monitors/settings.png)
+
+At any point, you can edit your monitor either by clicking the **Edit** button in the many dropdown menus, or by clicking the **Settings** tab on the monitor details page.
+You can change the name, type, domain, URL and interval of your monitor here.
+
+Bear in mind that all your previous data will remain after any change which can lead to confusion. We reccomend creating a new monitor instead of editing an existing one if you want to change the type or domain of your monitor.
+
+## What's next?
+
+Once you've created your monitor, you can link it to a status page to display the status of your service to your users.
+Check out the [Status Pages](/docs/concepts/status-pages) concept to learn more.

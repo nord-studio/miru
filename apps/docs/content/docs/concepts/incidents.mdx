@@ -1,0 +1,95 @@
+---
+title: Incidents
+description: "Keep track of the timeline of issues"
+---
+
+## What are Incidents?
+
+An incident, in general terms, can be defined as a disruption or unexpected event that affects the normal operation of a service or system. In the context of Miru, an incident refers to any issue or outage that impacts the availability or performance of a service being monitored.
+
+Incidents can range from minor issues that cause slight performance degradation to major outages that render a service completely unavailable. They can be caused by various factors, including hardware failures, software bugs, network issues, or external events such as natural disasters.
+
+## Creating an Incident
+
+Any workspace member can create an incident. To do so, head over to the **Incidents** section in the admin panel and click on **Create Incident**.
+
+![Create Incident](/concepts/incidents/create-incident.png)
+
+### Title
+
+The title is the most important part of the incident. It should be a short and descriptive title that summarizes what is going on. This is the first thing users will see when they visit your status page, so make sure it's clear and concise.
+
+### Affected Monitors
+
+The affected monitors are the monitors that are impacted by this incident. This is important for users to know which services are affected by the incident. You can select multiple monitors to be affected by the incident.
+
+### Status
+
+The status of the incident is a way to communicate the current state of the incident. The status can be one of the following:
+
+-   **Investigating**: The incident is being investigated and no further information is available.
+-   **Identified**: The incident has been identified and a fix is being worked on.
+-   **Monitoring**: The incident has been fixed and is being monitored to ensure it stays fixed.
+-   **Resolved**: The incident has been resolved and no further action is needed.
+
+### Your Message
+
+The message is used to communicate any additional information about the incident. This can include details about what caused the incident, what is being done to fix it, and any other relevant information. This is a great place to provide updates on the status of the incident and keep users informed.
+
+## Creating a report
+
+Once an incident has been created, you can create additional reports to provide updates to keep your users in the loop. To do so, head over to the **Incidents** section in the admin panel and click on the incident you want to create a report for. Then, click on **Create Report**.
+
+![Create Report](/concepts/incidents/create-report.png)
+
+### Status
+
+The current status of the incident. The status can be one of the following:
+
+-   **Investigating**: The incident is being investigated and no further information is available.
+-   **Identified**: The incident has been identified and a fix is being worked on.
+-   **Monitoring**: The incident has been fixed and is being monitored to ensure it stays fixed.
+-   **Resolved**: The incident has been resolved and no further action is needed.
+
+### Your Message
+
+The message is used to communicate any new information since the last report. This can include details about what has changed, what is being done to fix it, and any other relevant information.
+
+## Managing reports
+
+Miru allows you to edit or delete incident reports, however, it is extremely important to note that this should be done with caution. Editing or deleting reports can lead to confusion and misinformation, so it is recommended to only do so if absolutely necessary.
+
+Once a report has been editied or deleted, it cannot be undone.
+
+### Editing reports
+
+import { Pencil } from "lucide-react";
+
+To edit a report, head over to the **Incidents** section in the admin panel
+and click on the incident that contains the report you want to edit. Then,
+while hovering over the report, click on the button with the pencil
+icon (<Pencil className="inline-block size-4" />).
+
+You'll see a modal with the report details. You can edit the status and message of the report. Once you're done, click on **Save** to save your changes.
+
+### Deleting reports
+
+import { Trash } from "lucide-react";
+
+To delete a report, head over to the **Incidents** section in the admin panel
+and click on the incident that contains the report you want to delete. Then,
+while hovering over the report, click on the button with the trash
+icon (<Trash className="inline-block size-4" />).
+
+You'll see a modal asking you to confirm the deletion. Click on **Delete** to delete the report.
+This action cannot be undone, so make sure you really want to delete the report before confirming.
+
+## Viewing Incidents
+
+Incidents are displayed in a timeline format. This allows you and your users to see the history of events that have occurred in the past. The timeline is sorted by date and time, with the most recent events at the top.
+
+![Incidents Timeline](/concepts/incidents/timeline.png)
+
+If you have monitors with an incident linked to a status page, the status page will also display the incident in the same manner.
+
+![Incidents Timeline](/concepts/incidents/status-page-timeline.png)

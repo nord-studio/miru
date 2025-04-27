@@ -489,7 +489,7 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 								<div className="flex flex-col gap-1">
 									<div className="flex flex-row gap-2 items-center">
 										<Label>Force theme</Label>
-										<Link href="https://miru.nordstud.io/docs/branding/force-theme" target="_blank" rel="noopener noreferrer">
+										<Link href="https://miru.nordstud.io/docs/concepts/status-pages#force-theme" target="_blank" rel="noopener noreferrer">
 											<HelpCircle size={16} className="text-neutral-500 dark:text-neutral-400" />
 										</Link>
 									</div>

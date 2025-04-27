@@ -41,19 +41,24 @@ Please find a list of all the environment variables that can be set in the `.env
 	experience errors or even crashes.
 </Callout>
 
+### Required Environment Variables
+
+The following environment variables are required for Miru to run. If any of these variables are missing, your Miru instance will encounter errors or even crashes.
+
 <TypeTable
 	type={{
+		APP_ENV: {
+			description:
+				"Used as a work around for the `NODE_ENV` variable. Primarily used for development.",
+			type: "'development' | 'production'",
+			required: true,
+			default: "'production'",
+		},
 		DATABASE_URL: {
 			description:
 				"The shared database URL for the web and monitor containers.",
 			type: "string",
 			required: true,
-		},
-		DATABASE_SSL: {
-			description: "Whether to use SSL when connecting to the database.",
-			type: "'true' | 'false'",
-			required: false,
-			default: "'false'",
 		},
 		BETTER_AUTH_SECRET: {
 			description:
@@ -66,7 +71,7 @@ Please find a list of all the environment variables that can be set in the `.env
 				"The domain of your Miru instance. This is used for generating links throughout the app.",
 			type: "string",
 			required: true,
-			default: "'localhost'",
+			default: "'localhost:3000'",
 		},
 		MONITOR_URL: {
 			description:
@@ -75,16 +80,31 @@ Please find a list of all the environment variables that can be set in the `.env
 			type: "string",
 			default: "'http://localhost:8080'",
 		},
+	}}
+/>
+
+### Optional Environment Variables
+
+The following environment variables are optional. If any of these variables are missing, your Miru instance will use the default value or will disable the feature they reference to.
+
+<TypeTable
+	type={{
+		DATABASE_SSL: {
+			description: "Whether to use SSL when connecting to the database.",
+			type: "'true' | 'false'",
+			required: false,
+			default: "'false'",
+		},
 		EMAIL_VERIFICATION: {
 			description:
 				"Whether users are required to verify their email before logging in.",
 			type: "'true' | 'false'",
-			default: "'true'",
+			default: "'false'",
 		},
 		ENABLE_EMAIL: {
 			description: "Whether to enable email notifications on Miru.",
 			type: "'true' | 'false'",
-			default: "'true'",
+			default: "'false'",
 		},
 		SMTP_HOST: {
 			description: "The SMTP host to use for sending emails.",

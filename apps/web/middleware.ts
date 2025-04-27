@@ -6,7 +6,7 @@ type Session = typeof auth.$Infer.Session;
 
 export async function checkSession(request: NextRequest) {
 	const { data: session } = await betterFetch<Session>("/api/auth/get-session", {
-		baseURL: request.nextUrl.origin.replace("https", process.env.APP_ENV === "production" ? "https" : "http"),
+		baseURL: request.nextUrl.origin.replace("https", process.env.APP_ENV === "development" ? "http" : "https"),
 		headers: {
 			cookie: request.headers.get("cookie") || "",
 		},

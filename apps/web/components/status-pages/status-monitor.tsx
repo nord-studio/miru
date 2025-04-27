@@ -148,7 +148,7 @@ export function StatusMonitorBar({ data }: { data: StatusDayBlock }) {
 								Failed
 							</span>
 						</div>
-						<div className="flex flex-row gap-4 items-center justify-between">
+						<div className="flex flex-row gap-4 items-center justify-between w-full">
 							{data.incidents.map((incident) => {
 								return (
 									<div key={incident.id} className="flex flex-col gap-2 items-center w-full group">
