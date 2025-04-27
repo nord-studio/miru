@@ -4,6 +4,7 @@ import {
 } from "@/components/auth/forms/reset";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function ResetPasswordPage({
 	searchParams,
@@ -31,64 +32,54 @@ export default async function ResetPasswordPage({
 	return (
 		<>
 			{!token ? (
-				<div className="absolute left-1/2 top-1/2 w-3/4 -translate-x-1/2 -translate-y-1/2 sm:w-1/2 md:w-auto">
-					<div className="flex flex-col items-center justify-center gap-6 text-center">
-						<div className="flex w-full flex-col items-center justify-center gap-2">
-							<h1 className="text-center font-display text-3xl font-bold sm:text-4xl">
-								Reset Password
-							</h1>
-							<p className="text-sm text-neutral-500 sm:text-base">
-								Please enter your email to recieve a password
-								request.
-							</p>
-						</div>
-						<div className="flex w-full flex-col items-center justify-center gap-4">
-							<RequestPasswordResetForm />
-						</div>
-						<hr className="w-full border border-black/10 dark:border-white/10" />
-						<div className="flex w-full flex-col items-center">
-							<span>
-								Suddenly had an epiphany?{" "}
-								<Link href="/auth/login">
-									<Button
-										variant={"link"}
-										className="p-0 text-blue-500 dark:text-blue-500"
-									>
-										Login
-									</Button>
-								</Link>
-							</span>
+				<div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+					<div className="flex w-full max-w-sm flex-col gap-6">
+						<div className="flex flex-col gap-6">
+							<Card>
+								<CardHeader className="text-center">
+									<CardTitle className="text-xl">Reset Password</CardTitle>
+									<CardDescription>
+										Don&apos;t worry, it happens to the best of us.
+									</CardDescription>
+								</CardHeader>
+								<CardContent>
+									<div className="grid gap-6">
+										<RequestPasswordResetForm />
+										<div className="text-center text-sm">
+											Suddenly had an epiphany?{" "}
+											<Link href="/auth/login" className="underline underline-offset-4">
+												Log in
+											</Link>
+										</div>
+									</div>
+								</CardContent>
+							</Card>
 						</div>
 					</div>
 				</div>
 			) : (
-				<div className="absolute left-1/2 top-1/2 w-3/4 -translate-x-1/2 -translate-y-1/2 sm:w-1/2 md:w-auto">
-					<div className="flex flex-col items-center justify-center gap-6 text-center">
-						<div className="flex w-full flex-col items-center justify-center gap-2">
-							<h1 className="text-center font-display text-3xl font-bold sm:text-4xl">
-								Set a New Password
-							</h1>
-							<p className="text-sm text-neutral-500 sm:text-base">
-								Please set a new password for your accoumt. Make
-								sure it&apos;s secure!
-							</p>
-						</div>
-						<div className="flex w-full flex-col items-center justify-center gap-4">
-							<ResetPasswordForm token={token} />
-						</div>
-						<hr className="w-full border border-black/10 dark:border-white/10" />
-						<div className="flex w-full flex-col items-center">
-							<span>
-								Suddenly had an epiphany?{" "}
-								<Link href="/auth/login">
-									<Button
-										variant={"link"}
-										className="p-0 text-blue-500 dark:text-blue-500"
-									>
-										Login
-									</Button>
-								</Link>
-							</span>
+				<div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+					<div className="flex w-full max-w-sm flex-col gap-6">
+						<div className="flex flex-col gap-6">
+							<Card>
+								<CardHeader className="text-center">
+									<CardTitle className="text-xl">Reset Password</CardTitle>
+									<CardDescription>
+										Please set a new password for your account.
+									</CardDescription>
+								</CardHeader>
+								<CardContent>
+									<div className="grid gap-6">
+										<ResetPasswordForm token={token} />
+										<div className="text-center text-sm">
+											Suddenly had an epiphany?{" "}
+											<Link href="/auth/login" className="underline underline-offset-4">
+												Log in
+											</Link>
+										</div>
+									</div>
+								</CardContent>
+							</Card>
 						</div>
 					</div>
 				</div>

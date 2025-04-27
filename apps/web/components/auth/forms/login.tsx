@@ -10,6 +10,8 @@ import { logIn } from "@/components/auth/actions";
 import { authClient } from "@/lib/auth/client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 export default function LoginForm({ redirect }: { redirect?: string | null }) {
 	const [state, formAction] = useActionState(logIn, {
@@ -60,39 +62,53 @@ function Form({ redirect }: { redirect?: string | null }) {
 	return (
 		<>
 			<input type="hidden" name="redirect" id="redirect" value={redirect ?? "/admin"} />
-			<Input
-				id="email"
-				name="email"
-				type="email"
-				placeholder="Email"
-				required
-				disabled={pending || loading}
-				autoComplete="email webauthn"
-			/>
-			<div className="flex w-full flex-row items-center gap-2">
-				<Input
-					id="password"
-					name="password"
-					type={showPassword ? "text" : "password"}
-					placeholder="Password"
-					required
-					disabled={pending || loading}
-					autoComplete="current-password webauthn"
-				/>
-				<Button
-					variant="outline"
-					size="icon"
-					className="p-2"
-					onClick={togglePassword}
-					type="button"
-					disabled={pending || loading}
-				>
-					{showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+			<div className="grid gap-6">
+				<div className="grid gap-2">
+					<Label htmlFor="email">Email</Label>
+					<Input
+						id="email"
+						name="email"
+						type="email"
+						placeholder="Email"
+						required
+						disabled={pending || loading}
+						autoComplete="email webauthn"
+					/>
+				</div>
+				<div className="grid gap-2">
+					<div className="flex items-center">
+						<Label htmlFor="password">Password</Label>
+						<Link
+							href="/auth/reset"
+							className="ml-auto text-sm underline-offset-4 hover:underline after:content-['Forgot_Password?'] hover:after:content-['Well,_that_sucks.']"
+						/>
+					</div>
+					<div className="flex w-full flex-row items-center gap-2">
+						<Input
+							id="password"
+							name="password"
+							type={showPassword ? "text" : "password"}
+							placeholder="Password"
+							required
+							disabled={pending || loading}
+							autoComplete="current-password webauthn"
+						/>
+						<Button
+							variant="outline"
+							size="icon"
+							className="p-2"
+							onClick={togglePassword}
+							type="button"
+							disabled={pending || loading}
+						>
+							{showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+						</Button>
+					</div>
+				</div>
+				<Button className="w-full" disabled={pending || loading} type="submit">
+					{pending || loading ? <Spinner size={16} /> : "Login"}
 				</Button>
 			</div>
-			<Button className="w-full" disabled={pending || loading} type="submit">
-				{pending || loading ? <Spinner size={16} /> : "Submit"}
-			</Button>
 		</>
 	);
 }
