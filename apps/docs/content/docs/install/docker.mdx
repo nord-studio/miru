@@ -9,7 +9,7 @@ Before we start, you need to make sure you have a VPS or on-prem machine with:
 
 -   2 vCPUs
 -   2GB of RAM
--   [Docker](https://docs.docker.com/get-started/get-docker/)
+-   [Docker](https://docs.docker.com/engine/install/)
 
 ## Installation
 
@@ -91,15 +91,15 @@ Create and run the Miru dashboard container:
 <Tabs groupId="arch" items={["amd64", "arm64"]}>
 <Tab value="amd64">
 ```bash
-docker run -d --name web --network=miru --env-file ./.env -p 3000:3000 ghcr.io/nord-studio/miru/web:latest ;
-docker run -d --name monitor --network=miru --env-file ./.env -p 8080:8080 ghcr.io/nord-studio/miru/monitor:latest 
+docker run -d --name web --network=miru --env-file ./.env -p 3000:3000 ghcr.io/nord-studio/miru/web:0.3.2-amd64 ;
+docker run -d --name monitor --network=miru --env-file ./.env -p 8080:8080 ghcr.io/nord-studio/miru/monitor:0.3.2-amd64
 ```
 </Tab>
 
 <Tab value="arm64">
 ```bash
-docker run -d --name web --network=miru --env-file ./.env -p 3000:3000 ghcr.io/nord-studio/miru/web:latest-arm64 ;
-docker run -d --name monitor --network=miru --env-file ./.env -p 8080:8080 ghcr.io/nord-studio/miru/monitor:latest-arm64 
+docker run -d --name web --network=miru --env-file ./.env -p 3000:3000 ghcr.io/nord-studio/miru/web:0.3.2-arm64 ;
+docker run -d --name monitor --network=miru --env-file ./.env -p 8080:8080 ghcr.io/nord-studio/miru/monitor:0.3.2-arm64
 ```
 </Tab>
 </Tabs>
