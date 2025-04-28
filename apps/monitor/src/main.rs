@@ -9,7 +9,7 @@ use std::{
 
 use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
-use cron::worker::JobMetadata;
+use cron::{health::TrackedIncident, worker::JobMetadata};
 use dotenvy::dotenv;
 use log::info;
 use once_cell::sync::Lazy;
@@ -32,6 +32,7 @@ pub static POOL: Lazy<PgPool> = Lazy::new(|| {
 
 pub static SCHED: OnceLock<Arc<Mutex<JobScheduler>>> = OnceLock::new();
 pub static REGISTRY: OnceLock<Arc<Mutex<Vec<JobMetadata>>>> = OnceLock::new();
+pub static INCID_REGISTRY: OnceLock<Arc<Mutex<Vec<TrackedIncident>>>> = OnceLock::new();
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

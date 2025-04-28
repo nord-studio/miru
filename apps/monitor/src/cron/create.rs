@@ -8,7 +8,7 @@ use tokio_cron_scheduler::{Job, JobScheduler};
 use uuid::Uuid;
 
 use crate::{
-    cron,
+    cron::{self, health::check_health},
     ping::{http_ping, tcp_ping},
     POOL,
 };
@@ -72,6 +72,7 @@ pub async fn create_job<'a>(
                                     e.response.latency,
                                     e.error.to_string()
                                 );
+
                                 let query = query!(
                                     "INSERT INTO pings (id, monitor_id, type, success, status, latency, headers) VALUES ($1, $2, $3, $4, $5, $6, $7)",
                                     generate_id(),
@@ -85,15 +86,13 @@ pub async fn create_job<'a>(
                                 .execute(&pool)
                                 .await;
 
-                                match query {
-                                    Ok(_) => {
-                                        return;
-                                    }
-                                    Err(e) => {
-                                        error!("Error inserting failed ping: {}", e.to_string());
-                                        return;
-                                    }
-                                };
+                                if let Err(e) = query {
+                                    error!("Error inserting failed ping: {}", e.to_string());
+                                }
+
+                                check_health(monitor_id.to_string(), url.to_string()).await;
+
+                                return;
                             }
                         };
 
@@ -151,15 +150,13 @@ pub async fn create_job<'a>(
                                 .execute(&pool)
                                 .await;
 
-                                match query {
-                                    Ok(_) => {
-                                        return;
-                                    }
-                                    Err(e) => {
-                                        error!("Error inserting failed ping: {}", e.to_string());
-                                        return;
-                                    }
-                                };
+                                if let Err(e) = query {
+                                    error!("Error inserting failed ping: {}", e.to_string());
+                                }
+
+                                check_health(monitor_id.to_string(), url.to_string()).await;
+
+                                return;
                             }
                         };
 
