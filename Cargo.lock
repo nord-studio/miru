@@ -1447,7 +1447,7 @@ dependencies = [
 
 [[package]]
 name = "monitor"
-version = "0.3.0"
+version = "0.3.2"
 dependencies = [
  "actix-cors",
  "actix-web",
