@@ -1,10 +1,10 @@
 {
-	"name": "@miru/monitor",
-	"version": "0.3.2",
-	"scripts": {
-		"dev": "watchexec -e rs -r RUST_LOG=trace cargo run",
-		"build": "cargo build --release",
-		"start": "RUST_LOG=info ./../../target/debug/monitor",
-		"lint": "cargo clippy ; cargo fmt"
-	}
+  "name": "@miru/monitor",
+  "version": "0.3.3",
+  "scripts": {
+    "dev": "watchexec -e rs -r RUST_LOG=trace cargo run",
+    "build": "cargo build --release",
+    "start": "RUST_LOG=info ./../../target/debug/monitor",
+    "lint": "cargo clippy ; cargo fmt"
+  }
 }
