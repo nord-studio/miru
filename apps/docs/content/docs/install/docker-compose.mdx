@@ -56,7 +56,7 @@ services:
 
     monitor:
         container_name: monitor
-        image: ghcr.io/nord-studio/miru/monitor:0.3.3-amd64
+        image: ghcr.io/nord-studio/miru/monitor:0.3.4-amd64
         ports:
             - "8080:8080"
         environment:
@@ -68,7 +68,7 @@ services:
 
     web:
         container_name: web
-        image: ghcr.io/nord-studio/miru/web:0.3.3-amd64
+        image: ghcr.io/nord-studio/miru/web:0.3.4-amd64
         ports:
             - "3000:3000"
         environment:
@@ -132,7 +132,7 @@ services:
 
     monitor:
         container_name: monitor
-        image: ghcr.io/nord-studio/miru/monitor:0.3.3-arm64
+        image: ghcr.io/nord-studio/miru/monitor:0.3.4-arm64
         ports:
             - "8080:8080"
         environment:
@@ -144,7 +144,7 @@ services:
 
     web:
         container_name: web
-        image: ghcr.io/nord-studio/miru/web:0.3.3-arm64
+        image: ghcr.io/nord-studio/miru/web:0.3.4-arm64
         ports:
             - "3000:3000"
         environment:
