@@ -12,7 +12,7 @@ pub async fn create_job_service(path: web::Path<String>) -> impl Responder {
         Some(sched) => sched,
         None => {
             return HttpResponse::InternalServerError().json(json!({
-                    "error": "Failed to get scheduler"
+                "error": "Failed to get scheduler"
             }))
         }
     };
@@ -21,7 +21,7 @@ pub async fn create_job_service(path: web::Path<String>) -> impl Responder {
         Some(reg) => reg,
         None => {
             return HttpResponse::InternalServerError().json(json!({
-                            "error": "Failed to get registry"
+                "error": "Failed to get registry"
             }))
         }
     };
@@ -35,7 +35,7 @@ pub async fn create_job_service(path: web::Path<String>) -> impl Responder {
         Ok(monitor) => monitor,
         Err(_) => {
             return HttpResponse::NotFound().json(json!({
-                    "error": "Monitor not found"
+                "error": "Monitor not found"
             }))
         }
     };
@@ -53,7 +53,7 @@ pub async fn create_job_service(path: web::Path<String>) -> impl Responder {
         Ok(_) => {}
         Err(e) => {
             return HttpResponse::InternalServerError().json(json!({
-                    "error": format!("Failed to create job: {:?}", e)
+                "error": format!("Failed to create job: {:?}", e)
             }))
         }
     }

@@ -9,7 +9,9 @@ use tokio::{sync::Mutex, task::JoinHandle};
 use tokio_cron_scheduler::JobScheduler;
 use uuid::Uuid;
 
-use crate::{POOL, REGISTRY, SCHED};
+use crate::{INCID_REGISTRY, POOL, REGISTRY, SCHED};
+
+use super::health::TrackedIncident;
 
 #[derive(Debug, Clone)]
 pub struct JobMetadata {
@@ -25,6 +27,7 @@ pub static HANDLE: OnceLock<JoinHandle<()>> = OnceLock::new();
 pub async fn start() {
     let scheduler = Arc::new(Mutex::new(JobScheduler::new().await.unwrap()));
     let registry = Arc::new(Mutex::new(Vec::<JobMetadata>::new()));
+    let incid_registry = Arc::new(Mutex::new(Vec::<TrackedIncident>::new()));
 
     let sched_clone = scheduler.clone();
     let handle = tokio::spawn(async move {
@@ -39,6 +42,11 @@ pub async fn start() {
     REGISTRY
         .set(registry)
         .map_err(|_| error!("Failed to set registry"))
+        .ok();
+
+    INCID_REGISTRY
+        .set(incid_registry)
+        .map_err(|_| error!("Failed to set incident registry"))
         .ok();
 
     HANDLE

@@ -12,7 +12,7 @@ pub async fn remove_job_service(path: web::Path<String>) -> impl Responder {
         Some(sched) => sched,
         None => {
             return HttpResponse::InternalServerError().json(json!({
-                                    "error": "Failed to get scheduler"
+                "error": "Failed to get scheduler"
             }))
         }
     };
@@ -21,7 +21,7 @@ pub async fn remove_job_service(path: web::Path<String>) -> impl Responder {
         Some(reg) => reg,
         None => {
             return HttpResponse::InternalServerError().json(json!({
-                                "error": "Failed to get registry"
+                "error": "Failed to get registry"
             }))
         }
     };
