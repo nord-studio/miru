@@ -17,6 +17,10 @@ export default async function DashboardLayout({
 		headers: await headers(),
 	});
 
+	if (!currentUser) {
+		return notFound();
+	}
+
 	const data = await db.query.workspaces.findMany({
 		with: {
 			members: true,
@@ -25,7 +29,7 @@ export default async function DashboardLayout({
 
 	const workspaces = data.filter((workspace) =>
 		workspace.members.some(
-			(member) => member.userId === currentUser?.user.id
+			(member) => member.userId === currentUser.user.id
 		)
 	);
 

@@ -19,13 +19,13 @@ services:
     container_name: minio
     image: bitnami/minio
     ports:
-      - '9000:9000'
-      - '9001:9001'
+      - "9000:9000"
+      - "9001:9001"
     volumes:
       - minio:/bitnami/minio/data
     environment:
       - MINIO_ROOT_USER=miru
-      - MINIO_ROOT_PASSWORD=VerySecurePassword
+      - MINIO_ROOT_PASSWORD=VerySecurePassword123
       - MINIO_DEFAULT_BUCKETS=public
 
   monitor:
@@ -48,15 +48,16 @@ services:
     environment:
       - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
       - DATABASE_SSL=false
-      - S3_ENDPOINT=127.0.0.1
+      - S3_ENDPOINT=minio
       - S3_PORT=9000
       - S3_SECURE=false
       - S3_ACCESS_KEY=
       - S3_SECRET_KEY=
       - BETTER_AUTH_SECRET=secret
-      - APP_DOMAIN=http://localhost:3000
-      - MONITOR_URL=http://localhost:8080
-      - ENABLE_EMAIL=
+      - APP_DOMAIN=status.example.com
+      - MONITOR_URL=http://monitor:8080
+      - ENABLE_EMAIL=false
+      - EMAIL_VERIFICATION=false
       - SMTP_HOST=
       - SMTP_PORT=
       - SMTP_SECURE=
@@ -65,3 +66,4 @@ services:
       - SMTP_FROM=
     depends_on:
       - database
+      - minio

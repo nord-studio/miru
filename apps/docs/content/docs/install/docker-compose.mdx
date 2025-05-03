@@ -9,14 +9,14 @@ Before we start, you need to make sure you have a VPS or on-prem machine with:
 
 -   2 vCPUs
 -   2GB of RAM
--   [Docker](https://docs.docker.com/get-started/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
+-   [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/linux/#install-using-the-repository)
 
 ## Installation
 
 By far, the easiest way to get started with Miru is to use Docker Compose. The Miru repository comes with a [`docker-compose.yml`](https://github.com/nord-studio/miru/blob/main/docker-compose.yml) file that you can use as a template.
 
 <Steps>
-<Step> 
+<Step>
 Create a new `docker-compose.yml` file:
 
 <Tabs groupId="arch" items={["amd64", "arm64"]}>
@@ -26,6 +26,7 @@ Create a new `docker-compose.yml` file:
 ```yml
 volumes:
     database:
+    minio:
 
 services:
     database:
@@ -40,9 +41,22 @@ services:
             POSTGRES_USER: miru
             POSTGRES_DB: miru
 
+    minio:
+        container_name: minio
+        image: bitnami/minio
+        ports:
+            - "9000:9000"
+            - "9001:9001"
+        volumes:
+            - minio:/bitnami/minio/data
+        environment:
+            - MINIO_ROOT_USER=miru
+            - MINIO_ROOT_PASSWORD=VerySecurePassword123
+            - MINIO_DEFAULT_BUCKETS=public
+
     monitor:
         container_name: monitor
-        image: ghcr.io/nord-studio/miru/monitor:latest
+        image: ghcr.io/nord-studio/miru/monitor:0.3.4-amd64
         ports:
             - "8080:8080"
         environment:
@@ -54,16 +68,22 @@ services:
 
     web:
         container_name: web
-        image: ghcr.io/nord-studio/miru/web:latest
+        image: ghcr.io/nord-studio/miru/web:0.3.4-amd64
         ports:
             - "3000:3000"
         environment:
             - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
             - DATABASE_SSL=false
+            - S3_ENDPOINT=minio
+            - S3_PORT=9000
+            - S3_SECURE=false
+            - S3_ACCESS_KEY=
+            - S3_SECRET_KEY=
             - BETTER_AUTH_SECRET=secret
-            - APP_DOMAIN=http://localhost:3000
-            - MONITOR_URL=http://localhost:8080
-            - ENABLE_EMAIL=
+            - APP_DOMAIN=status.example.com
+            - MONITOR_URL=http://monitor:8080
+            - ENABLE_EMAIL=false
+            - EMAIL_VERIFICATION=false
             - SMTP_HOST=
             - SMTP_PORT=
             - SMTP_SECURE=
@@ -72,6 +92,7 @@ services:
             - SMTP_FROM=
         depends_on:
             - database
+            - minio
 ```
 
 </Tab>
@@ -81,6 +102,7 @@ services:
 ```yml
 volumes:
     database:
+    minio:
 
 services:
     database:
@@ -95,9 +117,22 @@ services:
             POSTGRES_USER: miru
             POSTGRES_DB: miru
 
+    minio:
+        container_name: minio
+        image: bitnami/minio
+        ports:
+            - "9000:9000"
+            - "9001:9001"
+        volumes:
+            - minio:/bitnami/minio/data
+        environment:
+            - MINIO_ROOT_USER=miru
+            - MINIO_ROOT_PASSWORD=VerySecurePassword123
+            - MINIO_DEFAULT_BUCKETS=public
+
     monitor:
         container_name: monitor
-        image: ghcr.io/nord-studio/miru/monitor:latest-arm64
+        image: ghcr.io/nord-studio/miru/monitor:0.3.4-arm64
         ports:
             - "8080:8080"
         environment:
@@ -109,16 +144,22 @@ services:
 
     web:
         container_name: web
-        image: ghcr.io/nord-studio/miru/web:latest-arm64
+        image: ghcr.io/nord-studio/miru/web:0.3.4-arm64
         ports:
             - "3000:3000"
         environment:
             - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
             - DATABASE_SSL=false
+            - S3_ENDPOINT=minio
+            - S3_PORT=9000
+            - S3_SECURE=false
+            - S3_ACCESS_KEY=
+            - S3_SECRET_KEY=
             - BETTER_AUTH_SECRET=secret
-            - APP_DOMAIN=http://localhost:3000
-            - MONITOR_URL=http://localhost:8080
-            - ENABLE_EMAIL=
+            - APP_DOMAIN=status.example.com
+            - MONITOR_URL=http://monitor:8080
+            - ENABLE_EMAIL=false
+            - EMAIL_VERIFICATION=false
             - SMTP_HOST=
             - SMTP_PORT=
             - SMTP_SECURE=
@@ -127,6 +168,7 @@ services:
             - SMTP_FROM=
         depends_on:
             - database
+            - minio
 ```
 
 </Tab>

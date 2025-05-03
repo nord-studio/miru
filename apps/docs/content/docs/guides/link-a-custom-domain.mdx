@@ -1,0 +1,40 @@
+---
+title: Link a Custom Domain
+description: Learn how to link a custom domain to your Miru application.
+---
+
+## Introduction
+In this guide, you'll learn how to link a custom domain to a deployed Miru instance. This guide assumes you have:
+
+- A deployed Miru instance
+- A domain
+- A DNS provider
+
+## Step 1: Setup a status page
+Before we link a custom domain, you'll need to have at least one status page. You can learn how to do that [here](/docs/concepts/status-pages#creating-a-page).
+
+Make sure you enable your status page, disable **Root Domain** and enter the domain you want to host the status page on under **Domain / URL**.
+
+![Domains](/guides/link-a-custom-domain/domains.png)
+
+## Step 2: Configure DNS records
+Once you have a status page setup, you'll need to point your domain to the Miru instance using an A record. Log in to your DNS provider and create an A record pointing towards the IP address of your Miru instance.
+
+![DNS](/guides/link-a-custom-domain/dns.png)
+
+You can confirm that the record has been created by running the following command in your terminal:
+
+```bash
+dig +short <domain>
+```
+![dig](/guides/link-a-custom-domain/dig.png)
+
+## Step 3: Verify domain
+
+Try navigating to your custom domain in your browser. If everything is set up correctly, you should see your status page:
+
+![Status Page](/guides/link-a-custom-domain/status-page.png)
+
+## Need Help?
+
+If you have any questions or need help with Miru, feel free to reach out to us on [Discord](https://nordstud.io/discord) or via [GitHub Discussions](https://github.com/nord-studio/miru/discussions).

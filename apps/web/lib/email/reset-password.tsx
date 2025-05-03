@@ -23,7 +23,7 @@ export default async function sendResetPasswordEmail(
 	email: string,
 	url: string
 ) {
-	if (!process.env.ENABLE_EMAIL) {
+	if (process.env.ENABLE_EMAIL !== "true") {
 		throw new Error(
 			"Emails are not enabled on this instance. If you are the instance administator, set ENABLE_EMAIL to true in your .env file."
 		);
