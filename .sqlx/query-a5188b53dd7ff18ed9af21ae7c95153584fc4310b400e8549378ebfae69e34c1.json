@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO monitors_to_incidents (monitor_id, incident_id) VALUES ($1, $2)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Varchar"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "a5188b53dd7ff18ed9af21ae7c95153584fc4310b400e8549378ebfae69e34c1"
+}

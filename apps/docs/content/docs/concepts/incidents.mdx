@@ -9,6 +9,18 @@ An incident, in general terms, can be defined as a disruption or unexpected even
 
 Incidents can range from minor issues that cause slight performance degradation to major outages that render a service completely unavailable. They can be caused by various factors, including hardware failures, software bugs, network issues, or external events such as natural disasters.
 
+## Auto Incidents
+
+<Callout type="warn">
+	This feature is in beta and may be subject to change in the future.
+</Callout>
+
+By default, the monitoring service will automatically create incidents for you when a monitor goes down and resolve them when the monitor comes back online. It will also alert any subscribers and workspace members. You can disable this feature in Miru's environment settings.
+
+### Disable Auto Incidents
+
+To disable auto incidents, head over to where your environment variables are stored and change the `AUTO_INCIDENTS` variables to `false`. This will prevent Miru from automatically creating incidents when a monitor goes down.
+
 ## Creating an Incident
 
 Any workspace member can create an incident. To do so, head over to the **Incidents** section in the admin panel and click on **Create Incident**.
@@ -75,6 +87,11 @@ You'll see a modal with the report details. You can edit the status and message 
 ### Deleting reports
 
 import { Trash } from "lucide-react";
+
+<Callout>
+	You can only delete reports if the incident has not been resolved already.
+	This is to prevent misinformation and confusion among users.
+</Callout>
 
 To delete a report, head over to the **Incidents** section in the admin panel
 and click on the incident that contains the report you want to delete. Then,

@@ -63,7 +63,7 @@ export default async function StatusPagesIndexPage({
 						)}
 					</div>
 				</div>
-				<div className="container mx-auto mt-4">
+				<div className="container mt-4">
 					<DataTable data={pages} columns={columns} />
 				</div>
 			</div>

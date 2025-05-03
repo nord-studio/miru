@@ -8,7 +8,10 @@ use tokio_cron_scheduler::{Job, JobScheduler};
 use uuid::Uuid;
 
 use crate::{
-    cron::{self, health::check_health},
+    cron::{
+        self,
+        health::{check_health, resolve_incident},
+    },
     ping::{http_ping, tcp_ping},
     POOL,
 };
@@ -61,6 +64,9 @@ pub async fn create_job<'a>(
                                     result.status,
                                     result.latency
                                 );
+
+                                resolve_incident(monitor_id.to_string()).await;
+
                                 result
                             }
                             Err(e) => {

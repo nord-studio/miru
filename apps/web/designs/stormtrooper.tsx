@@ -7,9 +7,7 @@ import { ThemeDropdown } from "@/components/theme/dropdown";
 import Color from "color";
 import { cn } from "@/lib/utils";
 import { Menu } from "lucide-react";
-import { IncidentWithReports, IncidentWithReportsAndMonitors } from "@/types/incident";
-import BackButton from "@/components/back-button";
-import IncidentTimelineItem from "@/components/incidents/reports/timeline-item";
+import { IncidentWithReportsAndMonitors } from "@/types/incident";
 
 export function StormtrooperStatusPageShell({ page, header, children }: { page: StatusPageWithMonitorsExtended, header: React.ReactNode, children: React.ReactNode }) {
 	const color = Color(page.brandColor || "#5865F2");
@@ -74,7 +72,7 @@ export function StormtrooperStatusPageShell({ page, header, children }: { page: 
 						</div>
 					</div>
 				</div>
-				<div className="w-full h-full bg-neutral-100 dark:bg-neutral-900 rounded-t-2xl max-w-[800px] p-8 shadow-md border-x border-t">
+				<div className="w-full h-full bg-neutral-100 dark:bg-neutral-900 rounded-t-2xl max-w-[800px] px-8 pt-8 pb-4 shadow-md border-x border-t">
 					{header}
 				</div>
 			</section>
@@ -100,14 +98,6 @@ export function StormtrooperStatusPageShell({ page, header, children }: { page: 
 };
 
 export default function StormtrooperStatusPageDesign({ page, incidents }: { page: StatusPageWithMonitorsExtended, incidents: IncidentWithReportsAndMonitors[] }) {
-	const color = Color(page.brandColor || "#5865F2");
-	function isLight() {
-		if (page.forcedTheme === "auto") return color.isLight();
-		if (page.forcedTheme === "light") return true;
-		if (page.forcedTheme === "dark") return false;
-		else return color.isLight();
-	}
-
 	let variant: "operational" | "degraded" | "down" = "operational";
 
 	const allOpenIncids = incidents.filter((incid) =>

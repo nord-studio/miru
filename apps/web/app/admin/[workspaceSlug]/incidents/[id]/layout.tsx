@@ -7,6 +7,9 @@ import { getIncidentsWithMonitors } from "@/lib/db/utils";
 import { desc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import React from "react";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default async function MonitorSingletonLayout({
 	children,
@@ -27,6 +30,10 @@ export default async function MonitorSingletonLayout({
 
 	const incident = await getIncidentsWithMonitors(id);
 
+	if (!incident) {
+		return notFound();
+	}
+
 	const latestReport = await db
 		.select()
 		.from(incidentReports)
@@ -39,10 +46,6 @@ export default async function MonitorSingletonLayout({
 		.select()
 		.from(monitors)
 		.where(eq(monitors.workspaceId, workspace.id));
-
-	if (!incident) {
-		return notFound();
-	}
 
 	return (
 		<>
@@ -58,7 +61,20 @@ export default async function MonitorSingletonLayout({
 						</p>
 					</div>
 					<div className="flex flex-row gap-3 items-center">
-						<CreateIncidentReport incident={incident} />
+						{incident.resolvedAt !== null ? (
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Button className="opacity-50 cursor-not-allowed">
+										<Plus /> Create Report
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>This incident has been resolved.</p>
+								</TooltipContent>
+							</Tooltip>
+						) : (
+							<CreateIncidentReport incident={incident} />
+						)}
 						<IncidentActionsDropdown
 							incident={incident}
 							monitors={allMonitors}
@@ -67,7 +83,7 @@ export default async function MonitorSingletonLayout({
 						/>
 					</div>
 				</div>
-				<div className="container mx-auto mt-6">{children}</div>
+				<div className="container mt-6">{children}</div>
 			</div>
 		</>
 	);

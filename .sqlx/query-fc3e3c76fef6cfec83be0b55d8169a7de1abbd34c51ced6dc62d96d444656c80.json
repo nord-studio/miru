@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE incidents SET resolved_at = $1, auto_resolved = true WHERE id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Timestamp",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "fc3e3c76fef6cfec83be0b55d8169a7de1abbd34c51ced6dc62d96d444656c80"
+}

@@ -9,26 +9,30 @@ export default async function IncidentSingletonPage({
 }) {
 	const { id } = await params;
 
-	const reports = await getIncidentWithReports(id);
+	const raw = await getIncidentWithReports(id);
 
-	if (!reports?.data?.reports) {
+	if (!raw?.data?.reports || !raw.data.incident) {
 		return notFound();
 	}
 
+	const reports = raw.data.reports;
+	const incident = raw.data.incident;
+
 	return (
 		<>
-			{reports.data.reports.length === 0 ? (
+			{reports.length === 0 ? (
 				<div className="w-full flex items-center justify-center">
 					<p className="text-neutral-500 dark:text-neutral-400">No reports found.</p>
 				</div>
 			) : (
 				<div className="grid gap-4">
-					{reports.data.reports.map((report, i) => (
+					{reports.map((report, i) => (
 						<IncidentTimelineItem
 							key={report.id}
 							editable={true}
+							deletable={incident.resolvedAt === null}
 							report={report}
-							last={i === reports.data!.reports!.length - 1}
+							last={i === reports.length - 1}
 						/>
 					))}
 				</div>
