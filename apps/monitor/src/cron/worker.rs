@@ -11,7 +11,7 @@ use uuid::Uuid;
 
 use crate::{INCID_REGISTRY, POOL, REGISTRY, SCHED};
 
-use super::health::TrackedIncident;
+use super::health::{load_registry, TrackedIncident};
 
 #[derive(Debug, Clone)]
 pub struct JobMetadata {
@@ -53,6 +53,9 @@ pub async fn start() {
         .set(handle)
         .map_err(|_| error!("Failed to set handle"))
         .ok();
+
+    // Load all tracked incidents from the database
+    load_registry().await;
 }
 
 /// Load all the monitors from the database and create a ping cron job for them

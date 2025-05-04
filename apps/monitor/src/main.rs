@@ -14,8 +14,8 @@ use dotenvy::dotenv;
 use log::info;
 use once_cell::sync::Lazy;
 use routes::{
-    create_job_service, hello_service, not_found_service, ping_service, remove_job_service,
-    test_service, update_job_service,
+    create_job_service, hello_service, not_found_service, ping_service, registry::registry_service,
+    remove_job_service, test_service, update_job_service,
 };
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use tokio::sync::Mutex;
@@ -80,6 +80,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .service(create_job_service)
             .service(remove_job_service)
             .service(update_job_service)
+            .service(registry_service)
             .default_service(web::to(not_found_service))
     })
     .bind(("0.0.0.0", 8080))?

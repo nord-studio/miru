@@ -2,6 +2,7 @@ use chrono::NaiveDateTime;
 use log::error;
 use monitor::generate_id;
 use sqlx::query;
+use tokio::sync::MutexGuard;
 
 use crate::{INCID_REGISTRY, POOL};
 
@@ -122,10 +123,15 @@ pub async fn check_health(monitor_id: String, url: String) {
                 monitor_id: monitor_id.clone(),
                 incident: incident.clone(),
             });
+
+            // Sync the registry with the database
+            sync_registry(incid_registry).await;
         }
     }
 }
 
+/// Run a check when a ping is successful to see if there are any tracked incidents in the registry related to that monitor.
+/// If there are, create a resolve incident report, and remove the incident from the registry.
 pub async fn resolve_incident(monitor_id: String) {
     let pool = POOL.clone();
 
@@ -225,4 +231,119 @@ pub async fn resolve_incident(monitor_id: String) {
     let sched = INCID_REGISTRY.get().unwrap();
     let mut incid_registry = sched.lock().await;
     incid_registry.retain(|incident| incident.incident.id != incident_id);
+
+    // Sync the registry with the database
+    sync_registry(incid_registry).await;
+}
+
+/// Sync the registry with the database.
+pub async fn sync_registry(registry: MutexGuard<'_, Vec<TrackedIncident>>) {
+    let pool = POOL.clone();
+
+    let mut tracked_incidents: Vec<TrackedIncident> = vec![];
+
+    for incident in registry.iter() {
+        tracked_incidents.push(incident.clone());
+    }
+
+    // Get all incidents from the database and check if they are already in the database
+    let db_incidents = query!("SELECT * FROM tracked_incidents")
+        .fetch_all(&pool)
+        .await
+        .unwrap_or_else(|_| vec![]);
+
+    let mut db_incidents_ids = vec![];
+
+    for incident in db_incidents.iter() {
+        db_incidents_ids.push(incident.id.clone());
+    }
+
+    // Remove any incidents from the registry that are already in the database
+    tracked_incidents.retain(|incident| !db_incidents_ids.contains(&incident.incident.id));
+
+    // Insert any new incidents into the database
+    for incident in tracked_incidents.iter() {
+        let query = query!(
+            "INSERT INTO tracked_incidents (monitor_id, id, title, started_at, acknowledged_at, resolved_at, auto_resolved) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+            incident.monitor_id.to_string(),
+            incident.incident.id.to_string(),
+            incident.incident.title.to_string(),
+            incident.incident.started_at,
+            incident.incident.acknowledged_at,
+            incident.incident.resolved_at,
+            incident.incident.auto_resolved,
+        )
+        .execute(&pool)
+        .await;
+
+        if let Err(e) = query {
+            error!("Error syncing registry: {}", e.to_string());
+        }
+    }
+
+    // Remove any incidents from the database that are no longer in the registry
+    for incident in db_incidents.iter() {
+        let mut found = false;
+        for tracked_incident in tracked_incidents.iter() {
+            if tracked_incident.incident.id == incident.id {
+                found = true;
+                break;
+            }
+        }
+
+        if !found {
+            let query = query!(
+                "DELETE FROM tracked_incidents WHERE id = $1",
+                incident.id.to_string()
+            )
+            .execute(&pool)
+            .await;
+
+            if let Err(e) = query {
+                error!("Error removing incident from registry: {}", e.to_string());
+            }
+        }
+    }
+}
+
+/// Loads all tracked incidents from the database and adds them to the registry.
+pub async fn load_registry() {
+    let pool = POOL.clone();
+
+    let sched = INCID_REGISTRY.get().unwrap();
+    let mut incid_registry = sched.lock().await;
+
+    // Get all incidents from the database
+    let mut db_incidents = query!("SELECT * FROM tracked_incidents")
+        .fetch_all(&pool)
+        .await
+        .unwrap_or_else(|_| vec![]);
+
+    // Do some cleaning up anc check if the incidents ACTUALLY exist in the database
+    let incidents =
+        query!("SELECT * FROM incidents WHERE id IN (SELECT id FROM tracked_incidents)")
+            .fetch_all(&pool)
+            .await
+            .unwrap_or_else(|_| vec![]);
+
+    let mut incident_ids = vec![];
+    for incident in incidents.iter() {
+        incident_ids.push(incident.id.clone());
+    }
+
+    db_incidents.retain(|incident| incident_ids.contains(&incident.id));
+
+    for incident in db_incidents.iter() {
+        incid_registry.push(TrackedIncident {
+            monitor_id: incident.monitor_id.to_string(),
+            incident: Incident {
+                id: incident.id.to_string(),
+                title: incident.title.to_string(),
+                started_at: incident.started_at,
+                acknowledged_at: incident.acknowledged_at,
+                resolved_at: incident.resolved_at,
+                auto_resolved: incident.auto_resolved,
+            },
+        });
+    }
 }
