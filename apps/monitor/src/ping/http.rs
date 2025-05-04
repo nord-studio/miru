@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use log::{error, info};
+use log::error;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -72,8 +72,6 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                 Err(_) => None,
             };
 
-            info!("Response: {:?}", body);
-
             Ok(HttpPingResponse {
                 status,
                 success: status == 200,
@@ -108,8 +106,6 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                         Ok(body) => Some(body),
                         Err(_) => None,
                     };
-
-                    info!("Response: {:?}", body);
 
                     Ok(HttpPingResponse {
                         status: status.as_u16() as i32,

@@ -10,6 +10,7 @@ import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+/// The latest report is always the first in the array.
 export const getIncidentWithReports = actionClient.schema(z.string().nonempty()).action(async ({ parsedInput: id }) => {
 	const incident = await db
 		.select()
@@ -30,13 +31,13 @@ export const getIncidentWithReports = actionClient.schema(z.string().nonempty())
 		orderBy: (reports, { desc }) => (desc(reports.timestamp)),
 	}).then((res) => res.map((r) => ({
 		id: r.id,
-		incidentId: r.incidentId, // Map incidentId to incident_id
+		incidentId: r.incidentId.id, // Map incidentId to incident_id
 		status: r.status as IncidentReportStatus,
 		message: r.message,
 		timestamp: r.timestamp,
 	})));
 
-	return { reports };
+	return { incident, reports };
 });
 
 export const createIncidentReport = actionClient
@@ -121,6 +122,18 @@ export const deleteIncidentReport = actionClient
 
 		if (reports.length <= 1) {
 			return { error: true, message: "Cannot delete the last report." };
+		}
+
+		const incident = await db.query.incidents.findFirst({
+			where: () => eq(incidents.id, incidentId),
+		});
+
+		if (!incident) {
+			return { error: true, message: "Incident not found." };
+		}
+
+		if (incident.resolvedAt) {
+			return { error: true, message: "Cannot delete a report after the incident has been resolved." };
 		}
 
 		const report = await db

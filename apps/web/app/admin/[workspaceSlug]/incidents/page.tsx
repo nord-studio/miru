@@ -67,7 +67,7 @@ export default async function IncidentsPage({
 						<CreateIncident monitors={mons} />
 					</div>
 				</div>
-				<div className="container mx-auto mt-4">
+				<div className="mt-4">
 					<DataTable columns={columns} data={incids} />
 				</div>
 			</div>

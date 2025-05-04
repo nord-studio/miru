@@ -13,14 +13,17 @@ import EditIncidentReport from "@/components/incidents/reports/edit-report";
 
 export default function IncidentTimelineItem({
 	editable = false,
+	deletable = false,
 	report,
 	last,
 }: {
 	editable?: boolean;
+	deletable?: boolean;
 	report: IncidentReport;
 	last?: boolean;
 }) {
 	const [deleteOpen, setDeleteOpen] = useState(false);
+	const either = editable || deletable;
 
 	return (
 		<>
@@ -50,36 +53,42 @@ export default function IncidentTimelineItem({
 					)}
 				</div>
 				<div className="mt-1 grid flex-1">
-					<div className={cn("absolute top-2 right-2 hidden gap-2", editable && "group-hover:flex group-active:flex")}>
-						<EditIncidentReport report={report} />
-						<Alert
-							title="Delete Report"
-							description="Are you sure you want to delete this report? This action cannot be undone."
-							onSubmit={async () => {
-								const t = toast.loading("Deleting report...");
-								deleteIncidentReport({
-									id: report.id,
-									incidentId: report.incidentId,
-								}).then((res) => {
-									if (res?.data?.error) {
-										toast.error("Something went wrong!", {
-											description: res.data.message,
-											id: t
+					<div className={cn("absolute top-2 right-2 hidden gap-2", either && "group-hover:flex group-active:flex")}>
+						{editable && (
+							<EditIncidentReport report={report} />
+						)}
+						{deletable && (
+							<>
+								<Alert
+									title="Delete Report"
+									description="Are you sure you want to delete this report? This action cannot be undone."
+									onSubmit={async () => {
+										const t = toast.loading("Deleting report...");
+										deleteIncidentReport({
+											id: report.id,
+											incidentId: report.incidentId,
+										}).then((res) => {
+											if (res?.data?.error) {
+												toast.error("Something went wrong!", {
+													description: res.data.message,
+													id: t
+												})
+											} else {
+												toast.success("Success!", {
+													description: res?.data?.message,
+													id: t
+												})
+											}
 										})
-									} else {
-										toast.success("Success!", {
-											description: res?.data?.message,
-											id: t
-										})
-									}
-								})
-							}}
-							open={deleteOpen}
-							setOpen={setDeleteOpen}
-						/>
-						<Button size="icon" variant="destructive" onClick={() => setDeleteOpen(true)}>
-							<Trash />
-						</Button>
+									}}
+									open={deleteOpen}
+									setOpen={setDeleteOpen}
+								/>
+								<Button size="icon" variant="destructive" onClick={() => setDeleteOpen(true)}>
+									<Trash />
+								</Button>
+							</>
+						)}
 					</div>
 					<div className="flex items-center gap-2">
 						<p className="font-medium text-sm">{report.status.slice(0, 1).toUpperCase() + report.status.slice(1)}</p>

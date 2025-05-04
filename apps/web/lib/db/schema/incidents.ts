@@ -45,3 +45,23 @@ export const incidentReportsRelations = relations(incidentReports, ({ one }) => 
 		references: [incidents.id],
 	})
 }));
+
+/// Monitor specific tables --- DO NOT EDIT OR REMOVE
+export const trackedIncidents = pgTable("tracked_incidents", {
+	monitorId: varchar("monitor_id", { length: 16 }).notNull(),
+	///
+	// DIRECT COPY OF INCIDENTS TABLE
+	///
+	/// The unique identifier for the incident
+	id: varchar("id", { length: 16 }).primaryKey().$defaultFn(generateId),
+	// The title of the incident
+	title: text("title").notNull(),
+	/// When the incident was started
+	startedAt: timestamp("started_at").notNull().defaultNow(),
+	/// When the incident was acknowledged
+	acknowledgedAt: timestamp("acknowledged_at"),
+	/// When the incident was resolved
+	resolvedAt: timestamp("resolved_at"),
+	/// If the incident was auto-resolved
+	autoResolved: boolean("auto_resolved").notNull().default(false),
+})

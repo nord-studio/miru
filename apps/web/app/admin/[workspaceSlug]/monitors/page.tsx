@@ -72,7 +72,7 @@ export default async function MonitorsPage({
 						)}
 					</div>
 				</div>
-				<div className="container mx-auto mt-4">
+				<div className="mt-4">
 					<DataTable columns={columns} data={data} />
 				</div>
 			</div>
