@@ -1,5 +1,6 @@
 volumes:
     database:
+    minio:
 
 networks:
     miru:
@@ -17,6 +18,21 @@ services:
             POSTGRES_PASSWORD: VerySecurePassword123
             POSTGRES_USER: miru
             POSTGRES_DB: miru
+        networks:
+            - miru
+
+    minio:
+        container_name: minio
+        image: bitnami/minio
+        ports:
+            - "9000:9000"
+            - "9001:9001"
+        volumes:
+            - minio:/bitnami/minio/data
+        environment:
+            - MINIO_ROOT_USER=miru
+            - MINIO_ROOT_PASSWORD=VerySecurePassword123
+            - MINIO_DEFAULT_BUCKETS=public
         networks:
             - miru
 

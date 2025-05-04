@@ -7,11 +7,9 @@ const pool = new Pool({
 	ssl: process.env.DATABASE_SSL === "true" ? true : false,
 });
 
-const db = drizzle({
+export const db = drizzle({
 	client: pool,
 	schema,
 });
-
-type db = typeof db;
 
 export default db;

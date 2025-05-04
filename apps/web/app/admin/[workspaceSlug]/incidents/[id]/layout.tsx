@@ -1,6 +1,5 @@
 import CreateIncidentReport from "@/components/incidents/reports/create-report";
 import IncidentActionsDropdown from "@/components/incidents/incidents-dropdown";
-import db from "@/lib/db";
 import { incidentReports, workspaces } from "@/lib/db/schema";
 import { monitors } from "@/lib/db/schema/monitors";
 import { getIncidentsWithMonitors } from "@/lib/db/utils";
@@ -10,6 +9,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import db from "@/lib/db";
 
 export default async function MonitorSingletonLayout({
 	children,
