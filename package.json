@@ -1,25 +1,25 @@
 {
-  "name": "miru",
-  "version": "0.3.4",
-  "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "start": "turbo start",
-    "lint": "turbo lint",
-    "drizzle": "cd apps/web && pnpm exec drizzle-kit",
-    "knip": "knip"
-  },
-  "devDependencies": {
-    "@types/node": "^22.15.3",
-    "knip": "^5.53.0",
-    "turbo": "^2.5.2",
-    "typescript": "^5.8.3"
-  },
-  "packageManager": "pnpm@10.9.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "unrs-resolver"
-    ]
-  }
+	"name": "miru",
+	"version": "0.3.5",
+	"scripts": {
+		"dev": "turbo dev",
+		"build": "turbo build",
+		"start": "turbo start",
+		"lint": "turbo lint",
+		"drizzle": "cd apps/web && pnpm exec drizzle-kit",
+		"knip": "knip"
+	},
+	"devDependencies": {
+		"@types/node": "^22.15.3",
+		"knip": "^5.53.0",
+		"turbo": "^2.5.2",
+		"typescript": "^5.8.3"
+	},
+	"packageManager": "pnpm@10.9.0",
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild",
+			"unrs-resolver"
+		]
+	}
 }
