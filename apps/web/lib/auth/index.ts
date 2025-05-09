@@ -1,12 +1,13 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
-import { emailOTP, username } from "better-auth/plugins";
+import { apiKey, emailOTP, username } from "better-auth/plugins";
 import { passkey } from "better-auth/plugins/passkey";
+
 import sendResetPasswordEmail from "@/lib/email/reset-password";
 import sendEmailVerification from "@/lib/email/verify-email";
-import db from "../db";
-import { getAppUrl } from "../utils";
+import db from "@/lib/db";
+import { getAppUrl } from "@/lib/utils";
 
 const { appDomain, appUrl } = getAppUrl();
 
@@ -50,7 +51,7 @@ export const auth = betterAuth({
   },
   database: drizzleAdapter(db, {
     provider: "pg",
-    schema: await import("@/lib/db/schema/auth"),
+    schema: await import("@/lib/db/schema"),
   }),
   plugins: [
     nextCookies(),

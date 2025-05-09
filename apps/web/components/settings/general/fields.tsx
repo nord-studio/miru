@@ -1,7 +1,7 @@
 "use client";
 
 import { Workspace } from "@/types/workspace";
-import SettingsCard from "@/app/admin/[workspaceSlug]/settings/card";
+import SettingsCard from "@/components/settings/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import React from "react";

@@ -1,5 +1,5 @@
-import { DeleteWorkspaceConfirm } from "@/app/admin/[workspaceSlug]/settings/danger/delete-confirm";
-import { WipeWorkspaceConfirm } from "@/app/admin/[workspaceSlug]/settings/danger/wipe-confirm";
+import { DeleteWorkspaceConfirm } from "@/components/settings/danger/delete-confirm";
+import { WipeWorkspaceConfirm } from "@/components/settings/danger/wipe-confirm";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import db from "@/lib/db";

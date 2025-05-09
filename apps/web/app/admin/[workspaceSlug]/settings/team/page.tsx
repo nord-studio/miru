@@ -3,7 +3,7 @@ import db from "@/lib/db";
 import { workspaceMembers, workspaces } from "@/lib/db/schema";
 import { Plus, UserPlus } from "lucide-react";
 import { eq } from "drizzle-orm";
-import InviteMembers from "@/app/admin/[workspaceSlug]/settings/team/invite-members";
+import InviteMembers from "@/components/settings/team/invite-members";
 import {
   Table,
   TableBody,
@@ -14,11 +14,12 @@ import {
 } from "@/components/ui/table";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import CreateInviteToken from "@/app/admin/[workspaceSlug]/settings/team/create-invite";
-import LeaveWorkspaceButton from "@/app/admin/[workspaceSlug]/settings/team/leave-workspace";
-import ManageMember from "@/app/admin/[workspaceSlug]/settings/team/manage-member";
-import KickWorkspaceMemberButton from "@/app/admin/[workspaceSlug]/settings/team/kick-member";
+import CreateInviteToken from "@/components/settings/team/create-invite";
+import LeaveWorkspaceButton from "@/components/settings/team/leave-workspace";
+import ManageMember from "@/components/settings/team/manage-member";
+import KickWorkspaceMemberButton from "@/components/settings/team/kick-member";
 import { getAppUrl } from "@/lib/utils";
+import { RankedRoles } from "@/types/workspace";
 
 export default async function ProfileSettingsPage({
   params,
@@ -54,12 +55,6 @@ export default async function ProfileSettingsPage({
 
   if (!currentMember) {
     throw new Error("You are not a member of this workspace");
-  }
-
-  enum rankedRoles {
-    member = 0,
-    admin = 1,
-    owner = 2,
   }
 
   const moreThanOneOwner =
@@ -152,22 +147,22 @@ export default async function ProfileSettingsPage({
                       </>
                     ) : (
                       <div className="flex flex-row gap-2 justify-end">
-                        {rankedRoles[
-                          currentMember?.role as keyof typeof rankedRoles
-                        ] >= rankedRoles[member.role] && (
-                          <div className="flex flex-row gap-2 justify-end">
-                            <ManageMember
-                              member={member}
-                              currentMember={currentMember}
-                            />
-                            {currentMember.role === "owner" &&
-                              currentMember.id !== member.id && (
-                                <>
-                                  <KickWorkspaceMemberButton member={member} />
-                                </>
-                              )}
-                          </div>
-                        )}
+                        {RankedRoles[
+                          currentMember?.role as keyof typeof RankedRoles
+                        ] >= RankedRoles[member.role] && (
+                            <div className="flex flex-row gap-2 justify-end">
+                              <ManageMember
+                                member={member}
+                                currentMember={currentMember}
+                              />
+                              {currentMember.role === "owner" &&
+                                currentMember.id !== member.id && (
+                                  <>
+                                    <KickWorkspaceMemberButton member={member} />
+                                  </>
+                                )}
+                            </div>
+                          )}
                       </div>
                     )}
                   </TableCell>

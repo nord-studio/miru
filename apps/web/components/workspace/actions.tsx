@@ -398,28 +398,42 @@ export const kickWorkspaceMember = actionClient.schema(z.object({
 })
 
 /// Get the authenticated users workspace member data
-export const getCurrentMember = async (workspaceId: string) => {
-	const currentUser = await auth.api.getSession({
-		headers: await headers(),
-	});
+export const getCurrentMember = async (workspaceId: string, userId?: string) => {
+	if (!userId) {
+		const currentUser = await auth.api.getSession({
+			headers: await headers(),
+		});
 
-	if (!currentUser) {
-		return null;
+		if (!currentUser) {
+			return null;
+		}
+
+		const currentMember = await db.query.workspaceMembers.findMany({
+			with: {
+				user: true,
+			},
+			where: () => and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.userId, currentUser.user.id)),
+		});
+
+		if (currentMember.length === 0) {
+			return null;
+		}
+
+		return currentMember[0];
+	} else {
+		const currentMember = await db.query.workspaceMembers.findMany({
+			with: {
+				user: true,
+			},
+			where: () => and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.userId, userId)),
+		});
+
+		if (currentMember.length === 0) {
+			return null;
+		}
+
+		return currentMember[0];
 	}
-
-	const currentMember = await db.query.workspaceMembers.findMany({
-		with: {
-			user: true,
-		},
-		where: () => and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.userId, currentUser.user.id)),
-	});
-
-	if (currentMember.length === 0) {
-		return null;
-	}
-
-	return currentMember[0];
-
 };
 
 export const declineInvite = actionClient.schema(z.object({

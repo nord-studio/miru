@@ -1,6 +1,6 @@
 "use client"
 
-import LeaveWorkspaceButton from "@/app/admin/[workspaceSlug]/settings/team/leave-workspace"
+import LeaveWorkspaceButton from "@/components/settings/team/leave-workspace"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { WorkspaceWithMembers } from "@/types/workspace"
 import React from "react"

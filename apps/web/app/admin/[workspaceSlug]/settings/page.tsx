@@ -1,4 +1,4 @@
-import WorkspaceGeneralSettingsFields from "@/app/admin/[workspaceSlug]/settings/(general)/fields";
+import WorkspaceGeneralSettingsFields from "@/components/settings/general/fields";
 import { getCurrentMember } from "@/components/workspace/actions";
 import db from "@/lib/db";
 import { workspaces } from "@/lib/db/schema";

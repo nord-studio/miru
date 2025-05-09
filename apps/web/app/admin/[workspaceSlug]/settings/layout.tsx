@@ -1,4 +1,4 @@
-import SettingsLinks from "@/app/admin/[workspaceSlug]/settings/links";
+import SettingsLinks from "@/components/settings/links";
 import { getCurrentMember } from "@/components/workspace/actions";
 import db from "@/lib/db";
 import { workspaces } from "@/lib/db/schema";

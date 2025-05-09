@@ -1,7 +1,7 @@
-import DangerUserSettings from "@/app/admin/[workspaceSlug]/settings/account/danger";
-import SecurityUserSettings from "@/app/admin/[workspaceSlug]/settings/account/security";
-import UserSettings from "@/app/admin/[workspaceSlug]/settings/account/user";
-import WorkspaceSettings from "@/app/admin/[workspaceSlug]/settings/account/workspaces";
+import { DeleteAccountConfirm } from "@/components/settings/account/delete-account";
+import SecurityUserSettings from "@/components/settings/account/security-settings";
+import UserSettings from "@/components/settings/account/user-settings";
+import WorkspaceSettings from "@/components/settings/account/workspace-settings";
 import { auth } from "@/lib/auth";
 import db from "@/lib/db";
 import { headers } from "next/headers";
@@ -9,11 +9,11 @@ import { redirect } from "next/navigation";
 
 export default async function UserAccountPage() {
 	const headerList = await headers();
-	const user = await auth.api.getSession({
+	const data = await auth.api.getSession({
 		headers: headerList
 	});
 
-	if (!user) {
+	if (!data || !data.user) {
 		return redirect("/auth/login");
 	}
 
@@ -24,7 +24,7 @@ export default async function UserAccountPage() {
 		}
 	});
 
-	const filteredWorkspaces = workspaces.filter((w) => w.user.id === user.user.id);
+	const filteredWorkspaces = workspaces.filter((w) => w.user.id === data.user.id);
 
 	return (
 		<>
@@ -38,7 +38,7 @@ export default async function UserAccountPage() {
 							Update your account settings, manage workspaces, and more.
 						</p>
 					</div>
-					<UserSettings user={user.user} />
+					<UserSettings user={data.user} />
 				</div>
 				<div className="flex flex-col gap-4 w-full">
 					<div className="flex flex-col">
@@ -49,7 +49,7 @@ export default async function UserAccountPage() {
 							Update your email, password and other security settings.
 						</p>
 					</div>
-					<SecurityUserSettings user={user.user} />
+					<SecurityUserSettings user={data.user} />
 				</div>
 				<div className="flex flex-col gap-4 w-full">
 					<div className="flex flex-col">
@@ -71,7 +71,26 @@ export default async function UserAccountPage() {
 							Be careful with these settings. Here be dragons!
 						</p>
 					</div>
-					<DangerUserSettings user={user.user} />
+					<div className="flex flex-col gap-4 w-full">
+						<div className="flex flex-col gap-4 pb-4 sm:gap-8">
+							<div className="flex w-full flex-col rounded-md border border-red-500/40">
+								<div className="flex flex-col gap-4 border-b border-red-500/40 p-6">
+									<div className="flex flex-col gap-2">
+										<h1 className="text-xl font-bold">Delete Account</h1>
+										<p className="text-sm">
+											Permanently delete your account and all of its contents from
+											your Miru instance. This action is not reversible, so
+											please continue with caution.
+										</p>
+									</div>
+								</div>
+								<div className="flex flex-row items-center justify-between gap-4 bg-red-500/10 p-4">
+									<div />
+									<DeleteAccountConfirm user={data.user} />
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</main>
 		</>

@@ -1,0 +1,10 @@
+type: workspace
+model: workspace
+id: wk_9QPQD8yRSR
+createdAt: 2025-05-09T21:18:43.672944
+updatedAt: 2025-05-09T21:18:43.672945
+name: Miru
+description: ''
+settingValidateCertificates: true
+settingFollowRedirects: true
+settingRequestTimeout: 0

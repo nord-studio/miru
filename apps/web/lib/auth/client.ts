@@ -7,6 +7,6 @@ export const authClient = createAuthClient({
 	plugins: [
 		usernameClient(),
 		emailOTPClient(),
-		passkeyClient()
-	]
+		passkeyClient(),
+	],
 });

@@ -1,0 +1,1 @@
+ALTER TABLE "apikey" ADD COLUMN "permissions" json DEFAULT '{"monitors":[],"incidents":[],"pages":[]}'::json NOT NULL;

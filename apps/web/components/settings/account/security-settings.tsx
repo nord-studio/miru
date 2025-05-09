@@ -1,7 +1,7 @@
 "use client";
 
-import UpdatePasswordDialog from "@/app/admin/[workspaceSlug]/settings/account/update-password";
-import SettingsCard from "@/app/admin/[workspaceSlug]/settings/card";
+import UpdatePasswordDialog from "@/components/settings/account/update-password";
+import SettingsCard from "@/components/settings/card";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/ui/icons";
 import Spinner from "@/components/ui/spinner";
@@ -115,7 +115,7 @@ export default function SecurityUserSettings({ user }: { user: User }) {
 						)}
 					</div>
 				</SettingsCard >
-			</div >
+			</div>
 		</>
 	)
 }

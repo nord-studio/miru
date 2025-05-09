@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { RankedRoles, WorkspaceMemberWithUser } from "@/types/workspace";
-import { Cog, TriangleAlert, User, Users } from "lucide-react";
+import { Code, Cog, TriangleAlert, User, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -52,6 +52,26 @@ export default function SettingsLinks({ currentMember }: { currentMember: Worksp
 							>
 								<Users />
 								<span>Team</span>
+							</Button>
+						</Link>
+						<Link
+							href={`/admin/${path.split("/")[2]}/settings/api`}
+							className="w-full"
+						>
+							<Button
+								variant="ghost"
+								className={cn(
+									"w-full justify-start flex flex-row gap-2",
+									`${path ===
+										`/admin/${path.split("/")[2]
+										}/settings/api`
+										? "bg-neutral-200 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50"
+										: ""
+									}`
+								)}
+							>
+								<Code />
+								<span>API</span>
 							</Button>
 						</Link>
 					</>
