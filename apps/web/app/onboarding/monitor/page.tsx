@@ -1,20 +1,21 @@
 import { getFirstWorkspace } from "@/app/onboarding/actions";
 import OnboardingMonitorForm from "@/app/onboarding/monitor/form";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getCurrentMember } from "@/components/workspace/actions";
+import { RankedRoles } from "@/types/workspace";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
 export default async function OnboardingMonitorPage() {
-	const data = await auth.api.getSession({
-		headers: await headers()
-	});
+	const workspace = await getFirstWorkspace();
+	const member = await getCurrentMember(workspace.id);
 
-	if (!data || !data.user) {
-		return redirect("/auth/login")
+	if (!member) {
+		return redirect("/admin");
 	}
 
-	const workspace = await getFirstWorkspace();
+	if (RankedRoles[member.role] < RankedRoles.admin) {
+		return redirect("/onboarding/conclusion");
+	}
 
 	return (
 		<>

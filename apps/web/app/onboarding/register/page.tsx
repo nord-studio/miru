@@ -1,6 +1,8 @@
 import RegisterForm from "@/components/auth/forms/register";
+import { auth } from "@/lib/auth";
 import db from "@/lib/db";
 import { user } from "@/lib/db/schema";
+import { headers } from "next/headers";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
@@ -8,6 +10,14 @@ export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
 export default async function OnboardingRegisterPage() {
+	const data = await auth.api.getSession({
+		headers: await headers(),
+	});
+
+	if (data && data.user) {
+		return redirect("/onboarding/workspace");
+	}
+
 	const fresh = await db
 		.select()
 		.from(user)

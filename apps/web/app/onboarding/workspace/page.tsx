@@ -2,9 +2,21 @@ import React from "react";
 import OnboardingWorkspaceForm from "@/app/onboarding/workspace/form";
 import { getFirstWorkspace } from "@/app/onboarding/actions";
 import Image from "next/image";
+import { RankedRoles } from "@/types/workspace";
+import { getCurrentMember } from "@/components/workspace/actions";
+import { redirect } from "next/navigation";
 
 export default async function OnboardingWorkspacePage() {
 	const workspace = await getFirstWorkspace();
+	const member = await getCurrentMember(workspace.id);
+
+	if (!member) {
+		return redirect("/admin");
+	}
+
+	if (RankedRoles[member.role] < RankedRoles.admin) {
+		return redirect("/onboarding/conclusion");
+	}
 
 	return (
 		<>

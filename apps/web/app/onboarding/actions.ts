@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import db from "@/lib/db";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function getFirstWorkspace() {
 	const data = await auth.api.getSession({
@@ -10,7 +11,7 @@ export async function getFirstWorkspace() {
 	});
 
 	if (!data || !data.user) {
-		throw new Error("Unauthorized")
+		return redirect("/auth/login");
 	}
 
 	const workspace = await db.query.workspaces.findFirst({
@@ -22,7 +23,7 @@ export async function getFirstWorkspace() {
 	});
 
 	if (!workspace) {
-		throw new Error("Workspace not found")
+		return redirect("/admin/no-workspaces");
 	}
 
 	return workspace;

@@ -3,24 +3,8 @@ import { Star, Heart, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image"
 import Link from "next/link";
-import db from "@/lib/db";
-import { user } from "@/lib/db/schema";
-import { redirect } from "next/navigation";
-
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
 
 export default async function IntroductionPage() {
-	const fresh = await db
-		.select()
-		.from(user)
-		.limit(1)
-		.then((res) => res.length === 0);
-
-	if (!fresh) {
-		return redirect("/admin");
-	}
-
 	return (
 		<div className="flex flex-row w-full gap-4 h-screen items-center">
 			<div className="w-full flex flex-col gap-8 items-start justify-center p-8 lg:p-16">
