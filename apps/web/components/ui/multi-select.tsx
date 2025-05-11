@@ -38,12 +38,11 @@ const multiSelectVariants = cva(
 		variants: {
 			variant: {
 				default:
-					"border-foreground/10 text-foreground bg-card hover:bg-card/80",
+					"border-foreground/10 text-foreground bg-card",
 				secondary:
-					"border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
+					"border-foreground/10 bg-secondary text-secondary-foreground",
 				destructive:
-					"border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-				inverted: "inverted",
+					"border-transparent bg-destructive text-destructive-foreground",
 			},
 		},
 		defaultVariants: {
@@ -93,12 +92,6 @@ interface MultiSelectProps
 	maxCount?: number;
 
 	/**
-	 * If true, renders the multi-select component as a child of another component.
-	 * Optional, defaults to false.
-	 */
-	asChild?: boolean;
-
-	/**
 	 * Additional class names to apply custom styles to the multi-select component.
 	 * Optional, can be used to add custom styles.
 	 */
@@ -117,7 +110,6 @@ export const MultiSelect = React.forwardRef<
 			defaultValue = [],
 			placeholder = "Select options",
 			maxCount = 3,
-			asChild = false,
 			className,
 			...props
 		},
@@ -162,17 +154,17 @@ export const MultiSelect = React.forwardRef<
 				open={isPopoverOpen}
 				onOpenChange={setIsPopoverOpen}
 			>
-				<PopoverTrigger asChild={asChild}>
+				<PopoverTrigger asChild>
 					<Button
 						ref={ref}
 						{...props}
 						onClick={handleTogglePopover}
 						className={cn(
-							"flex w-full p-1 rounded-md min-h-10 h-auto items-center justify-between [&_svg]:pointer-events-auto",
-							"disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground bg-transparent dark:bg-input/30 border-input border text-base shadow-xs outline-none",
-							"focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+							"flex w-full p-1 rounded-md min-h-10 h-auto items-center justify-between",
 							className
 						)}
+						type="button"
+						variant="outline"
 					>
 						{selectedValues.length > 0 ? (
 							<div className="flex justify-between items-center w-full">

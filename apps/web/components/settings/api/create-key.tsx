@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Spinner from "@/components/ui/spinner";
+import { generateId } from "@/lib/utils";
 import { ApiKeyPermissions } from "@/types/api";
 import { Workspace } from "@/types/workspace";
 import Link from "next/link";
@@ -106,7 +107,7 @@ export default function CreateApiKey({ workspace, children }: { workspace: Works
 	const isDesktop = useMediaQuery("(min-width: 768px)");
 	const [loading, setLoading] = React.useState(false);
 	const [finished, setFinished] = React.useState(false);
-	const [key, setKey] = React.useState("");
+	const [key, setKey] = React.useState(generateId());
 
 	const [name, setName] = React.useState("");
 	const [expiresIn, setExpiresIn] = React.useState<"none" | "7d" | "30d" | "60d" | "90d">("30d");
@@ -143,7 +144,8 @@ export default function CreateApiKey({ workspace, children }: { workspace: Works
 				monitors: monitorPerms as ApiKeyPermissions["monitors"],
 				incidents: incidentPerms as ApiKeyPermissions["incidents"],
 				pages: pagePerms as ApiKeyPermissions["pages"],
-			}
+			},
+			key: key
 		}).then((res) => {
 			if (res?.validationErrors) {
 				setLoading(false);
@@ -182,8 +184,6 @@ export default function CreateApiKey({ workspace, children }: { workspace: Works
 				id: t
 			});
 
-			setKey(res?.data.key);
-
 			// Open the message dialog
 			setFinished(true);
 
@@ -199,8 +199,8 @@ export default function CreateApiKey({ workspace, children }: { workspace: Works
 				<Dialog open={open} onOpenChange={() => {
 					if (open === false) {
 						setOpen(!open);
-						setKey("");
 						setName("");
+						setKey(generateId());
 						setExpiresIn("30d");
 						setMonitorPerms([]);
 						setIncidentPerms([]);

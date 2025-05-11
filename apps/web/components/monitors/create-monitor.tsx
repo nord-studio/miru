@@ -45,7 +45,7 @@ export function CreateMonitorButton() {
 	return (
 		<>
 			<CreateMonitor open={open} setOpen={setOpen} />
-			<Button>
+			<Button onClick={() => setOpen(!open)}>
 				<Plus />
 				Create Monitor
 			</Button>
