@@ -26,7 +26,6 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-	CommandSeparator,
 } from "@/components/ui/command";
 
 /**
@@ -163,7 +162,7 @@ export const MultiSelect = React.forwardRef<
 				open={isPopoverOpen}
 				onOpenChange={setIsPopoverOpen}
 			>
-				<PopoverTrigger asChild>
+				<PopoverTrigger asChild={asChild}>
 					<Button
 						ref={ref}
 						{...props}

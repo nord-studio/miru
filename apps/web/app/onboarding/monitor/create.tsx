@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
-import { Plus, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createMonitor } from "@/components/monitors/actions";
@@ -37,25 +37,10 @@ import Spinner from "@/components/ui/spinner";
 import React from "react";
 import Alert from "@/components/ui/alert";
 import { testUrl } from "@/components/monitors/utils";
-import { usePathname } from "next/navigation";
+import { redirect } from "next/navigation";
+import { Workspace } from "@/types/workspace";
 
-export function CreateMonitorButton() {
-	const [open, setOpen] = React.useState(false);
-
-	return (
-		<>
-			<CreateMonitor open={open} setOpen={setOpen} />
-			<Button>
-				<Plus />
-				Create Monitor
-			</Button>
-		</>
-	)
-}
-
-export default function CreateMonitor({ open, setOpen }: { open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
-	const pathname = usePathname();
-
+export default function OnboardingCreateMonitor({ open, setOpen, workspace }: { open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>, workspace: Workspace }) {
 	const [brokenWarning, setBrokenWarning] = useState(false);
 	const isDesktop = useMediaQuery("(min-width: 768px)");
 	const [loading, setLoading] = useState(false);
@@ -102,7 +87,7 @@ export default function CreateMonitor({ open, setOpen }: { open: boolean, setOpe
 			type,
 			url,
 			interval: parseInt(interval),
-			workspaceSlug: pathname.split("/")[2],
+			workspaceSlug: workspace.slug
 		}).then((res) => {
 			if (typeof res?.validationErrors !== "undefined") {
 				return toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
@@ -120,8 +105,11 @@ export default function CreateMonitor({ open, setOpen }: { open: boolean, setOpe
 				})
 			}
 
-			toast.success("Monitor created successfully.");
-			setOpen(!open);
+			toast.success("Success!", {
+				description: "Monitor created successfully."
+			});
+
+			return redirect("/onboarding/page");
 		}).finally(() => setLoading(false))
 	}
 

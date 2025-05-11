@@ -112,6 +112,9 @@ export async function register(prevState: { error: boolean, message: string }, f
 		};
 	}
 
+	const onboarding = formData.get("onboarding") ?? "false" as string;
+	const onboardingBool = onboarding === "true" ? true : false;
+
 	if (!fresh) {
 		const inviteToken = formData.get("inviteToken");
 		if (typeof inviteToken !== "string" || inviteToken.length < 1 || inviteToken.length > 255) {
@@ -194,7 +197,11 @@ export async function register(prevState: { error: boolean, message: string }, f
 			role: "owner",
 		});
 
-		return redirect("/admin/default-workspace");
+		if (onboardingBool) {
+			return redirect(`/onboarding/workspace`);
+		} else {
+			return redirect("/admin/default-workspace");
+		}
 	}
 }
 

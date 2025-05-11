@@ -1,18 +1,17 @@
 "use server";
 
 import db from "@/lib/db";
-import { apikey, user, workspaces } from "@/lib/db/schema";
+import { apikey, workspaces } from "@/lib/db/schema";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
 import { flattenValidationErrors } from "next-safe-action";
-import { z, ZodType } from "zod";
+import { z } from "zod";
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache";
 import type { ApiKey, ApiKeyPermissions } from "@/types/api";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getCurrentMember } from "@/components/workspace/actions";
-import { permission } from "process";
 
 export const createApiKey = actionClient.schema(z.object({
 	workspaceId: z.string().nonempty(),

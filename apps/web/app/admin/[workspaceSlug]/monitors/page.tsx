@@ -1,5 +1,5 @@
 import { columns } from "@/app/admin/[workspaceSlug]/monitors/columns";
-import CreateMonitor from "@/components/monitors/create-monitor";
+import { CreateMonitorButton } from "@/components/monitors/create-monitor";
 import { DataTable } from "@/components/ui/data-table";
 import { monitors } from "@/lib/db/schema/monitors";
 import db from "@/lib/db";
@@ -68,7 +68,9 @@ export default async function MonitorsPage({
 					</div>
 					<div className="flex flex-row gap-2 items-center">
 						{RankedRoles[currentMember.role] >= RankedRoles.admin && (
-							<CreateMonitor />
+							<>
+								<CreateMonitorButton />
+							</>
 						)}
 					</div>
 				</div>

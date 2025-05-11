@@ -11,7 +11,7 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Spinner from "@/components/ui/spinner";
 import { ApiKeyPermissions } from "@/types/api";
-import { Workspace, WorkspaceMemberWithUser } from "@/types/workspace";
+import { Workspace } from "@/types/workspace";
 import Link from "next/link";
 import React from "react";
 import { toast } from "sonner";
@@ -101,7 +101,7 @@ const permissionList = [
 	{ value: "delete", label: "Delete" }
 ];
 
-export default function CreateApiKey({ workspace, currentMember, children }: { workspace: Workspace, currentMember: WorkspaceMemberWithUser, children: React.ReactNode }) {
+export default function CreateApiKey({ workspace, children }: { workspace: Workspace, children: React.ReactNode }) {
 	const [open, setOpen] = React.useState(false);
 	const isDesktop = useMediaQuery("(min-width: 768px)");
 	const [loading, setLoading] = React.useState(false);

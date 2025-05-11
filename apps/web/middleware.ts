@@ -22,6 +22,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Allow static files in dev mode
+  if (path.includes(".png")) {
+    return NextResponse.next();
+  }
+
   return NextResponse.rewrite(
     new URL(`/status-page/${hostname}${path}`, request.url),
   );
@@ -29,7 +34,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Exclude /api/*, /_next/*, /_static/*, /auth/*, /join/* and static files
-    "/((?!api/|_next/|auth|join|_static/[\\w-]+\\.\\w+).*)",
+    // Exclude /api/*, /_next/*, /_static/*, /auth/*, /onboarding/*, /join/* and static files
+    "/((?!api/|_next/|auth|join|onboarding|_static/[\\w-]+\\.\\w+).*)",
   ],
 };

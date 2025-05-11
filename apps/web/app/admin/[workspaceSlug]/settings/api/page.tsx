@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { auth } from "@/lib/auth";
 import db from "@/lib/db";
-import { workspaceMembers, workspaces } from "@/lib/db/schema";
+import { workspaces } from "@/lib/db/schema";
 import { format, formatDistance } from "date-fns";
 import { eq } from "drizzle-orm";
-import { Plus, Trash } from "lucide-react";
+import { Plus } from "lucide-react";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getCurrentMember } from "@/components/workspace/actions";
@@ -72,7 +72,6 @@ export default async function ApiSettingsPage({
 							<div className="md:flex flex-row gap-3 hidden">
 								<CreateApiKey
 									workspace={workspace}
-									currentMember={currentMember}
 								>
 									<Button>
 										<Plus />
@@ -83,7 +82,6 @@ export default async function ApiSettingsPage({
 							<div className="flex flex-row gap-3 md:hidden">
 								<CreateApiKey
 									workspace={workspace}
-									currentMember={currentMember}
 								>
 									<Button>
 										<Plus />

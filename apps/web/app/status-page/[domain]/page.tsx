@@ -3,9 +3,9 @@ import { IncidentWithReportsAndMonitors } from "@/types/incident";
 import { IncidentReportStatus } from "@/types/incident-report";
 import { sql } from "drizzle-orm";
 
-import PandaStatusPageDesign from "@/designs/panda";
-import SimpleStatusPageDesign from "@/designs/simple";
-import StormtrooperStatusPageDesign from "@/designs/stormtrooper";
+import PandaStatusPageDesign from "@/designs/panda/page";
+import SimpleStatusPageDesign from "@/designs/simple/page";
+import StormtrooperStatusPageDesign from "@/designs/stormtrooper/page";
 
 type Props = {
 	params: Promise<{ domain: string }>;

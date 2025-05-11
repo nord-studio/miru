@@ -1,3 +1,5 @@
+import { Incident } from "@/types/incident";
+
 export type Monitor = {
 	id: string;
 	workspaceId: string;
@@ -12,3 +14,11 @@ export type Monitor = {
 export type MonitorWithUptime = Monitor & {
 	uptime: number;
 };
+
+export interface StatusDayBlock {
+	date: Date;
+	totalPings: number;
+	failedPings: number;
+	incidents: Incident[];
+	downtime: number;
+}

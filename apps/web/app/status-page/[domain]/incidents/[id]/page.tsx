@@ -2,12 +2,12 @@ import db from "@/lib/db";
 import { incidents } from "@/lib/db/schema";
 import { notFound } from "next/navigation";
 import { eq, sql } from "drizzle-orm";
-import { SimpleStatusPageShell } from "@/designs/simple";
+import SimpleStatusPageShell from "@/designs/simple/shell";
 import { IncidentReport, IncidentReportStatus } from "@/types/incident-report";
-import { StormtrooperStatusPageShell } from "@/designs/stormtrooper";
+import StormtrooperStatusPageShell from "@/designs/stormtrooper/shell";
 import BackButton from "@/components/back-button";
 import IncidentTimelineItem from "@/components/incidents/reports/timeline-item";
-import { PandaStatusPageShell } from "@/designs/panda";
+import PandaStatusPageShell from "@/designs/panda/shell";
 import { cn } from "@/lib/utils";
 import Color from "color";
 

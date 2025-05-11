@@ -9,7 +9,7 @@ import Spinner from "@/components/ui/spinner";
 import { getFreshStatus, register } from "@/components/auth/actions";
 import { Label } from "@/components/ui/label";
 
-export default function RegisterForm({ inviteToken }: { inviteToken: string | null }) {
+export default function RegisterForm({ inviteToken, onboarding = false }: { inviteToken: string | null, onboarding?: boolean }) {
 	const [state, formAction] = useActionState(register, {
 		error: false,
 		message: "",
@@ -21,12 +21,12 @@ export default function RegisterForm({ inviteToken }: { inviteToken: string | nu
 			className="flex w-full flex-col items-center gap-4"
 		>
 			{state.error && <p className="text-center">{state.message}</p>}
-			<InnerForm inviteToken={inviteToken} />
+			<InnerForm inviteToken={inviteToken} onboarding={onboarding} />
 		</form>
 	);
 }
 
-function InnerForm({ inviteToken }: { inviteToken: string | null }) {
+function InnerForm({ inviteToken, onboarding }: { inviteToken: string | null, onboarding?: boolean }) {
 	const [showPassword, setShowPassword] = React.useState(false);
 	const [fresh, setFresh] = React.useState(false);
 
@@ -42,6 +42,7 @@ function InnerForm({ inviteToken }: { inviteToken: string | null }) {
 
 	return (
 		<>
+			<input id="onboarding" name="onboarding" type="hidden" value={onboarding ? "true" : "false"} />
 			<div className="grid gap-6 w-full">
 				<div className="grid gap-2">
 					<Label htmlFor="name">

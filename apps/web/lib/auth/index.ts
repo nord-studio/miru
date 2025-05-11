@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
-import { apiKey, emailOTP, username } from "better-auth/plugins";
+import { emailOTP, username } from "better-auth/plugins";
 import { passkey } from "better-auth/plugins/passkey";
 
 import sendResetPasswordEmail from "@/lib/email/reset-password";

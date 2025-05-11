@@ -127,7 +127,7 @@ export const editWorkspace = actionClient.schema(z.object({
 	}, {});
 
 	await db.update(workspaces).set(newData).where(eq(workspaces.id, id)).then(async () => {
-		revalidatePath("/admin/");
+		revalidatePath("/admin", "layout");
 	}).catch((err) => {
 		console.error(err);
 		return { error: true, message: "Failed to update workspace" };
