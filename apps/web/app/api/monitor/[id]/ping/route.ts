@@ -7,19 +7,21 @@ export async function GET(request: Request, {
 }: {
 	params: Promise<{ id: string }>;
 }) {
-	const key = await validateKey(request.headers.get('x-api-key'));
+	const { key, error, message, status } = await validateKey(request.headers.get('x-api-key'), { monitors: ["read"] });
 
-	if (!key) {
+	if (error || !key) {
 		return NextResponse.json({
 			error: true,
-			message: "Unauthorized"
+			message: message ?? "Unauthorized",
 		}, {
-			status: 401
+			status: status ?? 401
 		});
 	}
 
 	const { id } = await params;
 
+	// TODO: @miru/monitor is throwing an error - error returned from database: invalid byte sequence for encoding "UTF8": 0x00
+	// Some StackOverflow post I found that might be related: https://stackoverflow.com/questions/1347646/postgres-error-on-insert-error-invalid-byte-sequence-for-encoding-utf8-0x0
 	const res = await pingMonitor(id);
 
 	if (res?.data?.error) {

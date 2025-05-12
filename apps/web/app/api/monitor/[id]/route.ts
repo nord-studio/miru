@@ -12,14 +12,14 @@ export async function GET(request: Request, {
 }: {
 	params: Promise<{ id: string }>;
 }) {
-	const key = await validateKey(request.headers.get('x-api-key'));
+	const { key, error, message, status } = await validateKey(request.headers.get('x-api-key'), { monitors: ["read"] });
 
-	if (!key) {
+	if (error || !key) {
 		return NextResponse.json({
 			error: true,
-			message: "Unauthorized"
+			message: message ?? "Unauthorized",
 		}, {
-			status: 401
+			status: status ?? 401
 		});
 	}
 
@@ -52,14 +52,14 @@ export async function PATCH(request: Request, {
 }: {
 	params: Promise<{ id: string }>;
 }) {
-	const key = await validateKey(request.headers.get('x-api-key'));
+	const { key, error, message, status } = await validateKey(request.headers.get('x-api-key'), { monitors: ["update"] });
 
-	if (!key) {
+	if (error || !key) {
 		return NextResponse.json({
 			error: true,
-			message: "Unauthorized"
+			message: message ?? "Unauthorized",
 		}, {
-			status: 401
+			status: status ?? 401
 		});
 	}
 
@@ -104,14 +104,14 @@ export async function DELETE(request: Request, {
 }: {
 	params: Promise<{ id: string }>;
 }) {
-	const key = await validateKey(request.headers.get('x-api-key'));
+	const { key, error, message, status } = await validateKey(request.headers.get('x-api-key'), { monitors: ["delete"] });
 
-	if (!key) {
+	if (error || !key) {
 		return NextResponse.json({
 			error: true,
-			message: "Unauthorized"
+			message: message ?? "Unauthorized",
 		}, {
-			status: 401
+			status: status ?? 401
 		});
 	}
 

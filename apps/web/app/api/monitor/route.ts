@@ -8,14 +8,14 @@ import { NextResponse } from "next/server";
 
 // Create
 export async function POST(request: Request) {
-	const key = await validateKey(request.headers.get('x-api-key'));
+	const { key, error, message, status } = await validateKey(request.headers.get('x-api-key'), { monitors: ["create"] });
 
-	if (!key) {
+	if (error || !key) {
 		return NextResponse.json({
 			error: true,
-			message: "Unauthorized"
+			message: message ?? "Unauthorized",
 		}, {
-			status: 401
+			status: status ?? 401
 		});
 	}
 
@@ -57,10 +57,8 @@ export async function POST(request: Request) {
 		});
 	}
 
-	// Ping the monitor to get the initial status
 	await pingMonitor(data.id);
 
-	// Start cron job
 	await fetch(`${process.env.MONITOR_URL}/cron/create/${data.id}`, {
 		method: "POST",
 		headers: {

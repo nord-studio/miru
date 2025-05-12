@@ -1,12 +1,12 @@
 export interface ApiKey {
-	workspaceId: string;
-	name: string;
 	id: string;
+	name: string;
 	createdAt: Date;
 	updatedAt: Date;
 	expiresAt: Date | null;
+	workspaceId: string;
 	permissions: ApiKeyPermissions;
-};
+}
 
 export interface ApiKeyPermissions {
 	monitors: ("create" | "read" | "update" | "delete")[];

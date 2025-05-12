@@ -10,7 +10,16 @@ export async function GET(request: Request, {
 }: {
 	params: Promise<{ id: string }>;
 }) {
-	const key = await validateKey(request.headers.get('x-api-key'));
+	const { key, error, message, status } = await validateKey(request.headers.get('x-api-key'), { monitors: ["read"] });
+
+	if (error || !key) {
+		return NextResponse.json({
+			error: true,
+			message: message ?? "Unauthorized",
+		}, {
+			status: status ?? 401
+		});
+	}
 
 	if (!key) {
 		return NextResponse.json({
