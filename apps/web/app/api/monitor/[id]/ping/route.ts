@@ -1,5 +1,8 @@
 import validateKey from "@/app/api/utils";
 import { pingMonitor } from "@/components/monitors/actions";
+import db from "@/lib/db";
+import { monitors } from "@/lib/db/schema";
+import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request, {
@@ -19,6 +22,19 @@ export async function GET(request: Request, {
 	}
 
 	const { id } = await params;
+
+	const monitor = await db.query.monitors.findFirst({
+		where: () => and(eq(monitors.id, id), eq(monitors.workspaceId, key.workspaceId))
+	});
+
+	if (!monitor) {
+		return NextResponse.json({
+			error: true,
+			message: "Monitor not found"
+		}, {
+			status: 404
+		});
+	}
 
 	// TODO: @miru/monitor is throwing an error - error returned from database: invalid byte sequence for encoding "UTF8": 0x00
 	// Some StackOverflow post I found that might be related: https://stackoverflow.com/questions/1347646/postgres-error-on-insert-error-invalid-byte-sequence-for-encoding-utf8-0x0

@@ -3,7 +3,7 @@ import validateKey from "@/app/api/utils";
 import { deleteMonitor } from "@/components/monitors/actions";
 import db from "@/lib/db";
 import { monitors } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 // Read
@@ -26,7 +26,7 @@ export async function GET(request: Request, {
 	const { id } = await params;
 
 	const data = await db.query.monitors.findFirst({
-		where: () => eq(monitors.id, id)
+		where: () => and(eq(monitors.id, id), eq(monitors.workspaceId, key.workspaceId))
 	});
 
 	if (!data) {
@@ -38,7 +38,10 @@ export async function GET(request: Request, {
 		});
 	}
 
-	return NextResponse.json(data, {
+	return NextResponse.json({
+		error: false,
+		monitor: data
+	}, {
 		status: 200,
 		headers: {
 			"Content-Type": "application/json",
@@ -79,7 +82,7 @@ export async function PATCH(request: Request, {
 		type,
 		url,
 		interval
-	}).where(eq(monitors.id, id)).returning().then((res) => res[0]);
+	}).where(and(eq(monitors.id, id), eq(monitors.workspaceId, key.workspaceId))).returning().then((res) => res[0]);
 
 	if (!data) {
 		return NextResponse.json({
@@ -116,6 +119,19 @@ export async function DELETE(request: Request, {
 	}
 
 	const { id } = await params;
+
+	const monitor = await db.query.monitors.findFirst({
+		where: () => and(eq(monitors.id, id), eq(monitors.workspaceId, key.workspaceId))
+	});
+
+	if (!monitor) {
+		return NextResponse.json({
+			error: true,
+			message: "Monitor not found"
+		}, {
+			status: 404
+		});
+	}
 
 	const res = await deleteMonitor(id);
 

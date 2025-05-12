@@ -2,7 +2,7 @@ import validateKey from "@/app/api/utils";
 import { testMonitor } from "@/components/monitors/actions";
 import db from "@/lib/db";
 import { monitors } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request, {
@@ -33,7 +33,7 @@ export async function GET(request: Request, {
 	const { id } = await params;
 
 	const mon = await db.query.monitors.findFirst({
-		where: () => eq(monitors.id, id)
+		where: () => and(eq(monitors.id, id), eq(monitors.workspaceId, key.workspaceId))
 	});
 
 	if (!mon) {

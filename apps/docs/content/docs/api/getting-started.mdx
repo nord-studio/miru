@@ -1,0 +1,60 @@
+---
+title: Getting Started
+description: Getting started with Miru's REST API
+---
+
+<Callout type="warn" title="Here be dragons!" className="-translate-y-4">
+	OpenAPI support is still a work in progress. Check the [GitHub
+	issue](https://github.com/nord-studio/miru/issues/32) for more details. For
+	now, you'll have to use this documentation as a reference.
+</Callout>
+
+## Introduction
+
+The Miru API is a RESTful service that allows you to interact with your workspace via HTTP requests. You can create an API with set permissions
+as to not expose any sensitive data.
+
+## Creating an API Key
+
+To create an API key, navigate to **Settings** > **API** in the admin dashboard. Bare in mind that an API key can only access data inside the workspace, which means that
+you need to create an API key for each workspace you want to access.
+
+## Handling Errors
+
+Miru's API uses standard HTTP status codes to provide context about the success of a failure. It also provides a JSON response with a `error` boolean that indicates
+whether the request was successful or not. Since the API is still in development, sometimes the `error` field may not be present in the response so it's recommend checking the status code first.
+
+## An example
+
+Here's an example of how to use the API to fetch information about a monitor:
+
+```bash
+curl -X GET 'https://status.example.com/api/monitor/<monitor_id>' -H "x-api-key: <api_key>"
+```
+
+If the API key is valid, hasn't expired and has the `monitor.read` permission, this will return a JSON response with the monitor's information.
+
+```json
+{
+	"error": false,
+	"monitor": {
+		"id": "MAWVBk3M134tB5zX",
+		"workspaceId": "oxf6K1uBV8VoIXVr",
+		"name": "Website",
+		"type": "http",
+		"url": "nordstud.io",
+		"interval": 5,
+		"createdAt": "2025-05-11T19:42:06.009Z",
+		"updatedAt": "2025-05-11T19:42:06.009Z"
+	}
+}
+```
+
+If the API key is invalid, expired or doesn't have the `monitor.read` permission, this will return a JSON response some an error message describing the issue.
+
+```json
+{
+	"error": true,
+	"message": "Invalid API key"
+}
+```

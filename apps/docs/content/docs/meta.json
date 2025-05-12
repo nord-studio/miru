@@ -1,13 +1,15 @@
 {
-  "root": true,
-  "pages": [
-    "---Introduction---",
-    "...",
-    "---Install---",
-    "...install",
-    "---Concepts---",
-    "...concepts",
-    "---Guides---",
-    "...guides"
-  ]
+	"root": true,
+	"pages": [
+		"---Introduction---",
+		"...",
+		"---Install---",
+		"...install",
+		"---Concepts---",
+		"...concepts",
+		"---Guides---",
+		"...guides",
+		"---API---",
+		"...api"
+	]
 }
