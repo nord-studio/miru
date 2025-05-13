@@ -100,7 +100,7 @@ function MonoStatusBanner({
 					{variant === "maintenance" && "Under Maintenance"}
 				</h2>
 				<p className="text-xs">
-					<DateTimeTooltip date={new Date()} className="" />
+					<DateTimeTooltip date={new Date()} />
 				</p>
 			</div>
 		</div>

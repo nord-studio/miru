@@ -19,7 +19,7 @@ For more information about Miru, getting started guides, configuration guides, a
 
 ## Running locally
 
-You need to have [NodeJS](https://nodejs.org/en), [pnpm](https://pnpm.io/), [Rust](https://www.rust-lang.org/), and [watchexec](https://github.com/watchexec/watchexec) installed as prerequisites.
+You need to have [NodeJS 22 or higher](https://nodejs.org/en), [pnpm](https://pnpm.io/), [Rust](https://www.rust-lang.org/), and [watchexec](https://github.com/watchexec/watchexec) installed as prerequisites.
 
 ```bash
 git clone https://github.com/nord-studio/miru

@@ -1,4 +1,8 @@
 export async function register() {
+	if (typeof process.env.APP_DOMAIN === "undefined" || process.env.APP_DOMAIN === "") {
+		throw new Error("The required environment variable APP_DOMAIN is not set or is empty.");
+	}
+
 	if (typeof process.env.MONITOR_URL === "undefined" || process.env.MONITOR_URL === "") {
 		throw new Error("The required environment variable MONITOR_URL is not set or is empty.");
 	}
@@ -11,14 +15,20 @@ export async function register() {
 		throw new Error("The required environment variable BETTER_AUTH_SECRET is not set or is empty.");
 	}
 
-	if (typeof process.env.APP_DOMAIN === "undefined" || process.env.APP_DOMAIN === "") {
-		throw new Error("The required environment variable APP_DOMAIN is not set or is empty.");
-	}
-
 	if (process.env.NEXT_RUNTIME === 'nodejs') {
 		const path = await import('path');
 		const { migrate } = await import('drizzle-orm/node-postgres/migrator');
 		const { db } = await import('./lib/db/index');
+		const { getConfig } = await import('./lib/config');
+
+		const { defaults } = await getConfig();
+
+		if (defaults) {
+			console.error(" ⚠ Failed to parse Miru config. Please check the syntax of the config file. Falling back to defaults.");
+		} else {
+			console.log(" ✓ Successfully loaded Miru config");
+		}
+
 		await migrate(db, { migrationsFolder: path.join(process.cwd(), "lib", "db", "migrations") });
 	}
 }

@@ -17,10 +17,11 @@ import { StatusPageWithMonitorsExtended } from "@/types/status-pages";
 import { Workspace } from "@/types/workspace";
 import { Skeleton } from "@/components/ui/skeleton";
 import * as RadioGroup from "@radix-ui/react-radio-group";
-import { cn, MAX_FILE_SIZE } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import Image from "next/image"
 import Link from "next/link";
 import { ColorPicker } from "@/components/ui/color-picker";
+import { getConfig } from "@/lib/config";
 
 export default function EditStatusPageForm({ existing, monitors, workspace }: { existing: StatusPageWithMonitorsExtended, monitors: Monitor[], workspace: Workspace }) {
 	const [loading, setLoading] = React.useState(false);
@@ -100,7 +101,9 @@ export default function EditStatusPageForm({ existing, monitors, workspace }: { 
 			return;
 		}
 
-		if (file[0].size > MAX_FILE_SIZE) {
+		const { config } = await getConfig();
+
+		if (file[0].size > config.storage.max_size) {
 			return toast.error("Please upload a file smaller than 12MB");
 		}
 

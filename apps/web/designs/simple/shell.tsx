@@ -72,7 +72,7 @@ export default function SimpleStatusPageShell({ page, header, children }: { page
 				<div className="flex flex-row gap-2 items-center justify-between w-full">
 					<ThemeDropdown />
 					<p className="text-neutral-500 dark:text-neutral-400">
-						Powered by Miru <span></span>
+						Powered by Miru
 					</p>
 				</div>
 			</main>

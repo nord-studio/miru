@@ -17,10 +17,11 @@ import { toast } from "sonner";
 import { Workspace } from "@/types/workspace";
 import { Skeleton } from "@/components/ui/skeleton";
 import * as RadioGroup from "@radix-ui/react-radio-group";
-import { cn, generateId, MAX_FILE_SIZE } from "@/lib/utils";
+import { cn, generateId } from "@/lib/utils";
 import Image from "next/image"
 import Link from "next/link";
 import { ColorPicker } from "@/components/ui/color-picker";
+import { getConfig } from "@/lib/config";
 
 export default function NewStatusPageForm({ monitors, workspace }: { monitors: Monitor[], workspace: Workspace }) {
 	const id = generateId();
@@ -48,7 +49,9 @@ export default function NewStatusPageForm({ monitors, workspace }: { monitors: M
 			return;
 		}
 
-		if (file[0].size > MAX_FILE_SIZE) {
+		const { config } = await getConfig();
+
+		if (file[0].size > config.storage.max_size) {
 			return toast.error("Please upload a file smaller than 12MB");
 		}
 

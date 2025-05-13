@@ -1,0 +1,13 @@
+[email]
+# Whether to enable emails
+enabled = true
+# If enabled, users will need to verify their email address before they can log in
+verification = true
+
+[incidents.auto]
+# Whether to automatically create incidents when a monitor goes down
+enabled = true
+
+[storage]
+# The maximum size of the file that can be uploaded in bytes
+max_size = 12582912

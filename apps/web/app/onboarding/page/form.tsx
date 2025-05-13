@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { Workspace } from "@/types/workspace";
 import { Skeleton } from "@/components/ui/skeleton";
 import * as RadioGroup from "@radix-ui/react-radio-group";
-import { cn, generateId, MAX_FILE_SIZE } from "@/lib/utils";
+import { cn, generateId } from "@/lib/utils";
 import Image from "next/image"
 import Link from "next/link";
 import { ColorPicker } from "@/components/ui/color-picker";
@@ -27,6 +27,7 @@ import { MonoStatusBanner, StatusBanner } from "@/components/ui/status-banner";
 import PandaStatusPageShell from "@/designs/panda/shell";
 import SimpleStatusPageShell from "@/designs/simple/shell";
 import StormtrooperStatusPageShell from "@/designs/stormtrooper/shell";
+import { getConfig } from "@/lib/config";
 
 export interface StatusDayBlock {
 	date: Date;
@@ -61,7 +62,9 @@ export default function OnboardingStatusPageForm({ monitors, workspace }: { moni
 			return;
 		}
 
-		if (file[0].size > MAX_FILE_SIZE) {
+		const { config } = await getConfig();
+
+		if (file[0].size > config.storage.max_size) {
 			return toast.error("Please upload a file smaller than 12MB");
 		}
 

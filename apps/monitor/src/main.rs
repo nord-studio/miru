@@ -12,6 +12,7 @@ use actix_web::{web, App, HttpServer};
 use cron::{health::TrackedIncident, worker::JobMetadata};
 use dotenvy::dotenv;
 use log::info;
+use monitor::{read_config, MiruConfig};
 use once_cell::sync::Lazy;
 use routes::{
     create_job_service, hello_service, not_found_service, ping_service, registry::registry_service,
@@ -33,6 +34,7 @@ pub static POOL: Lazy<PgPool> = Lazy::new(|| {
 pub static SCHED: OnceLock<Arc<Mutex<JobScheduler>>> = OnceLock::new();
 pub static REGISTRY: OnceLock<Arc<Mutex<Vec<JobMetadata>>>> = OnceLock::new();
 pub static INCID_REGISTRY: OnceLock<Arc<Mutex<Vec<TrackedIncident>>>> = OnceLock::new();
+pub static MIRU_CONFIG: OnceLock<MiruConfig> = OnceLock::new();
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -48,6 +50,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .init();
 
     info!("Starting monitor...");
+    info!("Loading config...");
+
+    let config = read_config();
+
+    MIRU_CONFIG
+        .set(config)
+        .unwrap_or_else(|_| panic!("Failed to set config"));
+
+    info!("Successfully loaded config.");
     info!("Connecting to database...");
 
     let pool = POOL.clone();

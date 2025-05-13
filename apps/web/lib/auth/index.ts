@@ -8,8 +8,10 @@ import sendResetPasswordEmail from "@/lib/email/reset-password";
 import sendEmailVerification from "@/lib/email/verify-email";
 import db from "@/lib/db";
 import { getAppUrl } from "@/lib/utils";
+import { getConfig } from "@/lib/config";
 
 const { appDomain, appUrl } = getAppUrl();
+const { config } = await getConfig();
 
 export const auth = betterAuth({
   appName: "miru",
@@ -17,7 +19,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
-    requireEmailVerification: process.env.EMAIL_VERIFICATION === "true",
+    requireEmailVerification: config.email.verification,
     sendResetPassword: async ({ user, url }) => {
       await sendResetPasswordEmail(user.email, url);
     },

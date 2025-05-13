@@ -24,11 +24,9 @@ export function generateId(): string {
   return result;
 }
 
-export const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE!) ?? 12582912;
-
 /// Must be used in a server component
 export const getAppUrl = () => {
-  let appDomain = process.env.APP_DOMAIN ?? "localhost:3000";
+  let appDomain = process.env.APP_DOMAIN || "localhost:3000";
   appDomain = appDomain.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "");
   const secure = process.env.APP_ENV === "development" ? "http" : "https";
   const appUrl = `${secure}://${appDomain}`;

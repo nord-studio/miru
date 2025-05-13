@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
       bodySizeLimit: "12mb"
-    }
+    },
   },
   generateBuildId: async () => {
     const response = await fetch("https://api.github.com/repos/nord-studio/miru/commits/main");
@@ -23,7 +23,8 @@ const nextConfig: NextConfig = {
     }
     const data = await response.json();
     return data.sha;
-  }
+  },
+  poweredByHeader: false,
 };
 
 export default nextConfig;

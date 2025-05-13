@@ -19,6 +19,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 import { kebabCase } from "es-toolkit/string"
+import { getConfig } from "@/lib/config";
 
 export const getAllWorkspaces = cache(actionClient.action(async () => {
 	const wrkspcs = await db.select().from(workspaces);
@@ -245,7 +246,9 @@ export const inviteMemberViaEmail = actionClient.schema(z.object({
 	error: z.boolean(),
 	message: z.string(),
 })).action(async ({ parsedInput: { workspace, email, role } }) => {
-	if (process.env.ENABLE_EMAIL !== "true") {
+	const { config } = await getConfig();
+
+	if (config.email.enabled) {
 		return {
 			error: true,
 			message: "Emails haven't been enabled on this instance. Please try generating an invite code instead.",

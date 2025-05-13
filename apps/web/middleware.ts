@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
-import { getAppUrl } from "./lib/utils";
 
 export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
@@ -8,9 +7,8 @@ export async function middleware(request: NextRequest) {
   const hostname = request.headers.get("host");
   const searchParams = request.nextUrl.searchParams.toString();
   const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`;
-  const { appDomain } = getAppUrl();
 
-  if (hostname === appDomain && path.startsWith("/admin")) {
+  if (path.startsWith("/admin")) {
     const sessionCookie = getSessionCookie(request, {
       cookiePrefix: "miru",
     });

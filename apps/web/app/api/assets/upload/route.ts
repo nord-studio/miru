@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
+import { getConfig } from "@/lib/config";
 import minio, { publicBucketExists } from "@/lib/minio";
-import { generateId, MAX_FILE_SIZE } from "@/lib/utils";
+import { generateId } from "@/lib/utils";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -35,7 +36,9 @@ export async function POST(request: NextRequest) {
 		});
 	}
 
-	if (file.size > MAX_FILE_SIZE) {
+	const { config } = await getConfig();
+
+	if (file.size > config.storage.max_size) {
 		return NextResponse.json({
 			error: true,
 			message: "Please upload a file smaller than 12MB"

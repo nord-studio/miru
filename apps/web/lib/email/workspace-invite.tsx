@@ -19,7 +19,7 @@ interface WorkspaceInviteEmailProps {
   inviteToken: string;
 }
 
-const appUrl = getAppUrl();
+const { appUrl } = getAppUrl();
 
 const WorkspaceInviteEmail = ({
   inviteToken,

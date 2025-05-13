@@ -1,12 +1,13 @@
 "use server";
 
 import { auth } from "@/lib/auth";
+import { getConfig } from "@/lib/config";
 import db from "@/lib/db";
 import { monitors, workspaces } from "@/lib/db/schema";
 import { statusPageMonitors, statusPages } from "@/lib/db/schema/status-pages";
 import minio, { publicBucketExists } from "@/lib/minio";
 import { actionClient } from "@/lib/safe-action";
-import { generateId, MAX_FILE_SIZE } from "@/lib/utils";
+import { generateId } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
@@ -269,7 +270,9 @@ export const uploadAsset = actionClient.schema(zfd.formData({
 		return { error: true, message: "No file was selected." };
 	}
 
-	if (file.size > MAX_FILE_SIZE) {
+	const { config } = await getConfig();
+
+	if (file.size > config.storage.max_size) {
 		return { error: true, message: "Please upload a file smaller than 12MB." };
 	}
 
