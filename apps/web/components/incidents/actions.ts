@@ -2,7 +2,7 @@
 
 import db from "@/lib/db";
 import { incidentReports, incidents } from "@/lib/db/schema/incidents";
-import { monitorsToIncidents } from "@/lib/db/schema/monitors";
+import { monitors, monitorsToIncidents } from "@/lib/db/schema/monitors";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
 import { IncidentReportStatus } from "@/types/incident-report";
@@ -54,26 +54,35 @@ export const createIncident = actionClient.schema(z.object({
 
 export const editIncident = actionClient.schema(z.object({
 	id: z.string(),
-	data: z.object({
-		title: z.string().min(3),
-		monitors: z.array(z.string()),
-	})
-})).action(async ({ parsedInput: { id, data } }) => {
+	title: z.string().min(3),
+	monitors: z.array(z.string().nonempty()).min(1),
+}), {
+	handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors
+}).action(async ({ parsedInput: { id, title, monitors: mons } }) => {
 	await db.update(incidents).set({
-		title: data.title,
+		title: title,
 	}).where(eq(incidents.id, id)).catch((err) => {
 		console.error(err);
 		return { error: true, message: "Failed to update incident" };
-	})
+	});
 
-	const mti = await db.select().from(monitorsToIncidents).where(eq(monitorsToIncidents.incidentId, id))
+	const mti = await db.select().from(monitorsToIncidents).where(eq(monitorsToIncidents.incidentId, id));
 
-	// Either remove or create new records in the join table based on the new monitor list
-	const monitorIds = data.monitors;
+	// Check if all the monitors are valid
+	for (const id of mons) {
+		const monitor = await db.query.monitors.findFirst({
+			where: () => eq(monitors.id, id),
+		});
+
+		if (!monitor) {
+			return { error: true, message: "Failed to find monitor with ID: " + id };
+		}
+	}
+
 	const existingMonitorIds = mti.map((m) => m.monitorId);
 
-	const toRemove = existingMonitorIds.filter((id) => !monitorIds.includes(id));
-	const toAdd = monitorIds.filter((id) => !existingMonitorIds.includes(id));
+	const toRemove = existingMonitorIds.filter((id) => !mons.includes(id));
+	const toAdd = mons.filter((id) => !existingMonitorIds.includes(id));
 
 	// Remove monitors that are not in the new list
 	for (const mId of toRemove) {

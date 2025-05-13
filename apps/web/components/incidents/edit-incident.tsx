@@ -96,22 +96,24 @@ export default function EditIncident({
 
 		const res = await editIncident({
 			id: incident.id,
-			data: { title, monitors: monitorList.map((m) => m.id) },
+			title,
+			monitors: monitorList.map((m) => m.id)
 		});
 
-		if (res?.serverError) {
-			setLoading(false);
-			return toast.error(res.serverError);
+		if (typeof res?.validationErrors !== "undefined") {
+			return toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
+				description: res.validationErrors[Object.keys(res.validationErrors)[0] as keyof typeof res.validationErrors]?.[0],
+			});
 		}
 
-		if (res?.validationErrors) {
-			setLoading(false);
-			return toast.error(res.validationErrors._errors?.join(", "));
+		if (typeof res?.serverError !== "undefined") {
+			return toast.error("Something went wrong!", { description: res.serverError })
 		}
 
 		if (res?.data?.error) {
-			setLoading(false);
-			return toast.error(res.data.message);
+			return toast.error("Something went wrong!", {
+				description: res.data.message
+			})
 		}
 
 		setLoading(false);

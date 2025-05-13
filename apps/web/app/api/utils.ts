@@ -82,7 +82,7 @@ export default async function validateKey(key: string | null, requiredPermission
 	if (q.expiresAt && q.expiresAt <= new Date()) {
 		return {
 			error: true,
-			message: "API key expired. You can renew it in the dashboard.2",
+			message: "API key expired. You can renew it in the dashboard.",
 			status: 401,
 			key: null
 		}

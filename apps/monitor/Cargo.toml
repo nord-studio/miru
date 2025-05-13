@@ -22,3 +22,4 @@ rand = "0.9.1"
 tokio-cron-scheduler = "0.13.0"
 uuid = { version = "1.16.0", features = ["v4"] }
 openssl = "0.10.72"
+toml = "0.8.22"

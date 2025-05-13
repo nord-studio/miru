@@ -1,4 +1,4 @@
-import { monitorSchema, optionalMonitorSchema } from "@/app/api/monitor/schema";
+import { monitorSchema } from "@/app/api/monitor/schema";
 import validateKey from "@/app/api/utils";
 import { deleteMonitor } from "@/components/monitors/actions";
 import db from "@/lib/db";
@@ -90,7 +90,7 @@ export async function PATCH(request: Request, {
 		});
 	}
 
-	const validation = optionalMonitorSchema.safeParse(body);
+	const validation = monitorSchema.partial().safeParse(body);
 
 	if (!validation.success) {
 		return NextResponse.json({

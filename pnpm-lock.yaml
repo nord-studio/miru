@@ -161,6 +161,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.4
         version: 1.2.6(@types/react-dom@19.1.3(@types/react@19.1.3))(@types/react@19.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@std/toml':
+        specifier: jsr:^1.0.6
+        version: '@jsr/std__toml@1.0.6'
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -1392,6 +1395,12 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
+
+  '@jsr/std__collections@1.1.0':
+    resolution: {integrity: sha512-7ZWtcEp91LeR0AOcaO5jibuVmCVbK7U3+uc7cxXaiwG/LAZM86+DlA/iZK4gGgVCv2mplIctwMntiC8nngOXJQ==, tarball: https://npm.jsr.io/~/11/@jsr/std__collections/1.1.0.tgz}
+
+  '@jsr/std__toml@1.0.6':
+    resolution: {integrity: sha512-67/DnqqA2yDMh5ZgQ/3ns2ETgqbTv01HSds+NxKDWlDmQ9xINDlVDF1KzrgUmBuojHFqMCVrv8d781a5Mcxy4A==, tarball: https://npm.jsr.io/~/11/@jsr/std__toml/1.0.6.tgz}
 
   '@jsx-email/doiuse-email@1.0.4':
     resolution: {integrity: sha512-HfLjuQsAAyAkIZWR0wHR6+P6u40RIX0jBZu/1rgsw18+jc36agZD5j84zG4CDzitRxgXJXrAohPfDFPxcrtjAA==}
@@ -7210,6 +7219,12 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
+
+  '@jsr/std__collections@1.1.0': {}
+
+  '@jsr/std__toml@1.0.6':
+    dependencies:
+      '@jsr/std__collections': 1.1.0
 
   '@jsx-email/doiuse-email@1.0.4':
     dependencies:
