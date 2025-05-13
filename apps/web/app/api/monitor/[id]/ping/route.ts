@@ -36,8 +36,6 @@ export async function GET(request: Request, {
 		});
 	}
 
-	// TODO: @miru/monitor is throwing an error - error returned from database: invalid byte sequence for encoding "UTF8": 0x00
-	// Some StackOverflow post I found that might be related: https://stackoverflow.com/questions/1347646/postgres-error-on-insert-error-invalid-byte-sequence-for-encoding-utf8-0x0
 	const res = await pingMonitor(id);
 
 	if (res?.data?.error) {

@@ -19,11 +19,29 @@ export async function POST(request: Request) {
 		});
 	}
 
-	const body = await request.json();
+	let body = null;
+
+	try {
+		body = await request.json();
+	} catch (e) {
+		return NextResponse.json({
+			error: true,
+			message: "Invalid JSON"
+		}, {
+			status: 400
+		});
+	}
+
 	const validation = monitorSchema.safeParse(body);
 
 	if (!validation.success) {
-		return NextResponse.json(validation.error.flatten(), { status: 400 })
+		return NextResponse.json({
+			error: true,
+			message: "Invalid or missing fields",
+			fieldErrors: validation.error.flatten().fieldErrors
+		}, {
+			status: 400
+		});
 	}
 
 	const workspace = await db.query.workspaces.findFirst({
@@ -33,9 +51,9 @@ export async function POST(request: Request) {
 	if (!workspace) {
 		return NextResponse.json({
 			error: true,
-			message: "Workspace not found"
+			message: "Failed to find workspace for this API key"
 		}, {
-			status: 404
+			status: 500
 		});
 	}
 
@@ -51,9 +69,9 @@ export async function POST(request: Request) {
 	if (!data) {
 		return NextResponse.json({
 			error: true,
-			message: "Monitor not found"
+			message: "Failed to create monitor"
 		}, {
-			status: 404
+			status: 500
 		});
 	}
 
@@ -70,17 +88,35 @@ export async function POST(request: Request) {
 			const json = await res.json();
 
 			if (json.error) {
-				return { error: true, message: json.error };
+				return NextResponse.json({
+					error: true,
+					message: json.message
+				}, {
+					status: 502
+				});
 			} else {
-				return { error: true, message: "Failed to start cron job" };
+				return NextResponse.json({
+					error: true,
+					message: "Failed to start cron job"
+				}, {
+					status: 502
+				});
 			}
 		}
 	}).catch((e) => {
 		console.error(e);
-		return { error: true, message: "Couldn't reach the monitor service. Is it running?" };
+		return NextResponse.json({
+			error: true,
+			message: "Failed to start cron job"
+		}, {
+			status: 502
+		});
 	})
 
-	return NextResponse.json(data, {
+	return NextResponse.json({
+		error: false,
+		monitor: data
+	}, {
 		status: 200,
 		headers: {
 			"Content-Type": "application/json",

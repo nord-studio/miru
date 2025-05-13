@@ -53,13 +53,13 @@ export async function GET(request: Request, {
 	if (!res) {
 		return NextResponse.json({
 			error: true,
-			message: "Monitor not found"
+			message: "Something went wrong requesting the monitoring service. Is it running?"
 		}, {
-			status: 404
+			status: 502
 		});
 	}
 
-	if (res?.data?.error) {
+	if (res.data && res.data.error) {
 		return NextResponse.json({
 			error: true,
 			message: res.data.message

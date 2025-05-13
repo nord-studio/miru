@@ -1,4 +1,4 @@
-import { monitorSchema } from "@/app/api/monitor/schema";
+import { monitorSchema, optionalMonitorSchema } from "@/app/api/monitor/schema";
 import validateKey from "@/app/api/utils";
 import { deleteMonitor } from "@/components/monitors/actions";
 import db from "@/lib/db";
@@ -67,21 +67,69 @@ export async function PATCH(request: Request, {
 	}
 
 	const { id } = await params;
-	const body = await request.json();
 
-	const validation = monitorSchema.safeParse(body);
+	if (!request.headers.get('content-type')?.includes('application/json')) {
+		return NextResponse.json({
+			error: true,
+			message: "Invalid content type. Must be application/json"
+		}, {
+			status: 400
+		});
+	}
+
+	let body = null;
+
+	try {
+		body = await request.json()
+	} catch (e) {
+		return NextResponse.json({
+			error: true,
+			message: "Invalid JSON"
+		}, {
+			status: 400
+		});
+	}
+
+	const validation = optionalMonitorSchema.safeParse(body);
 
 	if (!validation.success) {
-		return NextResponse.json(validation.error.flatten(), { status: 400 })
+		return NextResponse.json({
+			error: true,
+			message: "Invalid or missing fields",
+			fieldErrors: validation.error.flatten().fieldErrors
+		}, { status: 400 })
 	}
 
 	const { name, type, url, interval } = validation.data;
 
+	const monitor = await db.query.monitors.findFirst({
+		where: () => and(eq(monitors.id, id), eq(monitors.workspaceId, key.workspaceId))
+	});
+
+	if (!monitor) {
+		return NextResponse.json({
+			error: true,
+			message: "Monitor not found"
+		}, {
+			status: 404
+		});
+	}
+
+	if (monitor.name === name || monitor.type === type || monitor.url === url || monitor.interval === interval) {
+		return NextResponse.json({
+			error: true,
+			message: "No changes made"
+		}, {
+			status: 400
+		});
+	}
+
 	const data = await db.update(monitors).set({
-		name,
-		type,
-		url,
-		interval
+		name: name ?? monitor.name,
+		type: type ?? monitor.type,
+		url: url ?? monitor.url,
+		interval: interval ?? monitor.interval,
+		updatedAt: new Date()
 	}).where(and(eq(monitors.id, id), eq(monitors.workspaceId, key.workspaceId))).returning().then((res) => res[0]);
 
 	if (!data) {
@@ -93,7 +141,10 @@ export async function PATCH(request: Request, {
 		});
 	}
 
-	return NextResponse.json(data, {
+	return NextResponse.json({
+		error: false,
+		monitor: data
+	}, {
 		status: 200,
 		headers: {
 			"Content-Type": "application/json",

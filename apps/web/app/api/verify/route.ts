@@ -2,16 +2,19 @@ import validateKey from "@/app/api/utils";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-	const key = await validateKey(request.headers.get('x-api-key'));
+	const { key, error, message, status } = await validateKey(request.headers.get('x-api-key'));
 
-	if (!key) {
+	if (error || !key) {
 		return NextResponse.json({
 			error: true,
-			message: "Unauthorized"
+			message: message ?? "Unauthorized",
 		}, {
-			status: 401
+			status: status ?? 401
 		});
 	}
 
-	return new Response('Authorized', { status: 200 });
+	return NextResponse.json({
+		error: false,
+		message: "API key is valid",
+	}, { status: 200 });
 }
