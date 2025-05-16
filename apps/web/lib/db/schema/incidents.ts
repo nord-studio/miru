@@ -29,7 +29,7 @@ export const incidentReports = pgTable("incident_reports", {
 	/// The unique identifier for the incident report
 	id: varchar("id", { length: 16 }).primaryKey().$defaultFn(generateId),
 	/// The incident Id the report belongs to
-	incidentId: varchar("incident_id", { length: 16 }).notNull(),
+	incidentId: varchar("incident_id", { length: 16 }).notNull().references(() => incidents.id, { onDelete: "cascade" }),
 	/// The message of the incident report
 	message: text("message").notNull(),
 	/// The status of the incident report
