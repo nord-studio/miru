@@ -195,7 +195,7 @@ export default function EditIncidentReport({ report }: {
 			<>
 				<Drawer open={open} onOpenChange={setOpen}>
 					<DrawerTrigger asChild>
-						<Button size="icon" variant="secondary">
+						<Button size="icon" variant="outline">
 							<Pencil />
 						</Button>
 					</DrawerTrigger>

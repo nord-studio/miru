@@ -219,6 +219,18 @@ export const joinWorkspace = actionClient.schema(z.object({
 		return { error: true, message: "Workspace not found" };
 	}
 
+	const members = await db.query.workspaceMembers.findMany({
+		with: {
+			user: true,
+		},
+		where: () => eq(workspaceMembers.workspaceId, workspace.id),
+	});
+
+	const currentMember = await getCurrentMember(workspace.id, currentUser.user.id);
+	if (currentMember) {
+		return { error: true, message: "You are already in this workspace." };
+	}
+
 	await db.delete(workspaceInvites).where(eq(workspaceInvites.id, inviteToken));
 
 	await db.insert(workspaceMembers).values({
@@ -248,7 +260,7 @@ export const inviteMemberViaEmail = actionClient.schema(z.object({
 })).action(async ({ parsedInput: { workspace, email, role } }) => {
 	const { config } = await getConfig();
 
-	if (config.email.enabled) {
+	if (!config.email.enabled) {
 		return {
 			error: true,
 			message: "Emails haven't been enabled on this instance. Please try generating an invite code instead.",

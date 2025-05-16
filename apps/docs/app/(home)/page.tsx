@@ -26,7 +26,7 @@ export default function HomePage() {
           </Button>
         </Link>
         <Link href="https://github.com/nord-studio/miru" target="_blank">
-          <Button variant="secondary">
+          <Button variant="outline">
             View on GitHub
             <GitHub />
           </Button>

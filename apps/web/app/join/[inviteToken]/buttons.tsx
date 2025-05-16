@@ -11,7 +11,7 @@ export default function JoinWorkspaceButtons({ inviteToken }: { inviteToken: str
 	return (
 		<>
 			<div className="flex flex-row gap-3 items-center">
-				<Button variant="secondary" onClick={async () => {
+				<Button variant="outline" onClick={async () => {
 					const t = toast.loading("Declining invite...");
 
 					await declineInvite({ inviteToken }).then((res) => {

@@ -4,3 +4,4 @@ export { incidentRelations, incidentReports, incidentReportsRelations, incidents
 export { workspaces, workspaceMembers, workspacesRelations, workspaceMembersRelations, workspaceInvites } from "./schema/workspaces"
 export { statusPageMonitors, statusPageMonitorsRelations, statusPageRelations, statusPages } from "./schema/status-pages"
 export { apikey } from "./schema/api";
+export { notifications, notificationsRelations, notificationsToMonitors, notificationsToMonitorsRelations } from "./schema/notifications"

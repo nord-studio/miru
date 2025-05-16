@@ -32,10 +32,10 @@ export default async function Navbar({ workspaceSlug }: { workspaceSlug: string 
 			label: "Status Pages",
 			href: `/admin/${workspaceSlug}/status-pages`,
 		},
-		// {
-		// 	label: "Notifications",
-		// 	href: `/admin/${workspaceSlug}/notifications`,
-		// },
+		{
+			label: "Notifications",
+			href: `/admin/${workspaceSlug}/notifications`,
+		},
 		{
 			label: "Settings",
 			href: `/admin/${workspaceSlug}/settings`,

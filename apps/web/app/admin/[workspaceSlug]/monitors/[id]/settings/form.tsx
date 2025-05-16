@@ -151,7 +151,7 @@ export default function MonitorSingletonSettingsForm({
 								onChange={(e) => setUrl(e.target.value)}
 							/>
 							<Button
-								variant="secondary"
+								variant="outline"
 								onClick={handleMonitorTest}
 								disabled={loading}
 								type="button"

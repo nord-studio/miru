@@ -29,11 +29,11 @@ export default function ViewApiKey({ apiKey }: { apiKey: ApiKey }) {
 	if (!mounted) {
 		return (
 			<div>
-				<Button size="sm" variant="secondary" onClick={() => setOpen(!open)} className="md:flex hidden">
+				<Button size="sm" variant="outline" onClick={() => setOpen(!open)} className="md:flex hidden">
 					<Eye />
 					View
 				</Button>
-				<Button size="icon" variant="secondary" onClick={() => setOpen(!open)} className="md:hidden flex">
+				<Button size="icon" variant="outline" onClick={() => setOpen(!open)} className="md:hidden flex">
 					<Eye />
 				</Button>
 			</div>
@@ -45,7 +45,7 @@ export default function ViewApiKey({ apiKey }: { apiKey: ApiKey }) {
 			<>
 				<Dialog open={open} onOpenChange={setOpen}>
 					<DialogTrigger asChild>
-						<Button size="sm" variant="secondary" onClick={() => setOpen(!open)} className="md:flex hidden">
+						<Button size="sm" variant="outline" onClick={() => setOpen(!open)} className="md:flex hidden">
 							<Eye />
 							View
 						</Button>
@@ -105,7 +105,7 @@ export default function ViewApiKey({ apiKey }: { apiKey: ApiKey }) {
 			<>
 				<Drawer open={open} onOpenChange={setOpen}>
 					<DrawerTrigger asChild>
-						<Button size="icon" variant="secondary" onClick={() => setOpen(!open)} className="md:hidden flex">
+						<Button size="icon" variant="outline" onClick={() => setOpen(!open)} className="md:hidden flex">
 							<Eye />
 						</Button>
 					</DrawerTrigger>

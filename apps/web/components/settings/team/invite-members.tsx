@@ -470,7 +470,7 @@ export default function InviteMembers({ workspace, members, currentMember, child
                   <Button onClick={() => setMode("email")}>
                     Invite via Email
                   </Button>
-                  <Button onClick={() => setMode("select")} variant="secondary">
+                  <Button onClick={() => setMode("select")} variant="outline">
                     Invite existing user
                   </Button>
                 </div>
@@ -511,7 +511,7 @@ export default function InviteMembers({ workspace, members, currentMember, child
                 <Button onClick={() => setMode("email")}>
                   Invite via Email
                 </Button>
-                <Button onClick={() => setMode("select")} variant="secondary">
+                <Button onClick={() => setMode("select")} variant="outline">
                   Invite existing user
                 </Button>
               </div>

@@ -80,7 +80,7 @@ export default async function ProfileSettingsPage({
                   appUrl={appUrl}
                   currentMember={currentMember}
                 >
-                  <Button variant="secondary">
+                  <Button variant="outline">
                     <Plus />
                     Create Invite
                   </Button>
@@ -102,7 +102,7 @@ export default async function ProfileSettingsPage({
                   appUrl={appUrl}
                   currentMember={currentMember}
                 >
-                  <Button size="icon" variant="secondary">
+                  <Button size="icon" variant="outline">
                     <Plus />
                   </Button>
                 </CreateInviteToken>

@@ -1,17 +1,15 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+/// Merges class names and removes duplicates
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/// Verifies if a string is a valid email address
 export function verifyEmailInput(email: string): boolean {
   return /^.+@.+\..+$/.test(email) && email.length < 256;
 }
-
-// function convertToBoolean(value: unknown): boolean {
-//   return value === '1' || (typeof value === 'string' && value.toLowerCase() === 'true') || value === true;
-// }
 
 /// Generates a random ID of 16 characters
 export function generateId(): string {
@@ -33,3 +31,15 @@ export const getAppUrl = () => {
 
   return { appDomain, appUrl };
 };
+
+/// Verifies if a string is a valid URL
+export function isValidUrl(url: string) {
+  let givenURL;
+  try {
+    givenURL = new URL(url);
+  } catch (error) {
+    console.log("error is", error)
+    return false;
+  }
+  return givenURL.protocol === "http:" || givenURL.protocol === "https:";
+}

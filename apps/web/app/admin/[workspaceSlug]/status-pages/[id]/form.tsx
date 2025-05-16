@@ -576,7 +576,7 @@ export default function EditStatusPageForm({ existing, monitors, workspace, conf
 										}}>
 											Upload
 										</Button>
-										<Button variant="secondary" disabled={loading || !logo} onClick={async () => await remove("logo", false)}>
+										<Button variant="outline" disabled={loading || !logo} onClick={async () => await remove("logo", false)}>
 											Remove
 										</Button>
 									</div>
@@ -610,7 +610,7 @@ export default function EditStatusPageForm({ existing, monitors, workspace, conf
 										}}>
 											Upload
 										</Button>
-										<Button variant="secondary" disabled={loading || !darkLogo} onClick={async () => await remove("logo", true)}>
+										<Button variant="outline" disabled={loading || !darkLogo} onClick={async () => await remove("logo", true)}>
 											Remove
 										</Button>
 									</div>
@@ -646,7 +646,7 @@ export default function EditStatusPageForm({ existing, monitors, workspace, conf
 										}}>
 											Upload
 										</Button>
-										<Button variant="secondary" disabled={loading || !favicon} onClick={async () => await remove("favicon")}>
+										<Button variant="outline" disabled={loading || !favicon} onClick={async () => await remove("favicon")}>
 											Remove
 										</Button>
 									</div>
