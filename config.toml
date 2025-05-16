@@ -1,8 +1,8 @@
 [email]
 # Whether to enable emails
-enabled = true
+enabled = false
 # If enabled, users will need to verify their email address before they can log in
-verification = true
+verification = false
 
 [incidents.auto]
 # Whether to automatically create incidents when a monitor goes down

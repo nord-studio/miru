@@ -21,10 +21,12 @@ export default async function sendEmailVerification(
   email: string,
   url: string,
 ) {
-  if (process.env.ENABLE_EMAIL !== "true") {
-    throw new Error(
-      "Emails are not enabled on this instance. If you are the instance administator, set ENABLE_EMAIL to true in your .env file.",
+  const { config } = await import("@/lib/config").then((res) => res.getConfig());
+  if (!config.email.enabled) {
+    console.error(
+      "Emails are not enabled on this instance. If you are the instance administator, set ENABLE_EMAIL to true in your .env file."
     );
+    return;
   }
 
   const transporter = createTransport({

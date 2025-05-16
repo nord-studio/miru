@@ -36,12 +36,12 @@ export async function logIn(prevState: ActionResult, formData: FormData) {
 				email: email.toString(),
 				password: password
 			}
-		})
-	} catch (err: unknown) {
+		});
+	} catch (err) {
+		console.error(err);
 		return {
 			error: true,
-			// @ts-expect-error typescript won't let me define the damn error
-			message: err.body.message
+			message: "Something went wrong while logging in."
 		};
 	}
 

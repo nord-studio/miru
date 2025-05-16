@@ -48,6 +48,8 @@ services:
             - database
         networks:
             - miru
+        volumes:
+            - ./config.toml:/app/config.toml
 
     web:
         container_name: web
@@ -62,3 +64,5 @@ services:
             - monitor
         networks:
             - miru
+        volumes:
+            - ./config.toml:/app/config.toml
