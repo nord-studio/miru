@@ -21,9 +21,9 @@ import { cn } from "@/lib/utils";
 import Image from "next/image"
 import Link from "next/link";
 import { ColorPicker } from "@/components/ui/color-picker";
-import { getConfig } from "@/lib/config";
+import { MiruConfig } from "@/types/config";
 
-export default function EditStatusPageForm({ existing, monitors, workspace }: { existing: StatusPageWithMonitorsExtended, monitors: Monitor[], workspace: Workspace }) {
+export default function EditStatusPageForm({ existing, monitors, workspace, config }: { existing: StatusPageWithMonitorsExtended, monitors: Monitor[], workspace: Workspace, config: MiruConfig }) {
 	const [loading, setLoading] = React.useState(false);
 
 	const [name, setName] = React.useState(existing.name);
@@ -100,8 +100,6 @@ export default function EditStatusPageForm({ existing, monitors, workspace }: { 
 		if (!file || file.length === 0) {
 			return;
 		}
-
-		const { config } = await getConfig();
 
 		if (file[0].size > config.storage.max_size) {
 			return toast.error("Please upload a file smaller than 12MB");

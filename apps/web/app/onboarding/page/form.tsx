@@ -27,7 +27,7 @@ import { MonoStatusBanner, StatusBanner } from "@/components/ui/status-banner";
 import PandaStatusPageShell from "@/designs/panda/shell";
 import SimpleStatusPageShell from "@/designs/simple/shell";
 import StormtrooperStatusPageShell from "@/designs/stormtrooper/shell";
-import { getConfig } from "@/lib/config";
+import { MiruConfig } from "@/types/config";
 
 export interface StatusDayBlock {
 	date: Date;
@@ -37,7 +37,7 @@ export interface StatusDayBlock {
 	downtime: number;
 }
 
-export default function OnboardingStatusPageForm({ monitors, workspace }: { monitors: Monitor[], workspace: Workspace }) {
+export default function OnboardingStatusPageForm({ monitors, workspace, config }: { monitors: Monitor[], workspace: Workspace, config: MiruConfig }) {
 	const id = generateId();
 	const [loading, setLoading] = React.useState(false);
 	const [name, setName] = React.useState("Status Page");
@@ -61,8 +61,6 @@ export default function OnboardingStatusPageForm({ monitors, workspace }: { moni
 		if (!file || file.length === 0) {
 			return;
 		}
-
-		const { config } = await getConfig();
 
 		if (file[0].size > config.storage.max_size) {
 			return toast.error("Please upload a file smaller than 12MB");

@@ -1,6 +1,7 @@
 import { getFirstWorkspace } from "@/app/onboarding/actions";
 import OnboardingStatusPageForm from "@/app/onboarding/page/form";
 import { getCurrentMember } from "@/components/workspace/actions";
+import { getConfig } from "@/lib/config";
 import db from "@/lib/db";
 import { monitors } from "@/lib/db/schema";
 import { RankedRoles } from "@/types/workspace";
@@ -25,10 +26,12 @@ export default async function OnboardingStatusPage() {
 		return redirect("/onboarding/conclusion");
 	}
 
+	const { config } = await getConfig();
+
 	return (
 		<>
 			<div className="flex flex-row w-full gap-4 h-screen items-start py-8">
-				<OnboardingStatusPageForm workspace={workspace} monitors={mons} />
+				<OnboardingStatusPageForm workspace={workspace} monitors={mons} config={config} />
 			</div>
 		</>
 	)

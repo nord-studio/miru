@@ -1,17 +1,4 @@
-type MiruConfig = {
-	email: {
-		enabled: boolean;
-		verification: boolean;
-	},
-	incidents: {
-		auto: {
-			enabled: boolean;
-		}
-	},
-	storage: {
-		max_size: number;
-	}
-}
+import { MiruConfig } from "@/types/config";
 
 export async function getPath() {
 	const path = await import("path");
@@ -52,7 +39,7 @@ export async function parseConfig() {
 	try {
 		config = parse(contents) as MiruConfig;
 		defaults = false;
-	} catch (error) { }
+	} catch { }
 
 	return { config, defaults };
 }

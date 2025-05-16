@@ -1,5 +1,6 @@
 import NewStatusPageForm from "@/app/admin/[workspaceSlug]/status-pages/new/form";
 import { getCurrentMember } from "@/components/workspace/actions";
+import { getConfig } from "@/lib/config";
 import db from "@/lib/db";
 import { monitors, workspaces } from "@/lib/db/schema";
 import { RankedRoles } from "@/types/workspace";
@@ -36,6 +37,8 @@ export default async function CreateStatusPage({
 		return notFound();
 	}
 
+	const { config } = await getConfig();
+
 	return (
 		<>
 			<div className="flex flex-col w-full h-full gap-8">
@@ -50,8 +53,7 @@ export default async function CreateStatusPage({
 						</p>
 					</div>
 				</div>
-
-				<NewStatusPageForm monitors={mons} workspace={workspace} />
+				<NewStatusPageForm monitors={mons} workspace={workspace} config={config} />
 			</div >
 		</>
 	)

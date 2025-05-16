@@ -1,5 +1,6 @@
 import EditStatusPageForm from "@/app/admin/[workspaceSlug]/status-pages/[id]/form";
 import { getCurrentMember } from "@/components/workspace/actions";
+import { getConfig } from "@/lib/config";
 import db from "@/lib/db";
 import { monitors, statusPages, workspaces } from "@/lib/db/schema";
 import { StatusPageWithMonitorsExtended } from "@/types/status-pages";
@@ -52,6 +53,8 @@ export default async function CreateStatusPage({
 		return notFound();
 	}
 
+	const { config } = await getConfig();
+
 	return (
 		<>
 			<div className="flex flex-col w-full h-full gap-8">
@@ -66,7 +69,7 @@ export default async function CreateStatusPage({
 						</p>
 					</div>
 				</div>
-				<EditStatusPageForm existing={statusPage} monitors={mons} workspace={workspace} />
+				<EditStatusPageForm existing={statusPage} monitors={mons} workspace={workspace} config={config} />
 			</div >
 		</>
 	)
