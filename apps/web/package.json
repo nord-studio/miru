@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",
-		"start": "pnpm drizzle migrate ; next start",
+		"start": "next start",
 		"lint": "next lint",
 		"drizzle": "pnpm exec drizzle-kit"
 	},

@@ -59,16 +59,11 @@ export default function CreateMonitor({ open, setOpen }: { open: boolean, setOpe
 	const [brokenWarning, setBrokenWarning] = useState(false);
 	const isDesktop = useMediaQuery("(min-width: 768px)");
 	const [loading, setLoading] = useState(false);
-	const [mounted, setMounted] = useState(false);
 
 	const [name, setName] = useState("");
 	const [url, setUrl] = useState("");
 	const [type, setType] = useState<"http" | "tcp">("http");
 	const [interval, setInterval] = useState("5");
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
 
 	async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -142,16 +137,6 @@ export default function CreateMonitor({ open, setOpen }: { open: boolean, setOpe
 			error: `Failed to ping ${url}. Is the domain correct?`,
 		});
 	}
-
-	if (!mounted)
-		return (
-			<>
-				<Button>
-					<PlusIcon />
-					<span className="hidden sm:block">Create Monitor</span>
-				</Button>
-			</>
-		);
 
 	if (isDesktop) {
 		return (
