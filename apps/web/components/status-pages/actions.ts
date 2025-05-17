@@ -132,6 +132,7 @@ export const editStatusPage = actionClient.schema(z.object({
 	id: z.string(),
 	workspaceId: z.string(),
 	name: z.string(),
+	enabled: z.boolean().default(true),
 	root: z.boolean().default(false),
 	domain: z.string().optional(),
 	monitorIds: z.array(z.string()),
@@ -142,7 +143,6 @@ export const editStatusPage = actionClient.schema(z.object({
 	brandColor: z.string().optional(),
 	design: z.enum(["simple", "panda", "stormtrooper"]).default("simple"),
 	forcedTheme: z.enum(["auto", "light", "dark"]).default("auto"),
-	enabled: z.boolean().default(true),
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
 	error: z.boolean(),
 	message: z.string(),
