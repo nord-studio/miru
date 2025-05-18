@@ -20,16 +20,16 @@ interface VerifyAccountEmailProps {
 const VerifyAccountEmail = ({ url }: VerifyAccountEmailProps) => (
   <Html>
     <Head />
-    <Preview>Welcome to Miru!</Preview>
+    <Preview>Almost there...</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={heading}>Welcome to Miru!</Heading>
+        <Heading style={heading}>Almost there...</Heading>
         <Text style={paragraph}>
-          Please verify your email address to complete your registration.
+          Please verify your email address to complete account verification.
         </Text>
         <Section style={buttonContainer}>
           <Button style={button} href={url}>
-            Verify Account
+            Verify Email
           </Button>
         </Section>
         <Text style={paragraph}>
@@ -44,6 +44,10 @@ const VerifyAccountEmail = ({ url }: VerifyAccountEmailProps) => (
     </Body>
   </Html>
 );
+
+VerifyAccountEmail.PreviewProps = {
+  url: "https://miru.nordstud.io",
+};
 
 export default VerifyAccountEmail;
 
@@ -88,7 +92,7 @@ const button = {
   fontSize: "15px",
   textDecoration: "none",
   display: "block",
-  padding: "11px 23px",
+  padding: "12px 24px",
   margin: "0 auto",
   width: "140px"
 };

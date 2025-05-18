@@ -13,42 +13,44 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-const ResetPasswordEmail = ({ url }: { url: string }) => (
+interface IncidentResolvedEmailProps {
+	incidentName: string;
+	monitorNames: string[];
+	url: string;
+}
+
+const IncidentResolvedEmail = ({ incidentName, url }: IncidentResolvedEmailProps) => (
 	<Html>
 		<Head />
-		<Preview>Reset Password</Preview>
+		<Preview>An incident has been resolved!</Preview>
 		<Body style={main}>
 			<Container style={container}>
-				<Heading style={heading}>It happens to the best of us</Heading>
+				<Heading style={heading}>An incident has been resolved!</Heading>
 				<Text style={paragraph}>
-					Click the button below to reset your password.
+					The incident <b>{incidentName}</b> has been resolved. Take a breather, you deserve it! You can click the
+					button below to view the incident.
 				</Text>
 				<Section style={buttonContainer}>
-					<Button
-						style={button}
-						href={url}
-					>
-						Reset Password
+					<Button style={button} href={url}>
+						View Incident
 					</Button>
 				</Section>
-				<Text style={paragraph}>
-					This link will only be valid for the next hour. If you didn&apos;t request
-					this email, please ignore it.
-				</Text>
 				<Hr style={hr} />
 				<Text style={reportLink}>
 					見る • Made by <Link href="https://nordstud.io">Nord Studio</Link>
 				</Text>
 			</Container>
 		</Body>
-	</Html>
+	</Html >
 );
 
-ResetPasswordEmail.PreviewProps = {
+IncidentResolvedEmail.PreviewProps = {
+	monitorName: "Website",
+	incidentName: "Website is down",
 	url: "https://miru.nordstud.io",
-};
+}
 
-export default ResetPasswordEmail;
+export default IncidentResolvedEmail;
 
 const main = {
 	backgroundColor: "#ffffff",
@@ -80,7 +82,7 @@ const paragraph = {
 };
 
 const buttonContainer = {
-	padding: "8px 0 28px",
+	padding: "8px 0px 0px",
 };
 
 const button = {

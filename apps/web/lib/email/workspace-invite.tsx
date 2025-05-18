@@ -60,6 +60,11 @@ const WorkspaceInviteEmail = ({
   </Html>
 );
 
+WorkspaceInviteEmail.PreviewProps = {
+  workspaceName: "Nord Studio",
+  inviteToken: "123abc",
+};
+
 export default WorkspaceInviteEmail;
 
 const main = {
@@ -103,7 +108,7 @@ const button = {
   fontSize: "15px",
   textDecoration: "none",
   display: "block",
-  padding: "11px 23px",
+  padding: "12px 24px",
   margin: "0 auto",
   width: "140px"
 };

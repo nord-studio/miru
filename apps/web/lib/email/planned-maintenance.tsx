@@ -13,42 +13,50 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-const ResetPasswordEmail = ({ url }: { url: string }) => (
+interface PlannedMaintenanceProps {
+	name: string;
+	monitorNames: string[];
+	date: string;
+	time: string;
+	url: string;
+}
+
+const PlannedMaintenanceEmail = ({ monitorNames, url, date, time, name }: PlannedMaintenanceProps) => (
 	<Html>
 		<Head />
-		<Preview>Reset Password</Preview>
+		<Preview>Maintenance has been planned</Preview>
 		<Body style={main}>
 			<Container style={container}>
-				<Heading style={heading}>It happens to the best of us</Heading>
+				<Heading style={heading}>Maintenance has been planned</Heading>
 				<Text style={paragraph}>
-					Click the button below to reset your password.
+					A new maintenance event called "<b>{name}</b>" has been planned and will affect {" "}
+					{monitorNames.length === 1 && `"${monitorNames[0]}"`}
+					{monitorNames.length === 2 && `"${monitorNames[0]}" and "${monitorNames[1]}"`}
+					{monitorNames.length > 2 && `${monitorNames.length} monitors`}. The event is scheduled for <b>{date}</b> at <b>{time}</b>.
 				</Text>
 				<Section style={buttonContainer}>
-					<Button
-						style={button}
-						href={url}
-					>
-						Reset Password
+					<Button style={button} href={url}>
+						View Event
 					</Button>
 				</Section>
-				<Text style={paragraph}>
-					This link will only be valid for the next hour. If you didn&apos;t request
-					this email, please ignore it.
-				</Text>
 				<Hr style={hr} />
 				<Text style={reportLink}>
 					見る • Made by <Link href="https://nordstud.io">Nord Studio</Link>
 				</Text>
 			</Container>
 		</Body>
-	</Html>
+	</Html >
 );
 
-ResetPasswordEmail.PreviewProps = {
+PlannedMaintenanceEmail.PreviewProps = {
+	name: "Moving to a new server",
+	monitorNames: ["Website", "Campsite Gateway", "Campsite API"],
 	url: "https://miru.nordstud.io",
-};
+	date: "23rd May 2025",
+	time: "12:00pm UTC"
+}
 
-export default ResetPasswordEmail;
+export default PlannedMaintenanceEmail;
 
 const main = {
 	backgroundColor: "#ffffff",
@@ -80,7 +88,7 @@ const paragraph = {
 };
 
 const buttonContainer = {
-	padding: "8px 0 28px",
+	padding: "8px 0px 0px",
 };
 
 const button = {

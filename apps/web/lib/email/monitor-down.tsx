@@ -13,28 +13,30 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-const ResetPasswordEmail = ({ url }: { url: string }) => (
+interface MonitorDownEmailProps {
+	monitorNames: string[];
+	url: string;
+}
+
+const MonitorDownEmail = ({ monitorNames, url }: MonitorDownEmailProps) => (
 	<Html>
 		<Head />
-		<Preview>Reset Password</Preview>
+		<Preview>{monitorNames.length === 1 ? `${monitorNames[0]} is` : "Some monitors are"} down!</Preview>
 		<Body style={main}>
 			<Container style={container}>
-				<Heading style={heading}>It happens to the best of us</Heading>
+				<Heading style={heading}>{monitorNames.length === 1 ? `${monitorNames[0]} is` : "Some monitors are"} down!</Heading>
 				<Text style={paragraph}>
-					Click the button below to reset your password.
+					The monitoring service has detected that {" "}
+					{monitorNames.length === 1 && `${monitorNames[0]} is down.`}
+					{monitorNames.length === 2 && `${monitorNames[0]} and ${monitorNames[1]} are down`}
+					{monitorNames.length > 2 && `${monitorNames.length} monitors are down`}. Click the
+					button below to view the incident and take action.
 				</Text>
 				<Section style={buttonContainer}>
-					<Button
-						style={button}
-						href={url}
-					>
-						Reset Password
+					<Button style={button} href={url}>
+						View Incident
 					</Button>
 				</Section>
-				<Text style={paragraph}>
-					This link will only be valid for the next hour. If you didn&apos;t request
-					this email, please ignore it.
-				</Text>
 				<Hr style={hr} />
 				<Text style={reportLink}>
 					見る • Made by <Link href="https://nordstud.io">Nord Studio</Link>
@@ -44,11 +46,12 @@ const ResetPasswordEmail = ({ url }: { url: string }) => (
 	</Html>
 );
 
-ResetPasswordEmail.PreviewProps = {
+MonitorDownEmail.PreviewProps = {
+	monitorNames: ["Website", "Campsite Gateway"],
 	url: "https://miru.nordstud.io",
-};
+}
 
-export default ResetPasswordEmail;
+export default MonitorDownEmail;
 
 const main = {
 	backgroundColor: "#ffffff",
@@ -80,7 +83,7 @@ const paragraph = {
 };
 
 const buttonContainer = {
-	padding: "8px 0 28px",
+	padding: "8px 0px 0px",
 };
 
 const button = {

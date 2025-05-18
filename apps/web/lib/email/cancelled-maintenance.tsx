@@ -13,42 +13,46 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-const ResetPasswordEmail = ({ url }: { url: string }) => (
+interface CancelledMaintenanceProps {
+	monitorNames: string[];
+	name: string;
+	url: string;
+}
+
+const CancelledMaintenanceEmail = ({ monitorNames, name, url }: CancelledMaintenanceProps) => (
 	<Html>
 		<Head />
-		<Preview>Reset Password</Preview>
+		<Preview>Maintenance has been cancelled</Preview>
 		<Body style={main}>
 			<Container style={container}>
-				<Heading style={heading}>It happens to the best of us</Heading>
+				<Heading style={heading}>Maintenance has been cancelled</Heading>
 				<Text style={paragraph}>
-					Click the button below to reset your password.
+					The maintance event called <b>{name}</b> which affects {" "}
+					{monitorNames.length === 1 && `${monitorNames[0]}`}
+					{monitorNames.length === 2 && `${monitorNames[0]} and ${monitorNames[1]}`}
+					{monitorNames.length > 2 && `${monitorNames.length} monitors`} has been cancelled. Click the button below to view the event.
 				</Text>
 				<Section style={buttonContainer}>
-					<Button
-						style={button}
-						href={url}
-					>
-						Reset Password
+					<Button style={button} href={url}>
+						View Event
 					</Button>
 				</Section>
-				<Text style={paragraph}>
-					This link will only be valid for the next hour. If you didn&apos;t request
-					this email, please ignore it.
-				</Text>
 				<Hr style={hr} />
 				<Text style={reportLink}>
 					見る • Made by <Link href="https://nordstud.io">Nord Studio</Link>
 				</Text>
 			</Container>
 		</Body>
-	</Html>
+	</Html >
 );
 
-ResetPasswordEmail.PreviewProps = {
+CancelledMaintenanceEmail.PreviewProps = {
+	name: "Moving to a new server",
+	monitorNames: ["Website"],
 	url: "https://miru.nordstud.io",
-};
+}
 
-export default ResetPasswordEmail;
+export default CancelledMaintenanceEmail;
 
 const main = {
 	backgroundColor: "#ffffff",
@@ -80,7 +84,7 @@ const paragraph = {
 };
 
 const buttonContainer = {
-	padding: "8px 0 28px",
+	padding: "8px 0px 0px",
 };
 
 const button = {
