@@ -2,7 +2,7 @@ import { pageSchema } from "@/app/api/v1/page/schema";
 import validateKey from "@/app/api/utils";
 import { createStatusPage } from "@/components/status-pages/actions";
 import db from "@/lib/db";
-import { statusPages, workspaces } from "@/lib/db/schema";
+import { workspaces } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 

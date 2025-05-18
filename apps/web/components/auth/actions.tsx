@@ -6,12 +6,17 @@ import { user, workspaceInvites, workspaceMembers, workspaces } from "@/lib/db/s
 import { actionClient } from "@/lib/safe-action";
 import { verifyEmailInput } from "@/lib/utils";
 import { ActionResult } from "@/types/form";
+import { render } from "@react-email/render";
 import { eq } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { createTransport } from "nodemailer";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { cache } from "react";
 import { z } from "zod";
+import VerifyAccountEmail from "@/lib/email/verify-email";
+import ResetPasswordEmail from "@/lib/email/reset-password";
 
 export async function logIn(prevState: ActionResult, formData: FormData) {
 	const email = formData.get("email");
@@ -221,6 +226,54 @@ export async function requestResetPassword(prevState: ActionResult, formData: Fo
 	})
 }
 
+export default async function sendResetPasswordEmail(
+	email: string,
+	url: string
+) {
+	const { config } = await import("@/lib/config").then((res) => res.getConfig());
+	if (!config.email.enabled) {
+		console.error(
+			"Emails are not enabled on this instance. If you are the instance administator, set ENABLE_EMAIL to true in your .env file."
+		);
+		return;
+	}
+
+	const userEmail = await db
+		.select()
+		.from(user)
+		.where(eq(user.email, email))
+		.then((rows) => rows[0]);
+
+	if (!userEmail) {
+		// We do not tell the user if the email is invalid to prevent email enumeration
+		return;
+	}
+
+	const transporter = createTransport({
+		host: process.env.SMTP_HOST,
+		secure: process.env.SMTP_SECURE === 'true',
+		port: Number(process.env.SMTP_PORT),
+		auth: {
+			user: process.env.SMTP_USER,
+			pass: process.env.SMTP_PASSWORD,
+		},
+		debug: process.env.APP_ENV === "development",
+	} as SMTPTransport.Options);
+
+	const body = await render(<ResetPasswordEmail url={url} />);
+
+	await transporter
+		.sendMail({
+			from: process.env.SMTP_FROM,
+			to: email,
+			subject: "Password Reset Request",
+			html: body,
+		})
+		.catch((err) => {
+			console.error(err);
+		});
+}
+
 export const getCurrentUser = cache(async () => {
 	const currentUser = await auth.api.getSession({
 		headers: await headers(),
@@ -266,3 +319,40 @@ export const updatePassword = actionClient.schema(z.object({
 		message: "Password updated successfully."
 	}
 });
+
+export async function sendEmailVerification(
+	email: string,
+	url: string,
+) {
+	const { config } = await import("@/lib/config").then((res) => res.getConfig());
+	if (!config.email.enabled) {
+		console.error(
+			"Emails are not enabled on this instance. If you are the instance administator, set ENABLE_EMAIL to true in your .env file."
+		);
+		return;
+	}
+
+	const transporter = createTransport({
+		host: process.env.SMTP_HOST,
+		secure: process.env.SMTP_SECURE === "true",
+		port: Number(process.env.SMTP_PORT),
+		auth: {
+			user: process.env.SMTP_USER,
+			pass: process.env.SMTP_PASSWORD,
+		},
+		debug: process.env.APP_ENV === "development",
+	} as SMTPTransport.Options);
+
+	const body = await render(<VerifyAccountEmail url={url} />);
+
+	await transporter
+		.sendMail({
+			from: process.env.SMTP_FROM,
+			to: email,
+			subject: "Password Reset Request",
+			html: body,
+		})
+		.catch((err) => {
+			console.error(err);
+		});
+}

@@ -3,12 +3,10 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { emailOTP, username } from "better-auth/plugins";
 import { passkey } from "better-auth/plugins/passkey";
-
-import sendResetPasswordEmail from "@/lib/email/reset-password";
-import sendEmailVerification from "@/lib/email/verify-email";
 import db from "@/lib/db";
 import { getAppUrl } from "@/lib/utils";
 import { getConfig } from "@/lib/config";
+import sendResetPasswordEmail, { sendEmailVerification } from "@/components/auth/actions";
 
 const { appDomain, appUrl } = getAppUrl();
 const { config } = await getConfig();

@@ -8,7 +8,7 @@ import { statusPageMonitors, statusPages } from "@/lib/db/schema/status-pages";
 import minio, { publicBucketExists } from "@/lib/minio";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
-import { StatusPage, StatusPageMonitor } from "@/types/status-pages";
+import { StatusPage } from "@/types/status-pages";
 import { and, eq } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";

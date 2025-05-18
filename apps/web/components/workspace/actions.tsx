@@ -4,7 +4,7 @@ import { actionClient } from "@/lib/safe-action";
 import { User } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { render } from "jsx-email";
+import { render } from "@react-email/render";
 import { createTransport } from "nodemailer";
 import WorkspaceInviteEmail from "@/lib/email/workspace-invite";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
@@ -220,13 +220,6 @@ export const joinWorkspace = actionClient.schema(z.object({
 	if (!workspace) {
 		return { error: true, message: "Workspace not found" };
 	}
-
-	const members = await db.query.workspaceMembers.findMany({
-		with: {
-			user: true,
-		},
-		where: () => eq(workspaceMembers.workspaceId, workspace.id),
-	});
 
 	const currentMember = await getCurrentMember(workspace.id, currentUser.user.id);
 	if (currentMember) {

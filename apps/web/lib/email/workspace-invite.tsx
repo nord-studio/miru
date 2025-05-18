@@ -10,7 +10,7 @@ import {
   Preview,
   Section,
   Text,
-} from "jsx-email";
+} from "@react-email/components";
 import * as React from "react";
 import { getAppUrl } from "../utils";
 
@@ -22,8 +22,8 @@ interface WorkspaceInviteEmailProps {
 const { appUrl } = getAppUrl();
 
 const WorkspaceInviteEmail = ({
-  inviteToken,
-  workspaceName,
+  inviteToken = "123abc",
+  workspaceName = "Nord Studio",
 }: WorkspaceInviteEmailProps) => (
   <Html>
     <Head />
@@ -32,25 +32,21 @@ const WorkspaceInviteEmail = ({
       <Container style={container}>
         <Heading style={heading}>Workspace Invite</Heading>
         <Text style={paragraph}>
-          You have been invited to join {workspaceName} on Miru. Click the
+          You have been invited to join the workspace <b>{workspaceName}</b> on Miru. Click the
           button below to accept the invite.
         </Text>
-        <div>
-          <Section style={buttonContainer}>
-            <Button
-              style={button}
-              height={25}
-              width={160}
-              href={`${appUrl}/join/${inviteToken}`}
-            >
-              Accept Invite
-            </Button>
-          </Section>
-          <Text style={paragraph}>
-            ...or use the invite token below to join the workspace manually:
-          </Text>
-          <code style={code}>{inviteToken}</code>
-        </div>
+        <Section style={buttonContainer}>
+          <Button
+            style={button}
+            href={`${appUrl}/join/${inviteToken}`}
+          >
+            Accept Invite
+          </Button>
+        </Section>
+        <Text style={paragraph}>
+          ...or use the invite token below to join the workspace manually:
+        </Text>
+        <code style={code}>{inviteToken}</code>
         <Hr style={hr} />
         <Text style={paragraph}>
           This invite will only be valid for the next 2 weeks. If you do not
@@ -76,6 +72,7 @@ const container = {
   margin: "0 auto",
   padding: "20px 0 48px",
   maxWidth: "560px",
+  textAlign: "center" as const
 };
 
 const heading = {
@@ -95,20 +92,20 @@ const paragraph = {
 };
 
 const buttonContainer = {
-  padding: "8px 0 27px",
+  padding: "8px 0 28px",
 };
 
 const button = {
   backgroundColor: "#121212",
-  borderRadius: "3px",
+  borderRadius: "8px",
   fontWeight: "600",
   color: "#fff",
   fontSize: "15px",
   textDecoration: "none",
-  textAlign: "center" as const,
   display: "block",
   padding: "11px 23px",
   margin: "0 auto",
+  width: "140px"
 };
 
 const reportLink = {

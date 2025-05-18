@@ -2,7 +2,7 @@ import { incidentReportSchema } from "@/app/api/v1/incident/[id]/report/schema";
 import validateKey from "@/app/api/utils";
 import { deleteIncidentReport, editIncidentReport } from "@/components/incidents/reports/actions";
 import db from "@/lib/db";
-import { incidentReports, incidents, workspaces } from "@/lib/db/schema";
+import { incidents, workspaces } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 

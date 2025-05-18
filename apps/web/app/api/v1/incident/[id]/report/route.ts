@@ -168,7 +168,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
 	return NextResponse.json({
 		error: false,
-		reports: data.reports.map(({ incidentId, ...report }) => report)
+		reports: data.reports.map(({ ...report }) => report)
 	}, {
 		status: 200
 	});

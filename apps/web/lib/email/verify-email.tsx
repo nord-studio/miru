@@ -8,57 +8,14 @@ import {
   Html,
   Link,
   Preview,
-  render,
   Section,
   Text,
-} from "jsx-email";
-import { createTransport } from "nodemailer";
-import SMTPTransport from "nodemailer/lib/smtp-transport";
+} from "@react-email/components";
 import * as React from "react";
-import { getAppUrl } from "../utils";
-
-export default async function sendEmailVerification(
-  email: string,
-  url: string,
-) {
-  const { config } = await import("@/lib/config").then((res) => res.getConfig());
-  if (!config.email.enabled) {
-    console.error(
-      "Emails are not enabled on this instance. If you are the instance administator, set ENABLE_EMAIL to true in your .env file."
-    );
-    return;
-  }
-
-  const transporter = createTransport({
-    host: process.env.SMTP_HOST,
-    secure: process.env.SMTP_SECURE === "true",
-    port: Number(process.env.SMTP_PORT),
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD,
-    },
-    debug: process.env.APP_ENV === "development",
-  } as SMTPTransport.Options);
-
-  const body = await render(<VerifyAccountEmail url={url} />);
-
-  await transporter
-    .sendMail({
-      from: process.env.SMTP_FROM,
-      to: email,
-      subject: "Password Reset Request",
-      html: body,
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-}
 
 interface VerifyAccountEmailProps {
   url: string;
 }
-
-const { appUrl } = getAppUrl();
 
 const VerifyAccountEmail = ({ url }: VerifyAccountEmailProps) => (
   <Html>
@@ -67,8 +24,11 @@ const VerifyAccountEmail = ({ url }: VerifyAccountEmailProps) => (
     <Body style={main}>
       <Container style={container}>
         <Heading style={heading}>Welcome to Miru!</Heading>
+        <Text style={paragraph}>
+          Please verify your email address to complete your registration.
+        </Text>
         <Section style={buttonContainer}>
-          <Button style={button} height={25} width={100} href={url}>
+          <Button style={button} href={url}>
             Verify Account
           </Button>
         </Section>
@@ -85,9 +45,7 @@ const VerifyAccountEmail = ({ url }: VerifyAccountEmailProps) => (
   </Html>
 );
 
-VerifyAccountEmail.PreviewProps = {
-  url: `${appUrl}/verify-account`,
-} as VerifyAccountEmailProps;
+export default VerifyAccountEmail;
 
 const main = {
   backgroundColor: "#ffffff",
@@ -99,6 +57,7 @@ const container = {
   margin: "0 auto",
   padding: "20px 0 48px",
   maxWidth: "560px",
+  textAlign: "center" as const
 };
 
 const heading = {
@@ -118,21 +77,20 @@ const paragraph = {
 };
 
 const buttonContainer = {
-  padding: "27px 0 27px",
+  padding: "8px 0 28px",
 };
 
 const button = {
   backgroundColor: "#121212",
-  borderRadius: "3px",
+  borderRadius: "8px",
   fontWeight: "600",
   color: "#fff",
   fontSize: "15px",
   textDecoration: "none",
-  textAlign: "center" as const,
   display: "block",
   padding: "11px 23px",
-  marginLeft: "auto",
-  marginRight: "auto",
+  margin: "0 auto",
+  width: "140px"
 };
 
 const reportLink = {
