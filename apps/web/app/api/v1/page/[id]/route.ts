@@ -139,22 +139,22 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 		});
 	}
 
-	const { design, enabled, forcedTheme, monitorIds, name, root, workspaceId, brandColor, darkLogo, description, domain, favicon, logo } = validation.data;
+	const { design, enabled, forcedTheme, monitorIds, name, root, brandColor, darkLogo, description, domain, favicon, logo } = validation.data;
 
 	const res = await editStatusPage({
 		id,
 		monitorIds,
 		name,
-		workspaceId,
-		brandColor,
-		darkLogo,
-		description,
-		domain,
+		workspaceId: workspace.id,
+		brandColor: brandColor ?? undefined,
+		darkLogo: darkLogo ?? undefined,
+		description: description ?? undefined,
+		domain: domain ?? undefined,
 		design,
 		forcedTheme,
 		enabled,
-		favicon,
-		logo,
+		favicon: favicon ?? undefined,
+		logo: logo ?? undefined,
 		root
 	});
 
