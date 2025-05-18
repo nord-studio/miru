@@ -4,10 +4,31 @@ import { DataTable } from "@/components/ui/data-table";
 import { getCurrentMember } from "@/components/workspace/actions";
 import db from "@/lib/db";
 import { monitors, notifications, workspaces } from "@/lib/db/schema";
+import { Monitor } from "@/types/monitor";
 import { NotificationWithMonitors } from "@/types/notifications";
-import { RankedRoles } from "@/types/workspace";
+import { RankedRoles, Workspace } from "@/types/workspace";
 import { eq } from "drizzle-orm";
+import { BellOffIcon } from "lucide-react";
 import { redirect } from "next/navigation";
+
+function EmptyState({ mons, workspace }: { mons: Monitor[]; workspace: Workspace }) {
+	return (
+		<div className="flex flex-col items-center justify-center w-full h-full gap-4 py-4">
+			<div className="border rounded-lg p-2">
+				<BellOffIcon />
+			</div>
+			<div className="flex flex-col gap-1 items-center">
+				<h2 className="text-lg font-semibold">
+					No channels found
+				</h2>
+				<p>
+					Create a channel to notify your users when something goes wrong.
+				</p>
+			</div>
+			<CreateChannelButton monitors={mons} workspace={workspace} />
+		</div>
+	)
+}
 
 export default async function NotificationsPage({
 	params,
@@ -77,7 +98,7 @@ export default async function NotificationsPage({
 					</div>
 				</div>
 				<div className="mt-4">
-					<DataTable columns={columns} data={data} />
+					<DataTable columns={columns} data={data} emptyComponent={<EmptyState mons={mons} workspace={workspace} />} />
 				</div>
 			</div>
 		</>

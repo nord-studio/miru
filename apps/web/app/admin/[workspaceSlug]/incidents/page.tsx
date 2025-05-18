@@ -6,6 +6,27 @@ import { IncidentWithMonitor } from "@/types/incident";
 import { columns } from "@/app/admin/[workspaceSlug]/incidents/columns";
 import React from "react";
 import { eq } from "drizzle-orm";
+import { TriangleDashedIcon } from "lucide-react";
+import { Monitor } from "@/types/monitor";
+
+function EmptyState({ mons }: { mons: Monitor[] }) {
+	return (
+		<div className="flex flex-col items-center justify-center w-full h-full gap-4 py-4">
+			<div className="border rounded-lg p-2">
+				<TriangleDashedIcon />
+			</div>
+			<div className="flex flex-col gap-1 items-center">
+				<h2 className="text-lg font-semibold">
+					No incidents found
+				</h2>
+				<p>
+					Awesome! Looks like nothing has gone wrong yet.
+				</p>
+			</div>
+			<CreateIncident monitors={mons} />
+		</div>
+	)
+}
 
 export default async function IncidentsPage({
 	params,
@@ -68,7 +89,7 @@ export default async function IncidentsPage({
 					</div>
 				</div>
 				<div className="mt-4">
-					<DataTable columns={columns} data={incids} />
+					<DataTable columns={columns} data={incids} emptyComponent={<EmptyState mons={mons} />} />
 				</div>
 			</div>
 		</>

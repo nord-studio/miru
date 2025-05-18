@@ -89,7 +89,7 @@ export default function UpdatePasswordDialog({ children, user }: { children: Rea
 						<DialogHeader className="px-6 pt-6">
 							<DialogTitle>Update Password</DialogTitle>
 							<DialogDescription>
-								Make sure to use a strong password that you haven&aspos;t used before. You&apos;ll be logged out of all devices after this change.
+								Make sure to use a strong password that you haven&apos;t used before. You&apos;ll be logged out of all devices after this change.
 							</DialogDescription>
 						</DialogHeader>
 						<form onSubmit={onSubmit}>

@@ -8,9 +8,33 @@ import { statusPages } from "@/lib/db/schema/status-pages";
 import { StatusPageWithMonitorsExtended } from "@/types/status-pages";
 import { RankedRoles } from "@/types/workspace";
 import { eq } from "drizzle-orm";
-import { PlusIcon } from "lucide-react";
+import { FileTextIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+
+function EmptyState({ workspaceSlug }: { workspaceSlug: string }) {
+	return (
+		<div className="flex flex-col items-center justify-center w-full h-full gap-4 py-4">
+			<div className="border rounded-lg p-2">
+				<FileTextIcon />
+			</div>
+			<div className="flex flex-col gap-1 items-center">
+				<h2 className="text-lg font-semibold">
+					No pages found
+				</h2>
+				<p>
+					Create a status page to communicate the status of your services to your users.
+				</p>
+			</div>
+			<Link href={`/admin/${workspaceSlug}/status-pages/new`}>
+				<Button>
+					<PlusIcon />
+					Create Page
+				</Button>
+			</Link>
+		</div>
+	)
+}
 
 export default async function StatusPagesIndexPage({
 	params,
@@ -67,7 +91,7 @@ export default async function StatusPagesIndexPage({
 					</div>
 				</div>
 				<div className="container mt-4">
-					<DataTable data={pages} columns={columns} />
+					<DataTable data={pages} columns={columns} emptyComponent={<EmptyState workspaceSlug={workspace.slug} />} />
 				</div>
 			</div>
 		</>

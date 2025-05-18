@@ -10,9 +10,29 @@ import { workspaces } from "@/lib/db/schema";
 import { RankedRoles } from "@/types/workspace";
 import { getCurrentMember } from "@/components/workspace/actions";
 import { redirect } from "next/navigation";
+import { MonitorIcon } from "lucide-react";
 
 export interface MonitorRow extends Monitor {
 	uptime: number;
+}
+
+function EmptyState() {
+	return (
+		<div className="flex flex-col items-center justify-center w-full h-full gap-4 py-4">
+			<div className="border rounded-lg p-2">
+				<MonitorIcon />
+			</div>
+			<div className="flex flex-col gap-1 items-center">
+				<h2 className="text-lg font-semibold">
+					No monitors found
+				</h2>
+				<p>
+					Looks like you don&apos;t have any monitors yet. Create one to get started.
+				</p>
+			</div>
+			<CreateMonitorButton />
+		</div>
+	)
 }
 
 export default async function MonitorsPage({
@@ -75,7 +95,7 @@ export default async function MonitorsPage({
 					</div>
 				</div>
 				<div className="mt-4">
-					<DataTable columns={columns} data={data} />
+					<DataTable columns={columns} data={data} emptyComponent={<EmptyState />} />
 				</div>
 			</div>
 		</>
