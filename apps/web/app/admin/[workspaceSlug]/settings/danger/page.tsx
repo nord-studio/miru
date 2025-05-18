@@ -64,7 +64,7 @@ export default async function WorkspaceDangerSettingsPage({
 							<div className="flex flex-col gap-2">
 								<h1 className="text-xl font-bold">Wipe Workspace</h1>
 								<p className="text-sm">
-									Permanently wipe all data except for workspace settings, members and invites.
+									Permanently wipe <b>all</b> data except for workspace settings and members.
 									This action is not reversible, so
 									please continue with caution.
 								</p>

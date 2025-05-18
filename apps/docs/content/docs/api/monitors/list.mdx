@@ -1,0 +1,62 @@
+---
+title: List all Monitors
+description: Use the API to list all the monitors in your workspace.
+---
+
+## Required Permissions
+
+-   `monitors.read`
+
+## Example Request
+
+This request will return a list of all monitors in your workspace.
+
+```bash
+curl -X GET "https://status.example.com/api/v1/monitor" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+### Response
+
+If the API key is valid, hasn't expired, and has the `monitors.read` permission, the API will return a JSON response with a list of monitors.
+
+```json
+{
+	"error": false,
+	"monitors": [
+		{
+			"id": "pAbfD8udMmgzPdXx",
+			"workspaceId": "CiRW68WMhJUnlyeF",
+			"name": "Website",
+			"type": "http",
+			"url": "tygr.dev",
+			"interval": 5,
+			"createdAt": "2025-05-17T22:35:28.804Z",
+			"updatedAt": "2025-05-17T22:35:28.804Z"
+		}
+	]
+}
+```
+
+### Error Response
+
+If there is a problem with the request, the API will return a JSON response with an error message.
+
+```json
+{
+	"error": true,
+	"message": "Missing monitors permissions: read"
+}
+```
+
+## Types
+
+The API will return a JSON response that can include the following values:
+
+### Response
+
+<AutoTypeTable path="./types/monitor.ts" name="RouteWithMultipleMonitors" />
+
+### Monitor
+
+<AutoTypeTable path="./types/monitor.ts" name="Monitor" />

@@ -43,7 +43,7 @@ export default async function DashboardLayout({
 
 	return (
 		<>
-			<div className="flex flex-col w-full min-h-screen px-4 sm:px-6 py-2 sm:py-4 max-w-[1200px] mx-auto">
+			<div className="flex flex-col w-full min-h-screen px-4 sm:px-6 py-4 max-w-[1200px] mx-auto">
 				<Navbar workspaceSlug={workspaceSlug} />
 				<div className="flex flex-col md:flex-row gap-8 h-screen-no-nav w-full py-4">
 					{children}

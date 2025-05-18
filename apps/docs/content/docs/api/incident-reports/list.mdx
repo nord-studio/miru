@@ -1,0 +1,67 @@
+---
+title: "List all Incident Reports"
+description: "Use the API to list all the reports in a specific incident."
+---
+
+## Required Permissions
+
+-   `incidents.read`
+
+## Example Request
+
+This request will list all incident reports for the incident `tygr.dev is down`.
+
+```bash
+curl -X GET "https://status.example.com/api/v1/incident/FnFjhojDxjoK1nWB/report" \
+	-H "x-api-key: YOUR_API_KEY"
+```
+
+### Response
+
+If the API key is valid, hasn't expired, and has the `incidents.read` permission, the API will return a JSON response with a list of all reports for this incident.
+
+```json
+{
+	"error": false,
+	"reports": [
+		{
+			"id": "I9MXOJ6IOF9oRBzj",
+			"message": "We are looking into this now.",
+			"status": "investigating",
+			"timestamp": "2025-05-17T23:27:49.222Z"
+		}
+	]
+}
+```
+
+### Error Response
+
+If there is a problem with the request, the API will return a JSON response with an error message.
+
+```json
+{
+	"error": true,
+	"message": "Missing incidents permissions: read"
+}
+```
+
+## Types
+
+The API will return a JSON response that can include the following values:
+
+### Response
+
+<AutoTypeTable path="./types/incident.ts" name="RouteWithIncidentReports" />
+
+### Incident Report
+
+<AutoTypeTable path="./types/incident.ts" name="IncidentReport" />
+
+### Incident Report Status
+
+| Key           | Value           |
+| ------------- | --------------- |
+| INVESTIGATING | "investigating" |
+| IDENTIFIED    | "identified"    |
+| MONITORING    | "monitoring"    |
+| RESOLVED      | "resolved"      |

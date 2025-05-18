@@ -1,0 +1,78 @@
+---
+title: Update an incident
+description: Use the API to update a incident in your workspace.
+---
+
+## Required Permissions
+
+-   `incidents.update`
+
+## Example Request
+
+This request will update an existing incident, changing the title to `Website is down`.
+
+```bash
+curl -X PATCH "https://status.example.com/api/v1/incident/SbQ0ffRQL9tVVlQP" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "title": "Website is down",
+}'
+```
+
+### Response
+
+If the API key is valid, hasn't expired, and has the `incidents.update` permission, the API will return a JSON response with the details of the updated incident.
+
+```json
+{
+	"error": false,
+	"incident": {
+		"id": "SbQ0ffRQL9tVVlQP",
+		"title": "Website is down",
+		"startedAt": "2025-05-17T22:44:25.816Z",
+		"acknowledgedAt": null,
+		"resolvedAt": null,
+		"autoResolved": false,
+		"monitors": [
+			{
+				"id": "pAbfD8udMmgzPdXx",
+				"workspaceId": "CiRW68WMhJUnlyeF",
+				"name": "tygr.dev Website",
+				"type": "http",
+				"url": "tygr.dev",
+				"interval": 1,
+				"createdAt": "2025-05-17T22:35:28.804Z",
+				"updatedAt": "2025-05-17T22:40:33.093Z"
+			}
+		]
+	}
+}
+```
+
+### Error Response
+
+If there is a problem with the request, the API will return a JSON response with an error message.
+
+```json
+{
+	"error": true,
+	"message": "Missing incidents permissions: update"
+}
+```
+
+## Types
+
+The API will return a JSON response that can include the following values:
+
+### Response
+
+<AutoTypeTable path="./types/incident.ts" name="RouteWithIncidentAndMonitors" />
+
+### IncidentWithMonitors
+
+<AutoTypeTable path="./types/incident.ts" name="IncidentWithMonitors" />
+
+### Monitor
+
+<AutoTypeTable path="./types/monitor.ts" name="Monitor" />

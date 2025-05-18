@@ -102,7 +102,7 @@ export default function MobileNavbar() {
 											</Button>
 										</Drawer.Close>
 									</Link>
-									{/* <Link
+									<Link
 										href={`/admin/${currentWorkspace}/notifications`}
 										passHref
 										className="w-full"
@@ -110,17 +110,16 @@ export default function MobileNavbar() {
 										<Drawer.Close
 											className="w-full"
 											asChild
-										> */}
-									<Button
-										variant="ghost"
-										className="flex flex-row w-full gap-2 justify-start"
-										disabled={true}
-									>
-										<BellIcon className="w-6 h-6" />{" "}
-										Notifications
-									</Button>
-									{/* </Drawer.Close>
-									</Link> */}
+										>
+											<Button
+												variant="ghost"
+												className="flex flex-row w-full gap-2 justify-start"
+											>
+												<BellIcon className="w-6 h-6" />{" "}
+												Notifications
+											</Button>
+										</Drawer.Close>
+									</Link>
 									<Link
 										href={`/admin/${currentWorkspace}/settings`}
 										passHref

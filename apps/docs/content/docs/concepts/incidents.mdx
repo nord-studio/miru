@@ -15,11 +15,18 @@ Incidents can range from minor issues that cause slight performance degradation 
 	This feature is in beta and may be subject to change in the future.
 </Callout>
 
-By default, the monitoring service will automatically create incidents for you when a monitor goes down and resolve them when the monitor comes back online. It will also alert any subscribers and workspace members. You can disable this feature in Miru's environment settings.
+By default, the monitoring service will automatically create incidents for you when a monitor goes down and resolve them when the monitor comes back online. It will also alert any subscribers and workspace members. You can disable this feature in Miru's config file.
 
 ### Disable Auto Incidents
 
-To disable auto incidents, head over to where your environment variables are stored and change the `AUTO_INCIDENTS` variables to `false`. This will prevent Miru from automatically creating incidents when a monitor goes down.
+To disable auto incidents, navigate to your Miru config file and under the `[incidents.auto]` table, set `enabled` to `false`:
+
+```toml
+[incidents.auto]
+enabled = false
+```
+
+This will prevent Miru from automatically creating incidents when a monitor goes down. You can learn more about the config file under the [Configuration](/docs/configuration) page.
 
 ## Creating an Incident
 

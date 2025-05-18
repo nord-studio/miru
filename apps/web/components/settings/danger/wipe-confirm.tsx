@@ -95,14 +95,24 @@ export function WipeWorkspaceConfirm({
 							<DialogHeader className="px-6 pt-6">
 								<DialogTitle>Wipe Workspace?</DialogTitle>
 								<DialogDescription asChild>
-									<span>
-										Miru will <b>permanently</b> delete all data except for workspace settings, members and invites.
-									</span>
+									<div className="flex flex-col gap-4">
+										<span>
+											Miru will <b>permanently</b> delete the following data from this workspace:
+										</span>
+										<ul>
+											<li>&bull; Monitors</li>
+											<li>&bull; Incidents</li>
+											<li>&bull; Status Pages</li>
+											<li>&bull; Notification Channels</li>
+											<li>&bull; API Keys</li>
+											<li>&bull; Workspace Invites</li>
+										</ul>
+									</div>
 								</DialogDescription>
 							</DialogHeader>
 							<div className="flex flex-col items-start gap-4 px-6 pb-2">
 								<div className="flex w-full flex-col gap-4">
-									<Label htmlFor="name" className="text-sm text-neutral-500 gap-1">
+									<Label htmlFor="name" className="text-sm text-neutral-500 dark:text-neutral-400 gap-1">
 										To confirm wipe, type your workspace name &quot;{workspace.name}&quot; below:
 									</Label>
 									<Input
@@ -139,16 +149,25 @@ export function WipeWorkspaceConfirm({
 					<DrawerContent>
 						<DrawerHeader className="p-6 text-left">
 							<DrawerTitle>Wipe Workspace?</DrawerTitle>
-							<DrawerDescription>
-								<span>
-									Miru will <b>permanently</b> delete all data associated
-									with your workspace.
-								</span>
+							<DrawerDescription asChild>
+								<div className="flex flex-col gap-4">
+									<span>
+										Miru will <b>permanently</b> delete the following data from this workspace:
+									</span>
+									<ul>
+										<li>&bull; Monitors</li>
+										<li>&bull; Incidents</li>
+										<li>&bull; Status Pages</li>
+										<li>&bull; Notification Channels</li>
+										<li>&bull; API Keys</li>
+										<li>&bull; Workspace Invites</li>
+									</ul>
+								</div>
 							</DrawerDescription>
 						</DrawerHeader>
 						<div className="flex flex-col items-start gap-4 px-6 pb-6">
 							<div className="flex w-full flex-col gap-3">
-								<Label htmlFor="name" className="text-sm text-neutral-500 gap-1">
+								<Label htmlFor="name" className="text-sm text-neutral-500 dark:text-neutral-400 gap-1">
 									To confirm deletion, type your workspace name <b>&quot;{workspace.name}&quot;</b> below:
 								</Label>
 								<Input

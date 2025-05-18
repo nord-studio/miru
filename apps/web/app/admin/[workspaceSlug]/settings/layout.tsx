@@ -22,7 +22,7 @@ export default async function SettingsLayout({
 
 	return (
 		<>
-			<div className="flex flex-col gap-4 sm:gap-6 md:gap-8 sm:flex-row mt-4 sm:mt-0 w-full">
+			<div className="flex flex-col gap-4 sm:gap-6 md:gap-8 sm:flex-row mt-0 w-full">
 				<SettingsLinks currentMember={currentMember} />
 				<hr className="w-full border border-black/10 dark:border-white/10 sm:hidden" />
 				<div className="w-full">{children}</div>

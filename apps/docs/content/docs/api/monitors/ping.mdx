@@ -3,6 +3,47 @@ title: Ping a Monitor
 description: Use the API to ping a monitor in your workspace.
 ---
 
+Pinging a monitor allows you to manually check if the monitor is accessable or not. The result of the ping is stored in the monitors ping history. If you want to test a monitor without storing the ping result, see [testing a monitor](/docs/api/monitors/test).
+
 ## Required Permissions
 
 -   `monitors.read`
+
+## Example Request
+
+If the provided ID is valid, this request will return the details of the monitor.
+
+```bash
+curl -X GET "https://status.example.com/api/v1/monitor/pAbfD8udMmgzPdXx/ping" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+### Response
+
+If the API key is valid, hasn't expired, and has the `monitors.read` permission, the API will return a JSON response with the details of the monitor.
+
+```json
+{
+	"error": false,
+	"message": "Monitor pinged successfully"
+}
+```
+
+### Error Response
+
+If there is a problem with the request, the API will return a JSON response with an error message.
+
+```json
+{
+	"error": true,
+	"message": "error sending request for url (http://tygr.dev/)"
+}
+```
+
+## Types
+
+The API will return a JSON response that can include the following values:
+
+### Response
+
+<AutoTypeTable path="./types/response.ts" name="BaseResponse" />

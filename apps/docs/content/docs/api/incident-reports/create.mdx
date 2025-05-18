@@ -1,0 +1,71 @@
+---
+title: Create a new Incident Report
+description: Use the API to create a new report for an existing incident.
+---
+
+## Required Permissions
+
+-   `incidents.create`
+
+## Example Request
+
+This request will create a new incident report with the message "We have found the issue and are working on a fix." and with status `identified`. The report will be associated with the incident `tygr.dev is down`.
+
+```bash
+curl -X POST "https://status.example.com/api/v1/incident/FnFjhojDxjoK1nWB/report" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "message": "We have found the issue and are working on a fix.",
+  "status": "identified"
+}'
+```
+
+### Response
+
+If the API key is valid, hasn't expired, and has the `incidents.create` permission, the API will return a JSON response with the details of the created incident and report.
+
+```json
+{
+	"error": false,
+	"report": {
+		"id": "TYncABYRrec4znlG",
+		"incidentId": "FnFjhojDxjoK1nWB",
+		"message": "We have found the issue and are working on a fix.",
+		"status": "identified",
+		"timestamp": "2025-05-18T01:00:24.545Z"
+	}
+}
+```
+
+### Error Response
+
+If there is a problem with the request, the API will return a JSON response with an error message.
+
+```json
+{
+	"error": true,
+	"message": "Missing incidents permissions: create"
+}
+```
+
+## Types
+
+The API will return a JSON response that can include the following values:
+
+### Response
+
+<AutoTypeTable path="./types/incident.ts" name="RouteWithIncidentReport" />
+
+### Incident Report
+
+<AutoTypeTable path="./types/incident.ts" name="IncidentReport" />
+
+### Incident Report Status
+
+| Key           | Value           |
+| ------------- | --------------- |
+| INVESTIGATING | "investigating" |
+| IDENTIFIED    | "identified"    |
+| MONITORING    | "monitoring"    |
+| RESOLVED      | "resolved"      |

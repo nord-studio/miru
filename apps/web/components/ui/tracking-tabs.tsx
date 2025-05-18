@@ -8,6 +8,7 @@ export default function TrackingTabs({ links, bottomBorder = false }: {
   links: {
     label: string,
     href: string,
+    icon: React.ReactNode
   }[],
   bottomBorder?: boolean
 }) {
@@ -125,7 +126,8 @@ export default function TrackingTabs({ links, bottomBorder = false }: {
             onMouseEnter={() => handleMouseEnter(index)}
             onClick={() => setActiveIndex(index)}
           >
-            <div className="text-sm font-display font-medium leading-5 whitespace-nowrap flex items-center justify-center h-full">
+            <div className="text-sm font-display font-medium leading-5 whitespace-nowrap flex flex-row gap-2 items-center justify-center h-full">
+              {link.icon}
               {link.label}
             </div>
           </Link>

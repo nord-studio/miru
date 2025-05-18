@@ -1,0 +1,53 @@
+---
+title: Delete an Incident Report
+description: Use the API to delete a report for an existing incident.
+---
+
+## Required Permissions
+
+-   `incidents.delete`
+
+## A quick word
+
+Miru allows you to edit or delete incident reports, however, it is extremely important to note that this should be done with caution. Editing or deleting reports can lead to confusion and misinformation, so it is recommended to only do so if absolutely necessary.
+
+## Example Request
+
+This request will delete an existing incident report.
+
+```bash
+curl \
+  -X DELETE \
+  "https://status.example.com/api/v1/incident/FnFjhojDxjoK1nWB/report/gdGKS29ZhFprMvvM" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+### Response
+
+If the API key is valid, hasn't expired, and has the `incidents.delete` permission, the API will return a JSON response with the following structure:
+
+```json
+{
+	"error": false,
+	"message": "Incident report deleted successfully"
+}
+```
+
+### Error Response
+
+If there is a problem with the request, the API will return a JSON response with an error message.
+
+```json
+{
+	"error": true,
+	"message": "Missing incidents permissions: update"
+}
+```
+
+## Types
+
+The API will return a JSON response that can include the following values:
+
+### Response
+
+<AutoTypeTable path="./types/response.ts" name="BaseResponse" />

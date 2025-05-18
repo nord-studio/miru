@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 import {
@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
-import { Plus, PlusIcon } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createMonitor } from "@/components/monitors/actions";
@@ -45,9 +45,12 @@ export function CreateMonitorButton() {
 	return (
 		<>
 			<CreateMonitor open={open} setOpen={setOpen} />
-			<Button onClick={() => setOpen(!open)}>
+			<Button onClick={() => setOpen(!open)} className="hidden xs:flex">
 				<Plus />
 				Create Monitor
+			</Button>
+			<Button size="icon" onClick={() => setOpen(!open)} className="flex xs:hidden">
+				<Plus />
 			</Button>
 		</>
 	)

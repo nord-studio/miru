@@ -553,7 +553,7 @@ export default function NewStatusPageForm({ monitors, workspace, config }: { mon
 								</div>
 								<div className="flex flex-row gap-4 items-center w-full">
 									{logo ? (
-										<Image src={`/api/assets/${logo}`} alt="Logo" width={128} height={128} />
+										<Image src={`/api/v1/assets/${logo}`} alt="Logo" width={128} height={128} />
 									) : (
 										<div className="max-w-32 max-h-32 w-32 h-32 border rounded-md gap-2 text-center flex flex-col items-center justify-center">
 											<FileQuestion className="text-neutral-500 dark:text-neutral-400" />
@@ -594,7 +594,7 @@ export default function NewStatusPageForm({ monitors, workspace, config }: { mon
 								</div>
 								<div className="flex flex-row gap-4 items-center w-full">
 									{darkLogo ? (
-										<Image src={`/api/assets/${darkLogo}`} alt="Logo" width={128} height={128} />
+										<Image src={`/api/v1/assets/${darkLogo}`} alt="Logo" width={128} height={128} />
 									) : (
 										<div className="max-w-32 max-h-32 w-32 h-32 border rounded-md gap-2 text-center flex flex-col items-center justify-center">
 											<FileQuestion className="text-neutral-500 dark:text-neutral-400" />
@@ -629,7 +629,7 @@ export default function NewStatusPageForm({ monitors, workspace, config }: { mon
 								<div className="flex flex-row gap-4 items-center w-full">
 									{favicon ? (
 										<div className="max-w-32 max-h-32 size-32 border rounded-md gap-2 text-center flex flex-col items-center justify-center">
-											<Image src={`/api/assets/${favicon}`} alt="Favicon" width={32} height={32} />
+											<Image src={`/api/v1/assets/${favicon}`} alt="Favicon" width={32} height={32} />
 										</div>
 									) : (
 										<div className="max-w-32 max-h-32 w-32 h-32 border rounded-md gap-2 text-center flex flex-col items-center justify-center">

@@ -1,8 +1,60 @@
 ---
-title: Read Monitor Info
-description: Use the API to read a monitor's info in your workspace.
+title: Get a Monitor
+description: Use the API to get information about a monitor in your workspace.
 ---
 
 ## Required Permissions
 
 -   `monitors.read`
+
+## Example Request
+
+If the provided ID is valid, this request will return the details of the monitor.
+
+```bash
+curl -X GET "https://status.example.com/api/v1/monitor/3lcJDQOLjn2Gpzdq" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+### Response
+
+If the API key is valid, hasn't expired, and has the `monitors.read` permission, the API will return a JSON response with the details of the monitor.
+
+```json
+{
+	"error": false,
+	"monitor": {
+		"id": "3lcJDQOLjn2Gpzdq",
+		"workspaceId": "CiRW68WMhJUnlyeF",
+		"name": "Website",
+		"type": "http",
+		"url": "tygr.dev",
+		"interval": 5,
+		"createdAt": "2025-05-17T18:05:40.285Z",
+		"updatedAt": "2025-05-17T18:05:40.285Z"
+	}
+}
+```
+
+### Error Response
+
+If there is a problem with the request, the API will return a JSON response with an error message.
+
+```json
+{
+	"error": true,
+	"message": "Missing monitors permissions: read"
+}
+```
+
+## Types
+
+The API will return a JSON response that can include the following values:
+
+### Response
+
+<AutoTypeTable path="./types/monitor.ts" name="RouteWithMonitor" />
+
+### Monitor
+
+<AutoTypeTable path="./types/monitor.ts" name="Monitor" />

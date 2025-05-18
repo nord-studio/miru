@@ -11,7 +11,7 @@ import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { z } from "zod";
 import React, { cache } from "react";
 import { RankedRoles, Workspace } from "@/types/workspace";
-import { monitors, statusPages, workspaceInvites, workspaceMembers, workspaces } from "@/lib/db/schema";
+import { apikey, monitors, notifications, statusPages, workspaceInvites, workspaceMembers, workspaces } from "@/lib/db/schema";
 import { generateId } from "@/lib/utils";
 import db from "@/lib/db";
 import { flattenValidationErrors } from "next-safe-action";
@@ -156,7 +156,7 @@ export const deleteWorkspace = actionClient.schema(z.object({
 	});
 
 	if (rawWrkspcs.length === 1) {
-		return { error: true, message: "You cannot delete the last workspace" };
+		return { error: true, message: "You cannot delete the last workspace. Try wiping your workspace instead." };
 	}
 
 	const res = await db.delete(workspaces).where(eq(workspaces.id, id)).returning();
@@ -185,7 +185,9 @@ export const wipeWorkspace = actionClient.schema(z.object({
 	// Delete all data related to the workspace
 	await db.delete(monitors).where(eq(monitors.workspaceId, id));
 	await db.delete(statusPages).where(eq(statusPages.workspaceId, id));
-	// TODO: Delete notification channels when implemented
+	await db.delete(notifications).where(eq(notifications.workspaceId, id));
+	await db.delete(apikey).where(eq(apikey.workspaceId, id));
+	await db.delete(workspaceInvites).where(eq(workspaceInvites.workspaceId, id));
 
 	return { error: false, message: "Workspace wiped successfully" };
 });

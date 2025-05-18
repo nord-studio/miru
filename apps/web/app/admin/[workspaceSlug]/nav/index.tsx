@@ -6,6 +6,7 @@ import { WorkspaceSwitcher } from "@/components/workspace/switcher";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import TrackingTabs from "@/components/ui/tracking-tabs";
+import { Bell, Cog, File, Monitor, TriangleAlert } from "lucide-react";
 
 export default async function Navbar({ workspaceSlug }: { workspaceSlug: string }) {
 	const session = await auth.api.getSession({
@@ -23,22 +24,27 @@ export default async function Navbar({ workspaceSlug }: { workspaceSlug: string 
 		{
 			label: "Monitors",
 			href: `/admin/${workspaceSlug}/monitors`,
+			icon: <Monitor className="size-4" />
 		},
 		{
 			label: "Incidents",
 			href: `/admin/${workspaceSlug}/incidents`,
+			icon: <TriangleAlert className="size-4" />
 		},
 		{
 			label: "Status Pages",
 			href: `/admin/${workspaceSlug}/status-pages`,
+			icon: <File className="size-4" />
 		},
 		{
 			label: "Notifications",
 			href: `/admin/${workspaceSlug}/notifications`,
+			icon: <Bell className="size-4" />
 		},
 		{
 			label: "Settings",
 			href: `/admin/${workspaceSlug}/settings`,
+			icon: <Cog className="size-4" />
 		}
 	];
 

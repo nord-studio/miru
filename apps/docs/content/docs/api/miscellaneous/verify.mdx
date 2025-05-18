@@ -1,0 +1,42 @@
+---
+title: "Verify an API Key"
+description: "Double check if your API key is valid"
+---
+
+## Request
+
+Make sure to include the `x-api-key` header with your API key in the request.
+
+```bash
+curl -X GET "https://status.example.com/api/v1/verify" -H "x-api-key: YOUR_API_KEY"
+```
+
+### Response
+
+If the API key is valid and hasn't expired, the API will return a JSON response with a message indicating that the API key is valid.
+
+```json
+{
+	"error": false,
+	"message": "API key is valid"
+}
+```
+
+### Error Response
+
+If there is a problem with the key, the API will return a JSON response with an error message.
+
+```json
+{
+	"error": true,
+	"message": "API key not found"
+}
+```
+
+## Types
+
+The API will return a JSON response that can include the following values:
+
+### Response
+
+<AutoTypeTable path="./types/response.ts" name="BaseResponse" />

@@ -55,9 +55,12 @@ export default async function StatusPagesIndexPage({
 					<div className="flex flex-row gap-2 items-center">
 						{RankedRoles[currentMember.role] >= RankedRoles.admin && (
 							<Link href={`/admin/${workspaceSlug}/status-pages/new`}>
-								<Button>
+								<Button className="hidden xs:flex">
 									<PlusIcon />
-									<span className="hidden sm:block">Create Page</span>
+									Create Page
+								</Button>
+								<Button size="icon" className="flex xs:hidden">
+									<PlusIcon />
 								</Button>
 							</Link>
 						)}

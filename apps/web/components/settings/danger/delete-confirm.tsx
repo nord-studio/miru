@@ -102,7 +102,7 @@ export function DeleteWorkspaceConfirm({
 							</DialogHeader>
 							<div className="flex flex-col items-start gap-4 px-6 pb-2">
 								<div className="flex w-full flex-col gap-4">
-									<Label htmlFor="name" className="text-sm text-neutral-500 gap-1 ">
+									<Label htmlFor="name" className="text-sm text-neutral-500 dark:text-neutral-400 gap-1 ">
 										To confirm deletion, type your workspace name &quot;{workspace.name}&quot; below:
 									</Label>
 									<Input
@@ -147,7 +147,7 @@ export function DeleteWorkspaceConfirm({
 						</DrawerHeader>
 						<div className="flex flex-col items-start gap-4 px-6 pb-6">
 							<div className="flex w-full flex-col gap-3">
-								<Label htmlFor="name" className="text-sm text-neutral-500 gap-1">
+								<Label htmlFor="name" className="text-sm text-neutral-500 dark:text-neutral-400 gap-1">
 									To confirm deletion, type your workspace name <b>&quot;{workspace.name}&quot;</b> below:
 								</Label>
 								<Input

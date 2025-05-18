@@ -50,19 +50,27 @@ export function CreateChannelButton({ monitors, workspace }: { monitors: Monitor
 
 	if (!mounted) {
 		return (
-			<Button>
-				<PlusIcon />
-				Create Channel
-			</Button>
+			<>
+				<Button className="hidden sm:flex">
+					<PlusIcon />
+					Create Channel
+				</Button>
+				<Button size="icon" className="flex sm:hidden">
+					<PlusIcon />
+				</Button>
+			</>
 		);
 	}
 
 	return (
 		<>
 			<CreateChannel open={open} setOpen={setOpen} monitors={monitors} workspace={workspace} />
-			<Button onClick={() => setOpen(!open)}>
+			<Button onClick={() => setOpen(!open)} className="hidden sm:flex">
 				<PlusIcon />
 				Create Channel
+			</Button>
+			<Button size="icon" onClick={() => setOpen(!open)} className="flex sm:hidden">
+				<PlusIcon />
 			</Button>
 		</>
 	)
@@ -295,6 +303,21 @@ export default function CreateChannel({ open, setOpen, monitors, workspace }: { 
 						<form onSubmit={onSubmit}>
 							<div className="flex flex-col px-6 pb-4 gap-4">
 								<div className="flex flex-col gap-2 items-start w-full">
+									<Label>Name</Label>
+									<Input
+										value={name}
+										onChange={(e) =>
+											setName(e.target.value)
+										}
+										placeholder="Discord Server"
+										disabled={loading}
+									/>
+								</div>
+								<div className="flex flex-col gap-2 items-start w-full">
+									<Label>Monitors</Label>
+									<MonitorSelection monitors={monitors} value={selectedMonitors} setValue={setSelectedMonitors} min={1} />
+								</div>
+								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Provider</Label>
 									<Select
 										value={provider}
@@ -306,13 +329,13 @@ export default function CreateChannel({ open, setOpen, monitors, workspace }: { 
 										</SelectTrigger>
 										<SelectContent>
 											<SelectItem value="email">
-												Email
+												<Mail /> Email
 											</SelectItem>
 											<SelectItem value="discord">
-												Discord
+												<Icons.Discord /> Discord
 											</SelectItem>
 											<SelectItem value="slack">
-												Slack
+												<Icons.Slack /> Slack
 											</SelectItem>
 										</SelectContent>
 									</Select>
@@ -330,26 +353,57 @@ export default function CreateChannel({ open, setOpen, monitors, workspace }: { 
 										/>
 									</div>
 								)}
+								{provider === "discord" && (
+									<div className="flex flex-col gap-2 items-start w-full">
+										<Label>Webhook URL</Label>
+										<div className="flex flex-row gap-2 items-center w-full">
+											<Input
+												placeholder="https://discord.com/api/webhooks/..."
+												disabled={loading}
+												value={url}
+												onChange={(e) =>
+													setUrl(e.target.value)
+												}
+											/>
+											<Button variant="outline" type="button" disabled={loading} onClick={async () => await testUrl()}>
+												Test
+											</Button>
+										</div>
+									</div>
+								)}
+								{provider === "slack" && (
+									<div className="flex flex-col gap-2 items-start w-full">
+										<Label>Webhook URL</Label>
+										<div className="flex flex-row gap-2 items-center w-full">
+											<Input
+												placeholder="https://hooks.slack.com/services/..."
+												disabled={loading}
+												value={url}
+												onChange={(e) =>
+													setUrl(e.target.value)
+												}
+											/>
+											<Button variant="outline" type="button" disabled={loading} onClick={async () => await testUrl()}>
+												Test
+											</Button>
+										</div>
+									</div>
+								)}
 							</div>
-							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
-								<span className="text-neutral-400 dark:text-neutral-600 text-sm">
-									You can edit this later.
-								</span>
-								<div className="flex flex-row gap-2 items-center">
-									<DrawerClose asChild>
-										<Button
-											variant="outline"
-											type="button"
-											disabled={loading}
-										>
-											Cancel
-										</Button>
-									</DrawerClose>
-									<Button disabled={loading} type="submit">
-										{loading ? "Creating" : "Create"}
-										{loading && <Spinner />}
+							<div className="flex flex-row items-center justify-between gap-4 border-t rounded-b-lg bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
+								<DrawerClose asChild>
+									<Button
+										variant="outline"
+										type="button"
+										disabled={loading}
+									>
+										Cancel
 									</Button>
-								</div>
+								</DrawerClose>
+								<Button disabled={loading} type="submit" className="flex flex-row gap-2 items-center">
+									{loading ? "Creating" : "Create"}
+									{loading && <Spinner />}
+								</Button>
 							</div>
 						</form>
 					</DrawerContent>

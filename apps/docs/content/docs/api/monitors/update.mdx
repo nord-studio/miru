@@ -6,3 +6,60 @@ description: Use the API to update a monitor in your workspace.
 ## Required Permissions
 
 -   `monitors.update`
+
+## Example Request
+
+This request will update an existing monitor, changing its name to `tygr.dev Website` and its interval from `5` to `1` minute.
+
+```bash
+curl -X PATCH "https://status.example.com/api/v1/monitor/pAbfD8udMmgzPdXx" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "name": "tygr.dev Website",
+  "interval": 1
+}'
+```
+
+### Response
+
+If the API key is valid, hasn't expired, and has the `monitors.update` permission, the API will return a JSON response with the details of the updated monitor.
+
+```json
+{
+	"error": false,
+	"monitor": {
+		"id": "pAbfD8udMmgzPdXx",
+		"workspaceId": "CiRW68WMhJUnlyeF",
+		"name": "tygr.dev Website",
+		"type": "http",
+		"url": "tygr.dev",
+		"interval": 1,
+		"createdAt": "2025-05-17T22:35:28.804Z",
+		"updatedAt": "2025-05-17T22:39:48.591Z"
+	}
+}
+```
+
+### Error Response
+
+If there is a problem with the request, the API will return a JSON response with an error message.
+
+```json
+{
+	"error": true,
+	"message": "Missing monitors permissions: update"
+}
+```
+
+## Types
+
+The API will return a JSON response that can include the following values:
+
+### Response
+
+<AutoTypeTable path="./types/monitor.ts" name="RouteWithMonitor" />
+
+### Monitor
+
+<AutoTypeTable path="./types/monitor.ts" name="Monitor" />

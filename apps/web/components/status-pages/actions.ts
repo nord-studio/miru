@@ -8,6 +8,7 @@ import { statusPageMonitors, statusPages } from "@/lib/db/schema/status-pages";
 import minio, { publicBucketExists } from "@/lib/minio";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
+import { StatusPage, StatusPageMonitor } from "@/types/status-pages";
 import { and, eq } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
@@ -22,7 +23,7 @@ export const createStatusPage = actionClient.schema(z.object({
 	enabled: z.boolean().default(true),
 	root: z.boolean().default(false),
 	domain: z.string().optional(),
-	monitorIds: z.array(z.string()),
+	monitorIds: z.array(z.string()).min(1, "At least one monitor is required"),
 	description: z.string().optional(),
 	logo: z.string().optional(),
 	darkLogo: z.string().optional(),
@@ -33,6 +34,7 @@ export const createStatusPage = actionClient.schema(z.object({
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
 	error: z.boolean(),
 	message: z.string(),
+	page: z.custom<StatusPage>().optional(),
 })).action(async ({ parsedInput: {
 	id,
 	monitorIds,
@@ -109,7 +111,7 @@ export const createStatusPage = actionClient.schema(z.object({
 	monitorIds.forEach(async (id) => {
 		// check if monitor exists and belongs to the workspace
 		const monitor = await db.query.monitors.findMany({
-			where: () => eq(monitors.id, id)
+			where: () => and(eq(monitors.id, id), eq(monitors.workspaceId, workspaceId))
 		});
 
 		if (!monitor) {
@@ -124,8 +126,24 @@ export const createStatusPage = actionClient.schema(z.object({
 		});
 	});
 
+	const spm = await db.query.statusPageMonitors.findMany({
+		where: () => eq(statusPageMonitors.statusPageId, statusPage.id),
+		with: {
+			monitor: true,
+		}
+	});
+
 	revalidatePath("/admin/[workspaceSlug]/status-pages", "layout");
-	return { error: false, message: "Status page created" };
+	return {
+		error: false, message: "Successfully created status page", page: {
+			...statusPage,
+			statusPageMonitors: spm.map((spm) => ({
+				id: spm.id,
+				order: spm.order,
+				monitor: spm.monitor
+			}))
+		}
+	};
 })
 
 export const editStatusPage = actionClient.schema(z.object({
@@ -245,7 +263,7 @@ export const deleteStatusPage = actionClient.schema(z.object({
 	await db.delete(statusPages).where(eq(statusPages.id, id)).execute();
 
 	revalidatePath("/admin/[workspaceSlug]/status-pages", "layout");
-	return { error: false, message: "Status page deleted" };
+	return { error: false, message: "Successfully deleted status page" };
 });
 
 export const uploadAsset = actionClient.schema(zfd.formData({

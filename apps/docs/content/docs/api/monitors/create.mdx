@@ -1,5 +1,5 @@
 ---
-title: Create New Monitor
+title: Create a new Monitor
 description: Use the API to create a new monitor in your workspace.
 ---
 
@@ -7,10 +7,62 @@ description: Use the API to create a new monitor in your workspace.
 
 -   `monitors.create`
 
-## Return Values
+## Example Request
+
+This request will create a new monitor called `Website` that pings the URL `tygr.dev` using the `HTTP` protocol every 5 minutes.
+Note that the monitoring service will ping using HTTPS first and then HTTP if HTTPS fails.
+
+```bash
+curl -X POST "https://status.example.com/api/v1/monitor" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "name": "Website",
+  "type": "http",
+  "url": "tygr.dev",
+  "interval": 5
+}'
+```
+
+### Response
+
+If the API key is valid, hasn't expired, and has the `monitors.create` permission, the API will return a JSON response with the details of the created monitor.
+
+```json
+{
+	"error": false,
+	"monitor": {
+		"id": "pAbfD8udMmgzPdXx",
+		"workspaceId": "CiRW68WMhJUnlyeF",
+		"name": "Website",
+		"type": "http",
+		"url": "tygr.dev",
+		"interval": 5,
+		"createdAt": "2025-05-17T22:35:28.804Z",
+		"updatedAt": "2025-05-17T22:35:28.804Z"
+	}
+}
+```
+
+### Error Response
+
+If there is a problem with the request, the API will return a JSON response with an error message.
+
+```json
+{
+	"error": true,
+	"message": "Missing monitors permissions: create"
+}
+```
+
+## Types
 
 The API will return a JSON response that can include the following values:
 
--   `error`: A boolean that indicates whether the request was successful or not.
--   `message`: If error is true, this will contain a message describing the error.
--   `monitor`: The monitor object that was created. You cna find their values in the table below.
+### Response
+
+<AutoTypeTable path="./types/monitor.ts" name="RouteWithMonitor" />
+
+### Monitor
+
+<AutoTypeTable path="./types/monitor.ts" name="Monitor" />

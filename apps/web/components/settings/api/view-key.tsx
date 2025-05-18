@@ -116,12 +116,12 @@ export default function ViewApiKey({ apiKey }: { apiKey: ApiKey }) {
 								Please find the permissions the API key <b>{apiKey.name}</b> has access to below.
 							</DrawerDescription>
 						</DrawerHeader>
-						<div className="flex flex-col px-6 pb-4 gap-5">
+						<div className="flex flex-col px-4 pt-2 pb-6 gap-5">
 							<div className="flex flex-col gap-2 items-start w-full">
 								<Label>Monitor Permissions</Label>
 								<MultiSelect
 									options={permissionList}
-									value={apiKey.permissions.monitors}
+									defaultValue={apiKey.permissions.monitors}
 									onValueChange={() => { }}
 									disabled
 								/>
@@ -130,7 +130,7 @@ export default function ViewApiKey({ apiKey }: { apiKey: ApiKey }) {
 								<Label>Incident Permissions</Label>
 								<MultiSelect
 									options={permissionList}
-									value={apiKey.permissions.incidents}
+									defaultValue={apiKey.permissions.incidents}
 									onValueChange={() => { }}
 									disabled
 								/>
@@ -139,7 +139,7 @@ export default function ViewApiKey({ apiKey }: { apiKey: ApiKey }) {
 								<Label>Status Page Permissions</Label>
 								<MultiSelect
 									options={permissionList}
-									value={apiKey.permissions.pages}
+									defaultValue={apiKey.permissions.pages}
 									onValueChange={() => { }}
 									disabled
 								/>

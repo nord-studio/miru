@@ -1,0 +1,85 @@
+---
+title: Create a new Incident
+description: Use the API to create a new incident in your workspace.
+---
+
+## Required Permissions
+
+-   `incidents.create`
+
+## Example Request
+
+This request will create a new incident with the title `tygr.dev is down`, and a incident report with the message `We are looking into this now.` and with status `investigating`. The incident will be associated with the monitor `tygr.dev`.
+
+```bash
+curl -X POST "https://status.example.com/api/v1/incident" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "monitorIds": ["pAbfD8udMmgzPdXx"],
+  "title": "tygr.dev is down",
+  "message": "We are looking into this now.",
+  "status": "investigating"
+}'
+```
+
+### Response
+
+If the API key is valid, hasn't expired, and has the `incidents.create` permission, the API will return a JSON response with the details of the created incident and report.
+
+```json
+{
+	"error": false,
+	"incident": {
+		"id": "SbQ0ffRQL9tVVlQP",
+		"title": "tygr.dev is down",
+		"startedAt": "2025-05-17T22:44:25.816Z",
+		"acknowledgedAt": null,
+		"resolvedAt": null,
+		"autoResolved": false
+	},
+	"report": {
+		"id": "NQ8wd8pnuSaEzLns",
+		"incidentId": "SbQ0ffRQL9tVVlQP",
+		"message": "We are looking into this now.",
+		"status": "investigating",
+		"timestamp": "2025-05-17T22:44:25.834Z"
+	}
+}
+```
+
+### Error Response
+
+If there is a problem with the request, the API will return a JSON response with an error message.
+
+```json
+{
+	"error": true,
+	"message": "Missing incidents permissions: create"
+}
+```
+
+## Types
+
+The API will return a JSON response that can include the following values:
+
+### Response
+
+<AutoTypeTable path="./types/incident.ts" name="RouteWithIncidentAndReport" />
+
+### Incident
+
+<AutoTypeTable path="./types/incident.ts" name="Incident" />
+
+### Incident Report
+
+<AutoTypeTable path="./types/incident.ts" name="IncidentReport" />
+
+### Incident Report Status
+
+| Key           | Value           |
+| ------------- | --------------- |
+| INVESTIGATING | "investigating" |
+| IDENTIFIED    | "identified"    |
+| MONITORING    | "monitoring"    |
+| RESOLVED      | "resolved"      |

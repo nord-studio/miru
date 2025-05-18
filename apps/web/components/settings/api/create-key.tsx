@@ -39,7 +39,7 @@ function ApiKeyMessage({ open, setOpen, apiKey }: { open: boolean, setOpen: (ope
 							</div>
 							<span className="text-sm text-neutral-500 dark:text-neutral-400 items-center">
 								To learn how to use the Miru API, please take a look at our {" "}
-								<Link href="https://miru.nordstud.io/docs/api/" target="_blank">
+								<Link href="https://miru.nordstud.io/docs/api/getting-started" target="_blank">
 									<span className="text-blue-400 dark:text-blue-500">
 										documentation
 									</span>

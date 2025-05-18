@@ -24,7 +24,7 @@ export default function PandaStatusPageShell({ page, header, children }: { page:
 							<div className={cn("hidden", !isLight() && "block")}>
 								{page.darkLogo ? (
 									<Image
-										src={`/api/assets/${page.darkLogo}`}
+										src={`/api/v1/assets/${page.darkLogo}`}
 										alt="Dark Logo"
 										width={64}
 										height={64}
@@ -40,7 +40,7 @@ export default function PandaStatusPageShell({ page, header, children }: { page:
 							<div className={cn("hidden", isLight() && "block")}>
 								{page.logo ? (
 									<Image
-										src={`/api/assets/${page.logo}`}
+										src={`/api/v1/assets/${page.logo}`}
 										alt="Logo"
 										width={64}
 										height={64}

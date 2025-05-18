@@ -19,17 +19,23 @@ as to not expose any sensitive data.
 To create an API key, navigate to **Settings** > **API** in the admin dashboard. Bare in mind that an API key can only access data inside the workspace, which means that
 you need to create an API key for each workspace you want to access.
 
+## API versioning
+
+The Miru API is versioned and will only keep the previous version from it's latest release. This means that if the latest version was `v3`, `v1` would be removed but `v2` would still be available up until the next major API release.
+
+The current latest version is `v1`, which is the only version available at the moment.
+
 ## Handling Errors
 
 Miru's API uses standard HTTP status codes to provide context about the success of a failure. It also provides a JSON response with a `error` boolean that indicates
-whether the request was successful or not. Since the API is still in development, sometimes the `error` field may not be present in the response so it's recommend checking the status code first.
+whether the request was successful or not. It's recommended to prioritize the HTTP status code over the `error` boolean, as it provides more context about the error.
 
 ## An example
 
 Here's an example of how to use the API to fetch information about a monitor:
 
 ```bash
-curl -X GET 'https://status.example.com/api/monitor/<monitor_id>' -H "x-api-key: <api_key>"
+curl -X GET 'https://status.example.com/api/v1/monitor/<monitor_id>' -H "x-api-key: <api_key>"
 ```
 
 If the API key is valid, hasn't expired and has the `monitor.read` permission, this will return a JSON response with the monitor's information.
@@ -58,3 +64,36 @@ If the API key is invalid, expired or doesn't have the `monitor.read` permission
 	"message": "Invalid API key"
 }
 ```
+
+## Available areas
+
+Currently, there are four areas that you can interact with via the API:
+
+import { Code, Monitor, TriangleAlert, File } from "lucide-react";
+
+<Cards>
+	<Card
+		icon={<Monitor />}
+		title="Monitors"
+		description="Manage monitors in your workspace via the API."
+		href="/docs/api/monitors/create"
+	/>
+	<Card
+		icon={<TriangleAlert />}
+		title="Incidents"
+		description="Manage incidents and reports in your workspace via the API."
+		href="/docs/api/incidents/create"
+	/>
+	<Card
+		icon={<File />}
+		title="Status Pages"
+		description="Manage status pages in your workspace via the API."
+		href="/docs/api/pages/create"
+	/>
+	<Card
+		icon={<Code />}
+		title="Miscellaneous"
+		description="Any other API endpoints that don't fit into the above categories."
+		href="/docs/api/miscellaneous/verify"
+	/>
+</Cards>

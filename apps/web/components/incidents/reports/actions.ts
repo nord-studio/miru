@@ -56,6 +56,7 @@ export const createIncidentReport = actionClient
 		z.object({
 			error: z.boolean(),
 			message: z.string(),
+			report: z.custom<IncidentReport>().nullish(),
 		})
 	)
 	.action(async ({ parsedInput: { incidentId, status, message } }) => {
@@ -82,14 +83,21 @@ export const createIncidentReport = actionClient
 			incidentId,
 			status: sta,
 			message,
-		});
+		}).returning().then((res) => res[0])
 
 		if (!report) {
 			return { error: true, message: "Failed to create report." };
 		}
 
 		revalidatePath("/admin/[workspaceSlug]/incidents/[id]", "layout");
-		return { error: false, message: "Report created successfully" };
+		return {
+			error: false,
+			message: "Report created successfully",
+			report: {
+				...report,
+				status: report.status as IncidentReportStatus,
+			}
+		};
 	});
 
 export const deleteIncidentReport = actionClient
@@ -163,6 +171,7 @@ export const editIncidentReport = actionClient
 		z.object({
 			error: z.boolean(),
 			message: z.string(),
+			report: z.custom<IncidentReport>().nullish(),
 		})
 	)
 	.action(async ({ parsedInput: { id, status, message } }) => {
@@ -181,5 +190,10 @@ export const editIncidentReport = actionClient
 		}
 
 		revalidatePath("/admin/[workspaceSlug]/incidents/[id]", "layout");
-		return { error: false, message: "Report updated successfully" };
+		return {
+			error: false, message: "Report updated successfully", report: {
+				...report,
+				status: report.status as IncidentReportStatus,
+			}
+		};
 	});

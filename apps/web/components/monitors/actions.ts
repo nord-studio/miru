@@ -121,7 +121,7 @@ export const pingMonitor = actionClient.schema(z.string().nonempty()).outputSche
 			const json = await res.json();
 			if (json.error) {
 				revalidatePath("/admin/[workspaceSlug]/monitors", "layout");
-				return { error: true, message: json.error };
+				return { error: true, message: json.error.error };
 			} else {
 				revalidatePath("/admin/[workspaceSlug]/monitors", "layout");
 				return { error: true, message: "Failed to ping monitor" };

@@ -25,7 +25,7 @@ export async function generateMetadata({
   });
 
   const { appUrl } = getAppUrl();
-  const favicon = `${appUrl}/api/assets/${statusPage?.favicon}`;
+  const favicon = `${appUrl}/api/v1/assets/${statusPage?.favicon}`;
 
   if (!statusPage || statusPage.enabled === false) {
     return {

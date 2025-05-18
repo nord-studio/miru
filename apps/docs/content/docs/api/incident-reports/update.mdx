@@ -1,0 +1,75 @@
+---
+title: Update an Incident Report
+description: Use the API to update an existing report in an incident.
+---
+
+## Required Permissions
+
+-   `incidents.update`
+
+## A quick word
+
+Miru allows you to edit or delete incident reports, however, it is extremely important to note that this should be done with caution. Editing or deleting reports can lead to confusion and misinformation, so it is recommended to only do so if absolutely necessary.
+
+## Example Request
+
+This request will update an existing incident report with the title `We have identified the issue and are currently working on a fix`.
+
+```bash
+curl -X POST "https://status.example.com/api/v1/incident/FnFjhojDxjoK1nWB/report/gdGKS29ZhFprMvvM" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "message": "We have identified the issue and are currently working on a fix.",
+  "status": "identified"
+}'
+```
+
+### Response
+
+If the API key is valid, hasn't expired, and has the `incidents.update` permission, the API will return a JSON response with the details of the updated report.
+
+```json
+{
+	"error": false,
+	"report": {
+		"id": "gdGKS29ZhFprMvvM",
+		"incidentId": "FnFjhojDxjoK1nWB",
+		"message": "We have found the issue and are working on a fix.",
+		"status": "identified",
+		"timestamp": "2025-05-18T00:52:02.478Z"
+	}
+}
+```
+
+### Error Response
+
+If there is a problem with the request, the API will return a JSON response with an error message.
+
+```json
+{
+	"error": true,
+	"message": "Missing incidents permissions: update"
+}
+```
+
+## Types
+
+The API will return a JSON response that can include the following values:
+
+### Response
+
+<AutoTypeTable path="./types/incident.ts" name="RouteWithIncidentReport" />
+
+### Incident Report
+
+<AutoTypeTable path="./types/incident.ts" name="IncidentReport" />
+
+### Incident Report Status
+
+| Key           | Value           |
+| ------------- | --------------- |
+| INVESTIGATING | "investigating" |
+| IDENTIFIED    | "identified"    |
+| MONITORING    | "monitoring"    |
+| RESOLVED      | "resolved"      |
