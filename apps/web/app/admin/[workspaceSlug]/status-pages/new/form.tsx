@@ -1,6 +1,6 @@
 "use client";
 
-import { createStatusPage, uploadAsset, deleteAsset } from "@/components/status-pages/actions";
+import { createStatusPage } from "@/components/status-pages/actions";
 import { useRouter } from "next/navigation";
 import MonitorSelection from "@/components/monitors/monitor-select";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -22,6 +22,7 @@ import Image from "next/image"
 import Link from "next/link";
 import { ColorPicker } from "@/components/ui/color-picker";
 import { MiruConfig } from "@/types/config";
+import { deleteAsset, uploadAsset } from "@/lib/minio/actions";
 
 export default function NewStatusPageForm({ monitors, workspace, config }: { monitors: Monitor[], workspace: Workspace, config: MiruConfig }) {
 	const id = generateId();

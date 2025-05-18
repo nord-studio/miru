@@ -1,6 +1,6 @@
 "use client";
 
-import { createStatusPage, uploadAsset, deleteAsset } from "@/components/status-pages/actions";
+import { createStatusPage } from "@/components/status-pages/actions";
 import { redirect } from "next/navigation";
 import MonitorSelection from "@/components/monitors/monitor-select";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -28,6 +28,7 @@ import PandaStatusPageShell from "@/designs/panda/shell";
 import SimpleStatusPageShell from "@/designs/simple/shell";
 import StormtrooperStatusPageShell from "@/designs/stormtrooper/shell";
 import { MiruConfig } from "@/types/config";
+import { deleteAsset, uploadAsset } from "@/lib/minio/actions";
 
 export interface StatusDayBlock {
 	date: Date;

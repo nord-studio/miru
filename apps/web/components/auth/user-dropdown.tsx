@@ -66,7 +66,7 @@ export default function UserDropdown({ user }: { user: User }) {
 	if (!mounted)
 		return (
 			<>
-				<Skeleton className="size-8 rounded-full" />
+				<Skeleton className="size-9 rounded-full" />
 			</>
 		);
 
@@ -81,9 +81,9 @@ export default function UserDropdown({ user }: { user: User }) {
 									asChild
 									className="cursor-pointer"
 								>
-									<Avatar className="border border-black/10 dark:border dark:border-white/10">
+									<Avatar className="border border-black/10 dark:border dark:border-white/10 size-9">
 										<AvatarImage
-											src={user.image ?? undefined}
+											src={`/api/v1/assets/${user.image}`}
 											alt="Avatar"
 											aria-label="Avatar"
 										/>

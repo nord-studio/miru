@@ -38,7 +38,6 @@ export function isValidUrl(url: string) {
   try {
     givenURL = new URL(url);
   } catch (error) {
-    console.log("error is", error)
     return false;
   }
   return givenURL.protocol === "http:" || givenURL.protocol === "https:";

@@ -11,7 +11,7 @@ import { CircleCheck, Code, FileQuestion, GripVertical, HelpCircle, Moon, Sun } 
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
-import { deleteAsset, editStatusPage, uploadAsset } from "@/components/status-pages/actions";
+import { editStatusPage } from "@/components/status-pages/actions";
 import { toast } from "sonner";
 import { StatusPageWithMonitorsExtended } from "@/types/status-pages";
 import { Workspace } from "@/types/workspace";
@@ -22,6 +22,7 @@ import Image from "next/image"
 import Link from "next/link";
 import { ColorPicker } from "@/components/ui/color-picker";
 import { MiruConfig } from "@/types/config";
+import { deleteAsset, uploadAsset } from "@/lib/minio/actions";
 
 export default function EditStatusPageForm({ existing, monitors, workspace, config }: { existing: StatusPageWithMonitorsExtended, monitors: Monitor[], workspace: Workspace, config: MiruConfig }) {
 	const [loading, setLoading] = React.useState(false);

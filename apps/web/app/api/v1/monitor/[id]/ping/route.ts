@@ -38,8 +38,6 @@ export async function GET(request: Request, {
 
 	const res = await pingMonitor(id);
 
-	console.log(res)
-
 	if (res?.data?.error) {
 		return NextResponse.json({
 			error: true,
