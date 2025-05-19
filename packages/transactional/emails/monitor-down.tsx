@@ -11,14 +11,13 @@ import {
 	Section,
 	Text,
 } from "@react-email/components";
-import * as React from "react";
 
 interface MonitorDownEmailProps {
 	monitorNames: string[];
 	url: string;
 }
 
-const MonitorDownEmail = ({ monitorNames, url }: MonitorDownEmailProps) => (
+const MonitorDownEmail = ({ monitorNames = ["monitorNames"], url = "url" }: MonitorDownEmailProps) => (
 	<Html>
 		<Head />
 		<Preview>{monitorNames.length === 1 ? `${monitorNames[0]} is` : "Some monitors are"} down!</Preview>

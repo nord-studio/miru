@@ -10,10 +10,8 @@ export const notifications = pgTable("notifications", {
 	workspaceId: varchar("workspace_id", { length: 16 }).notNull().references(() => workspaces.id, { onDelete: "cascade" }),
 	/// The name of the channel
 	name: text("name").notNull().unique(),
-	/// The provider of the notification (e.g. email, webhook, etc)
-	provider: text("provider", { enum: ["email", "slack", "discord"] }).notNull(),
-	/// The email address for the notification (if applicable)
-	email: text("email"),
+	/// The provider of the notification (e.g. slack, discord, webook, etc)
+	provider: text("provider", { enum: ["slack", "discord"] }).notNull(),
 	/// The URL for the notification (if applicable)
 	url: text("url"),
 });

@@ -1,6 +1,8 @@
 "use server";
 
+import { sendIncidentCreated } from "@/components/notifications/actions";
 import db from "@/lib/db";
+import { workspaces } from "@/lib/db/schema";
 import { incidentReports, incidents } from "@/lib/db/schema/incidents";
 import { monitors, monitorsToIncidents } from "@/lib/db/schema/monitors";
 import { actionClient } from "@/lib/safe-action";
@@ -47,6 +49,24 @@ export const createIncident = actionClient.schema(z.object({
 	if (!report) {
 		return { error: true, message: "Failed to create incident report" };
 	}
+
+	const mon = await db.query.monitors.findFirst({
+		where: () => eq(monitors.id, monitorIds[0]),
+	});
+
+	if (!mon) {
+		return { error: true, message: "Failed to find monitor" };
+	}
+
+	const wkrspc = await db.query.workspaces.findFirst({
+		where: () => eq(workspaces.id, mon.workspaceId),
+	});
+
+	if (!wkrspc) {
+		return { error: true, message: "Failed to find workspace" };
+	}
+
+	await sendIncidentCreated({ workspaceId: wkrspc.id, incidentId: incident[0].id });
 
 	revalidatePath("/admin/[workspaceSlug]/incidents", "layout");
 	return { error: false, message: "Incident created successfully" };

@@ -1,4 +1,4 @@
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "./monitor";
 
 export interface Notification {
 	id: string;

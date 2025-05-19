@@ -11,32 +11,45 @@ import {
   Section,
   Text,
 } from "@react-email/components";
-import * as React from "react";
 
-interface VerifyAccountEmailProps {
+interface WorkspaceInviteEmailProps {
+  workspaceName: string;
+  inviteToken: string;
   url: string;
 }
 
-const VerifyAccountEmail = ({ url }: VerifyAccountEmailProps) => (
+const WorkspaceInviteEmail = ({
+  url = "url",
+  inviteToken = "inviteToken",
+  workspaceName = "workspaceName",
+}: WorkspaceInviteEmailProps) => (
   <Html>
     <Head />
-    <Preview>Almost there...</Preview>
+    <Preview>Workspace Invite</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={heading}>Almost there...</Heading>
+        <Heading style={heading}>Workspace Invite</Heading>
         <Text style={paragraph}>
-          Please verify your email address to complete account verification.
+          You have been invited to join the workspace <b>{workspaceName}</b> on Miru. Click the
+          button below to accept the invite.
         </Text>
         <Section style={buttonContainer}>
-          <Button style={button} href={url}>
-            Verify Email
+          <Button
+            style={button}
+            href={`${url}/join/${inviteToken}`}
+          >
+            Accept Invite
           </Button>
         </Section>
         <Text style={paragraph}>
-          This link will only be valid for the next hour. If you did not request
-          this, you can safely ignore this email.
+          ...or use the invite token below to join the workspace manually:
         </Text>
+        <code style={code}>{inviteToken}</code>
         <Hr style={hr} />
+        <Text style={paragraph}>
+          This invite will only be valid for the next 2 weeks. If you do not
+          want to join this workspace, please ignore this email.
+        </Text>
         <Text style={reportLink}>
           見る • Made by <Link href="https://nordstud.io">Nord Studio</Link>
         </Text>
@@ -45,11 +58,13 @@ const VerifyAccountEmail = ({ url }: VerifyAccountEmailProps) => (
   </Html>
 );
 
-VerifyAccountEmail.PreviewProps = {
-  url: "https://miru.nordstud.io",
+WorkspaceInviteEmail.PreviewProps = {
+  workspaceName: "Nord Studio",
+  inviteToken: "123abc",
+  url: "http://localhost:3000",
 };
 
-export default VerifyAccountEmail;
+export default WorkspaceInviteEmail;
 
 const main = {
   backgroundColor: "#ffffff",
@@ -105,4 +120,15 @@ const reportLink = {
 const hr = {
   borderColor: "#dfe1e4",
   margin: "42px 0 26px",
+};
+
+const code = {
+  fontFamily: "monospace",
+  fontWeight: "700",
+  padding: "1px 4px",
+  backgroundColor: "#dfe1e4",
+  letterSpacing: "-0.3px",
+  fontSize: "21px",
+  borderRadius: "4px",
+  color: "#3c4149",
 };

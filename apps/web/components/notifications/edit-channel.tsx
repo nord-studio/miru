@@ -24,11 +24,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
-import { Mail, Pen } from "lucide-react";
+import { Pen } from "lucide-react";
 import { VariantProps } from "class-variance-authority";
 import MonitorSelection from "@/components/monitors/monitor-select";
 import { Monitor } from "@/types/monitor";
-import { NotificationWithMonitors } from "@/types/notifications";
+import { Notification, NotificationWithMonitors } from "@/types/notifications";
 import { editNotification, testWebhook } from "@/components/notifications/actions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Icons } from "@/components/ui/icons";
@@ -90,19 +90,11 @@ export default function EditNotification({
 	const isDesktop = useMediaQuery("(min-width: 768px)");
 	const [loading, setLoading] = useState(false);
 	const [name, setName] = useState(notification.name);
-	const [provider, setProvider] = useState<"email" | "slack" | "discord">(notification.provider);
-	const [email, setEmail] = useState(notification.email || "");
+	const [provider, setProvider] = useState<Notification["provider"]>(notification.provider);
 	const [url, setUrl] = useState(notification.url || "");
 	const [monitorList, setMonitorList] = useState<Monitor[]>(notification.monitors.map((m) => m));
 
 	async function testUrl() {
-		if (provider === "email") {
-			toast.error("Invalid provider", {
-				description: "Please select a valid provider",
-			});
-			return;
-		}
-
 		const t = toast.loading("Testing webook...");
 
 		if (!url) {
@@ -136,7 +128,6 @@ export default function EditNotification({
 			name,
 			monitors: monitorList.map((m) => m.id),
 			provider,
-			email,
 			url,
 		});
 
@@ -199,16 +190,13 @@ export default function EditNotification({
 									<Label>Provider</Label>
 									<Select
 										value={provider}
-										onValueChange={(v) => setProvider(v as "email" | "slack" | "discord")}
+										onValueChange={(v) => setProvider(v as "slack" | "discord")}
 										disabled={loading}
 									>
 										<SelectTrigger className="w-full">
-											<SelectValue placeholder="email" />
+											<SelectValue placeholder="discord" />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="email">
-												<Mail /> Email
-											</SelectItem>
 											<SelectItem value="discord">
 												<Icons.Discord /> Discord
 											</SelectItem>
@@ -218,19 +206,6 @@ export default function EditNotification({
 										</SelectContent>
 									</Select>
 								</div>
-								{provider === "email" && (
-									<div className="flex flex-col gap-2 items-start w-full">
-										<Label>Email</Label>
-										<Input
-											placeholder="tim@apple.com"
-											disabled={loading}
-											value={email}
-											onChange={(e) =>
-												setEmail(e.target.value)
-											}
-										/>
-									</div>
-								)}
 								{provider === "discord" && (
 									<div className="flex flex-col gap-2 items-start w-full">
 										<Label>Webhook URL</Label>
@@ -325,16 +300,13 @@ export default function EditNotification({
 									<Label>Provider</Label>
 									<Select
 										value={provider}
-										onValueChange={(v) => setProvider(v as "email" | "slack" | "discord")}
+										onValueChange={(v) => setProvider(v as "slack" | "discord")}
 										disabled={loading}
 									>
 										<SelectTrigger className="w-full">
-											<SelectValue placeholder="email" />
+											<SelectValue placeholder="discord" />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="email">
-												<Mail /> Email
-											</SelectItem>
 											<SelectItem value="discord">
 												<Icons.Discord /> Discord
 											</SelectItem>
@@ -344,19 +316,6 @@ export default function EditNotification({
 										</SelectContent>
 									</Select>
 								</div>
-								{provider === "email" && (
-									<div className="flex flex-col gap-2 items-start w-full">
-										<Label>Email</Label>
-										<Input
-											placeholder="tim@apple.com"
-											disabled={loading}
-											value={email}
-											onChange={(e) =>
-												setEmail(e.target.value)
-											}
-										/>
-									</div>
-								)}
 								{provider === "discord" && (
 									<div className="flex flex-col gap-2 items-start w-full">
 										<Label>Webhook URL</Label>

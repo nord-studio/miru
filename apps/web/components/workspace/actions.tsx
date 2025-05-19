@@ -6,13 +6,13 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { render } from "@react-email/render";
 import { createTransport } from "nodemailer";
-import WorkspaceInviteEmail from "@/lib/email/workspace-invite";
+import WorkspaceInviteEmail from "@miru/transactional/emails/workspace-invite";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { z } from "zod";
 import React, { cache } from "react";
 import { RankedRoles, Workspace } from "@/types/workspace";
 import { apikey, monitors, notifications, statusPages, workspaceInvites, workspaceMembers, workspaces } from "@/lib/db/schema";
-import { generateId } from "@/lib/utils";
+import { generateId, getAppUrl } from "@/lib/utils";
 import db from "@/lib/db";
 import { flattenValidationErrors } from "next-safe-action";
 import { headers } from "next/headers";
@@ -274,9 +274,11 @@ export const inviteMemberViaEmail = actionClient.schema(z.object({
 		debug: process.env.APP_ENV === "development",
 	} as SMTPTransport.Options);
 
+	const { appUrl } = getAppUrl();
+
 	// Send email
 	const inviteToken = generateId();
-	const body = await render(<WorkspaceInviteEmail workspaceName={workspace.name} inviteToken={inviteToken} />);
+	const body = await render(<WorkspaceInviteEmail workspaceName={workspace.name} inviteToken={inviteToken} url={appUrl} />);
 
 	await db.insert(workspaceInvites).values({
 		id: inviteToken,

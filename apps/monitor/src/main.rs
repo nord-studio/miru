@@ -76,6 +76,41 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     cron::worker::start().await;
     cron::worker::load_jobs().await;
 
+    // info!("Reading email templates...");
+    // let transactional_path = "node_modules/@miru/transactional/out";
+    // match std::fs::read_dir(transactional_path) {
+    //     Ok(entries) => {
+    //         for entry in entries {
+    //             if let Ok(entry) = entry {
+    //                 info!("Found template: {}", entry.path().display());
+    //                 if entry.file_name().to_string_lossy() == "monitor-down.html" {
+    //                     info!("Found monitor-down.html template, applying replacements");
+    //                     let path = entry.path();
+    //                     match std::fs::read_to_string(&path) {
+    //                         Ok(content) => {
+    //                             let modified_content = content
+    //                                 .replace("monitorNames", "Website, API and Gateway")
+    //                                 .replace("url", "https://tygr.dev");
+
+    //                             if let Err(e) = std::fs::write(&path, modified_content) {
+    //                                 info!("Error writing modified template: {}", e);
+    //                             } else {
+    //                                 info!("Successfully applied replacements to monitor-down.html");
+    //                             }
+    //                         }
+    //                         Err(e) => {
+    //                             info!("Error reading monitor-down.html template: {}", e);
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     Err(e) => {
+    //         info!("Error reading email templates: {}", e);
+    //     }
+    // }
+
     info!("Starting server...");
     match HttpServer::new(|| {
         let cors = Cors::default()

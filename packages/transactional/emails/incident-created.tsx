@@ -11,7 +11,6 @@ import {
 	Section,
 	Text,
 } from "@react-email/components";
-import * as React from "react";
 
 interface IncidentCreatedEmailProps {
 	incidentName: string;
@@ -19,7 +18,7 @@ interface IncidentCreatedEmailProps {
 	url: string;
 }
 
-const IncidentCreatedEmail = ({ incidentName, monitorNames, url }: IncidentCreatedEmailProps) => (
+const IncidentCreatedEmail = ({ incidentName = "incidentName", monitorNames = ["monitorNames"], url = "url" }: IncidentCreatedEmailProps) => (
 	<Html>
 		<Head />
 		<Preview>{monitorNames.length === 1 ? `${monitorNames[0]} has` : "Some monitors have"} an issue!</Preview>

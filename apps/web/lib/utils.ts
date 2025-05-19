@@ -37,7 +37,7 @@ export function isValidUrl(url: string) {
   let givenURL;
   try {
     givenURL = new URL(url);
-  } catch (error) {
+  } catch {
     return false;
   }
   return givenURL.protocol === "http:" || givenURL.protocol === "https:";

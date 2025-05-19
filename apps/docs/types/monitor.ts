@@ -1,15 +1,7 @@
 import { BaseResponsePartialMessage } from "@/types/response";
+import { Monitor as MiruMonitor } from "@miru/types";
 
-export interface Monitor {
-	id: string;
-	workspaceId: string;
-	name: string;
-	type: "http" | "tcp";
-	url: string;
-	interval: 1 | 5 | 10 | 30 | 60;
-	createdAt: Date;
-	updatedAt: Date;
-}
+export type Monitor = MiruMonitor;
 
 export interface RouteWithMonitor extends BaseResponsePartialMessage {
 	monitor?: Monitor;

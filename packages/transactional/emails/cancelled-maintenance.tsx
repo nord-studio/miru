@@ -11,15 +11,14 @@ import {
 	Section,
 	Text,
 } from "@react-email/components";
-import * as React from "react";
 
 interface CancelledMaintenanceProps {
 	monitorNames: string[];
-	name: string;
+	maintenanceName: string;
 	url: string;
 }
 
-const CancelledMaintenanceEmail = ({ monitorNames, name, url }: CancelledMaintenanceProps) => (
+const CancelledMaintenanceEmail = ({ monitorNames = ["monitorNames"], maintenanceName = "maintenanceName", url = "url" }: CancelledMaintenanceProps) => (
 	<Html>
 		<Head />
 		<Preview>Maintenance has been cancelled</Preview>
@@ -27,7 +26,7 @@ const CancelledMaintenanceEmail = ({ monitorNames, name, url }: CancelledMainten
 			<Container style={container}>
 				<Heading style={heading}>Maintenance has been cancelled</Heading>
 				<Text style={paragraph}>
-					The maintance event called <b>{name}</b> which affects {" "}
+					The maintance event called <b>{maintenanceName}</b> which affects {" "}
 					{monitorNames.length === 1 && `${monitorNames[0]}`}
 					{monitorNames.length === 2 && `${monitorNames[0]} and ${monitorNames[1]}`}
 					{monitorNames.length > 2 && `${monitorNames.length} monitors`} has been cancelled. Click the button below to view the event.
@@ -47,7 +46,7 @@ const CancelledMaintenanceEmail = ({ monitorNames, name, url }: CancelledMainten
 );
 
 CancelledMaintenanceEmail.PreviewProps = {
-	name: "Moving to a new server",
+	maintenanceName: "Moving to a new server",
 	monitorNames: ["Website"],
 	url: "https://miru.nordstud.io",
 }

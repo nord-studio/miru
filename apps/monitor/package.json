@@ -6,5 +6,8 @@
 		"build": "cargo build --release",
 		"start": "RUST_LOG=info ./../../target/debug/monitor",
 		"lint": "cargo clippy ; cargo fmt"
+	},
+	"dependencies": {
+		"@miru/transactional": "workspace:*"
 	}
 }

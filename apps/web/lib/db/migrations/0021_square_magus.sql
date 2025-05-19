@@ -1,0 +1,2 @@
+ALTER TABLE "incident_reports" ADD CONSTRAINT "incident_reports_incident_id_incidents_id_fk" FOREIGN KEY ("incident_id") REFERENCES "public"."incidents"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "notifications" DROP COLUMN "email";

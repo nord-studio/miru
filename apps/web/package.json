@@ -16,6 +16,7 @@
 		"@dnd-kit/modifiers": "^9.0.0",
 		"@dnd-kit/sortable": "^10.0.0",
 		"@dnd-kit/utilities": "^3.2.2",
+		"@miru/transactional": "workspace:*",
 		"@radix-ui/react-avatar": "^1.1.7",
 		"@radix-ui/react-checkbox": "^1.2.3",
 		"@radix-ui/react-dialog": "^1.1.11",
@@ -66,6 +67,7 @@
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3.3.1",
+		"@miru/types": "workspace:*",
 		"@next/eslint-plugin-next": "^15.3.1",
 		"@tailwindcss/postcss": "^4.1.4",
 		"@types/node": "^22.15.2",

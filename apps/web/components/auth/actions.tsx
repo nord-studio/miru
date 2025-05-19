@@ -15,8 +15,8 @@ import { createTransport } from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { cache } from "react";
 import { z } from "zod";
-import VerifyAccountEmail from "@/lib/email/verify-email";
-import ResetPasswordEmail from "@/lib/email/reset-password";
+import VerifyAccountEmail from "@miru/transactional/emails/verify-email";
+import ResetPasswordEmail from "@miru/transactional/emails/reset-password";
 
 export async function logIn(prevState: ActionResult, formData: FormData) {
 	const email = formData.get("email");
@@ -233,7 +233,7 @@ export default async function sendResetPasswordEmail(
 	const { config } = await import("@/lib/config").then((res) => res.getConfig());
 	if (!config.email.enabled) {
 		console.error(
-			"Emails are not enabled on this instance. If you are the instance administator, set ENABLE_EMAIL to true in your .env file."
+			"Emails are not enabled on this instance. Learn more: https://miru.nordstud.io/docs/configuration/email"
 		);
 		return;
 	}
@@ -327,7 +327,7 @@ export async function sendEmailVerification(
 	const { config } = await import("@/lib/config").then((res) => res.getConfig());
 	if (!config.email.enabled) {
 		console.error(
-			"Emails are not enabled on this instance. If you are the instance administator, set ENABLE_EMAIL to true in your .env file."
+			"Emails are not enabled on this instance. Learn more: https://miru.nordstud.io/docs/configuration/email"
 		);
 		return;
 	}

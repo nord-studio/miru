@@ -11,7 +11,6 @@ import {
 	Section,
 	Text,
 } from "@react-email/components";
-import * as React from "react";
 
 interface IncidentResolvedEmailProps {
 	incidentName: string;
@@ -19,7 +18,7 @@ interface IncidentResolvedEmailProps {
 	url: string;
 }
 
-const IncidentResolvedEmail = ({ incidentName, url }: IncidentResolvedEmailProps) => (
+const IncidentResolvedEmail = ({ incidentName = "incidentName", url = "url" }: IncidentResolvedEmailProps) => (
 	<Html>
 		<Head />
 		<Preview>An incident has been resolved!</Preview>

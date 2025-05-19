@@ -11,17 +11,16 @@ import {
 	Section,
 	Text,
 } from "@react-email/components";
-import * as React from "react";
 
 interface PlannedMaintenanceProps {
-	name: string;
+	maintenanceName: string;
 	monitorNames: string[];
 	date: string;
 	time: string;
 	url: string;
 }
 
-const PlannedMaintenanceEmail = ({ monitorNames, url, date, time, name }: PlannedMaintenanceProps) => (
+const PlannedMaintenanceEmail = ({ monitorNames = ["monitorNames"], url = "url", date = "date", time = "time", maintenanceName = "maintenanceName" }: PlannedMaintenanceProps) => (
 	<Html>
 		<Head />
 		<Preview>Maintenance has been planned</Preview>
@@ -29,7 +28,7 @@ const PlannedMaintenanceEmail = ({ monitorNames, url, date, time, name }: Planne
 			<Container style={container}>
 				<Heading style={heading}>Maintenance has been planned</Heading>
 				<Text style={paragraph}>
-					A new maintenance event called "<b>{name}</b>" has been planned and will affect {" "}
+					A new maintenance event called "<b>{maintenanceName}</b>" has been planned and will affect {" "}
 					{monitorNames.length === 1 && `"${monitorNames[0]}"`}
 					{monitorNames.length === 2 && `"${monitorNames[0]}" and "${monitorNames[1]}"`}
 					{monitorNames.length > 2 && `${monitorNames.length} monitors`}. The event is scheduled for <b>{date}</b> at <b>{time}</b>.
@@ -49,7 +48,7 @@ const PlannedMaintenanceEmail = ({ monitorNames, url, date, time, name }: Planne
 );
 
 PlannedMaintenanceEmail.PreviewProps = {
-	name: "Moving to a new server",
+	maintenanceName: "Moving to a new server",
 	monitorNames: ["Website", "Campsite Gateway", "Campsite API"],
 	url: "https://miru.nordstud.io",
 	date: "23rd May 2025",

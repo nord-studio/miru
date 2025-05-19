@@ -11,9 +11,8 @@ import {
 	Section,
 	Text,
 } from "@react-email/components";
-import * as React from "react";
 
-const ResetPasswordEmail = ({ url }: { url: string }) => (
+const ResetPasswordEmail = ({ url = "url" }: { url: string }) => (
 	<Html>
 		<Head />
 		<Preview>Reset Password</Preview>

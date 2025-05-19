@@ -19,7 +19,7 @@ export interface MonitorRow extends Monitor {
 function EmptyState() {
 	return (
 		<div className="flex flex-col items-center justify-center w-full h-full gap-4 py-4">
-			<div className="border rounded-lg p-2">
+			<div className="border rounded-lg p-2 bg-muted/80">
 				<MonitorIcon />
 			</div>
 			<div className="flex flex-col gap-1 items-center">

@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
-import { Mail, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Spinner from "@/components/ui/spinner";
@@ -39,6 +39,7 @@ import { Monitor } from "@/types/monitor";
 import { toast } from "sonner";
 import { createChannel, testWebhook } from "@/components/notifications/actions";
 import { Workspace } from "@/types/workspace";
+import { Notification } from "@/types/notifications";
 
 export function CreateChannelButton({ monitors, workspace }: { monitors: Monitor[], workspace: Workspace }) {
 	const [open, setOpen] = React.useState(false);
@@ -82,11 +83,8 @@ export default function CreateChannel({ open, setOpen, monitors, workspace }: { 
 	const [loading, setLoading] = useState(false);
 
 	const [name, setName] = useState("");
-	const [provider, setProvider] = useState<"email" | "slack" | "discord">("email");
+	const [provider, setProvider] = useState<Notification["provider"]>("discord");
 	const [selectedMonitors, setSelectedMonitors] = useState<Monitor[]>([]);
-
-	// Email provider
-	const [email, setEmail] = useState("");
 
 	// Discord provider
 	const [url, setUrl] = useState("");
@@ -104,7 +102,6 @@ export default function CreateChannel({ open, setOpen, monitors, workspace }: { 
 			provider,
 			workspaceSlug: workspace.slug,
 			monitorIds: selectedMonitors.map((m) => m.id),
-			email,
 			url
 		}).then((res) => {
 			if (typeof res?.validationErrors !== "undefined") {
@@ -135,13 +132,6 @@ export default function CreateChannel({ open, setOpen, monitors, workspace }: { 
 	}
 
 	async function testUrl() {
-		if (provider === "email") {
-			toast.error("Invalid provider", {
-				description: "Please select a valid provider",
-			});
-			return;
-		}
-
 		const t = toast.loading("Testing webook...");
 
 		if (!url) {
@@ -199,16 +189,13 @@ export default function CreateChannel({ open, setOpen, monitors, workspace }: { 
 									<Label>Provider</Label>
 									<Select
 										value={provider}
-										onValueChange={(v) => setProvider(v as "email" | "slack" | "discord")}
+										onValueChange={(v) => setProvider(v as "slack" | "discord")}
 										disabled={loading}
 									>
 										<SelectTrigger className="w-full">
-											<SelectValue placeholder="email" />
+											<SelectValue placeholder="discord" />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="email">
-												<Mail /> Email
-											</SelectItem>
 											<SelectItem value="discord">
 												<Icons.Discord /> Discord
 											</SelectItem>
@@ -218,19 +205,6 @@ export default function CreateChannel({ open, setOpen, monitors, workspace }: { 
 										</SelectContent>
 									</Select>
 								</div>
-								{provider === "email" && (
-									<div className="flex flex-col gap-2 items-start w-full">
-										<Label>Email</Label>
-										<Input
-											placeholder="tim@apple.com"
-											disabled={loading}
-											value={email}
-											onChange={(e) =>
-												setEmail(e.target.value)
-											}
-										/>
-									</div>
-								)}
 								{provider === "discord" && (
 									<div className="flex flex-col gap-2 items-start w-full">
 										<Label>Webhook URL</Label>
@@ -321,16 +295,13 @@ export default function CreateChannel({ open, setOpen, monitors, workspace }: { 
 									<Label>Provider</Label>
 									<Select
 										value={provider}
-										onValueChange={(v) => setProvider(v as "email" | "slack" | "discord")}
+										onValueChange={(v) => setProvider(v as "slack" | "discord")}
 										disabled={loading}
 									>
 										<SelectTrigger className="w-full">
-											<SelectValue placeholder="email" />
+											<SelectValue placeholder="discord" />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="email">
-												<Mail /> Email
-											</SelectItem>
 											<SelectItem value="discord">
 												<Icons.Discord /> Discord
 											</SelectItem>
@@ -340,19 +311,6 @@ export default function CreateChannel({ open, setOpen, monitors, workspace }: { 
 										</SelectContent>
 									</Select>
 								</div>
-								{provider === "email" && (
-									<div className="flex flex-col gap-2 items-start w-full">
-										<Label>Email</Label>
-										<Input
-											placeholder="tim@apple.com"
-											disabled={loading}
-											value={email}
-											onChange={(e) =>
-												setEmail(e.target.value)
-											}
-										/>
-									</div>
-								)}
 								{provider === "discord" && (
 									<div className="flex flex-col gap-2 items-start w-full">
 										<Label>Webhook URL</Label>

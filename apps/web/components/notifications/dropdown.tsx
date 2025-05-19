@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { MoreHorizontal, Trash } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -14,7 +13,6 @@ import {
 import { toast } from "sonner";
 import React from "react";
 import { VariantProps } from "class-variance-authority";
-import { usePathname } from "next/navigation";
 import { RankedRoles, WorkspaceMemberWithUser } from "@/types/workspace";
 import { getCurrentMember } from "@/components/workspace/actions";
 import Spinner from "@/components/ui/spinner";
@@ -35,7 +33,6 @@ export default function NotificationActionsDropdown({
 	workspaceId: string;
 } & React.ComponentProps<"button"> &
 	VariantProps<typeof buttonVariants>) {
-	const pathname = usePathname();
 	const [deleteOpen, setDeleteOpen] = React.useState(false);
 	const [editOpen, setEditOpen] = React.useState(false);
 	const [currentMember, setCurrentMember] = React.useState<WorkspaceMemberWithUser | null>(null);
@@ -103,11 +100,6 @@ export default function NotificationActionsDropdown({
 								Edit
 							</DropdownMenuItem>
 						)}
-						<Link
-							href={`/admin/${pathname.split("/")[2]}/notifications/${notification.id}`}
-						>
-							<DropdownMenuItem>Details</DropdownMenuItem>
-						</Link>
 						<DropdownMenuItem
 							onClick={() => {
 								navigator.clipboard.writeText(notification.id);

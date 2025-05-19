@@ -1,4 +1,4 @@
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "@miru/types";
 import { BaseResponsePartialMessage } from "@/types/response";
 
 export interface Incident {
@@ -26,7 +26,6 @@ export interface IncidentReport {
 }
 
 // Incidents
-
 export type IncidentWithMonitors = Incident & {
 	monitors: Monitor[];
 };
@@ -35,7 +34,7 @@ export interface RouteWithIncident extends BaseResponsePartialMessage {
 	incident?: Incident;
 }
 
-// Multiple incidents with monitors
+// Multiple incidents with monitors  adfasdfasdfasdf
 export interface RouteWithIncidentsAndMonitors extends BaseResponsePartialMessage {
 	incidents?: IncidentWithMonitors[];
 }

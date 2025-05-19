@@ -148,6 +148,13 @@
       "when": 1747413549297,
       "tag": "0020_true_spectrum",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1747610892680,
+      "tag": "0021_square_magus",
+      "breakpoints": true
     }
   ]
 }
