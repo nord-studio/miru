@@ -1,0 +1,25 @@
+---
+title: "Notifications"
+description: "Get alerted when something requires action in your workspace."
+---
+
+## What are Notifications?
+
+Notification channels are a way to send alerts to external platforms like Discord and Slack when something requires action in your workspace.
+These alerts can be triggered by various events, such as a monitor going down, a new report being created, or a new incident being created.
+
+<Callout>
+	Notification channels differ from **Subscriptions** in that they are not
+	tried to a specific user.
+</Callout>
+
+## Channel Types
+
+Miru provides two types of Notification channels:
+
+-   **Internal**: Used to send alerts to your workspace members. They will contain all information about the event, and links to the admin dashboard so your team can take action quickly.
+-   **External**: Used to update your users in real-time in a platform they already use when something happens to a service they are using.
+
+By default, Miru will send alerts via email to workspace members that have the `admin` role or higher, but sometimes this isn't enough and you'll want to be alerted in real-time in a platform your team is already using.
+
+Optionally, you can create external channels that send alerts to your users when a service they use goes down, or when a new incident is created. This can keep your users informed as soon as possible in a way that is convenient for them.
