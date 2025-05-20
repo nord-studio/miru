@@ -19,9 +19,8 @@
 	"packageManager": "pnpm@10.11.0",
 	"pnpm": {
 		"onlyBuiltDependencies": [
-			"esbuild",
-			"sharp",
-			"unrs-resolver"
+			"@tailwindcss/oxide",
+			"esbuild"
 		]
 	}
 }
