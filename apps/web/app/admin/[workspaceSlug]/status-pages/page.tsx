@@ -90,7 +90,7 @@ export default async function StatusPagesIndexPage({
 						)}
 					</div>
 				</div>
-				<div className="container mt-4">
+				<div className="mt-4">
 					<DataTable data={pages} columns={columns} emptyComponent={<EmptyState workspaceSlug={workspace.slug} />} />
 				</div>
 			</div>

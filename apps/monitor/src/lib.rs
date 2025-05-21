@@ -18,23 +18,23 @@ pub fn generate_id() -> String {
     id
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Default)]
 pub struct MiruConfigEmail {
     pub enabled: bool,
     pub verification: bool,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Default)]
 pub struct MiruConfigIncident {
     pub auto: MiruConfigIncidentAuto,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Default)]
 pub struct MiruConfigIncidentAuto {
     pub enabled: bool,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Default)]
 pub struct MiruConfigStorage {
     pub max_size: u64,
 }

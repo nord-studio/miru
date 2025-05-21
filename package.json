@@ -11,17 +11,16 @@
 		"knip": "knip"
 	},
 	"devDependencies": {
-		"@types/node": "^22.15.18",
-		"knip": "^5.56.0",
+		"@types/node": "^22.15.21",
+		"knip": "^5.57.0",
 		"turbo": "^2.5.3",
 		"typescript": "^5.8.3"
 	},
 	"packageManager": "pnpm@10.11.0",
 	"pnpm": {
 		"onlyBuiltDependencies": [
-			"esbuild",
-			"sharp",
-			"unrs-resolver"
+			"@tailwindcss/oxide",
+			"esbuild"
 		]
 	}
 }

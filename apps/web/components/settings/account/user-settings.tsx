@@ -106,7 +106,7 @@ export default function UserSettings({ user }: { user: User }) {
 				>
 					<div className="flex flex-row items-center w-full gap-4">
 						<Avatar className="size-24">
-							<AvatarImage src={`/api/v1/assets/${avatar}`} alt="Avatar" />
+							<AvatarImage src={avatar ? `/api/v1/assets/${avatar}` : undefined} alt="Avatar" />
 							<AvatarFallback className="text-2xl">
 								{user.name.charAt(0).toUpperCase()}
 							</AvatarFallback>

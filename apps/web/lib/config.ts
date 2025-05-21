@@ -10,7 +10,7 @@ export async function getPath() {
 	}
 }
 
-export async function parseConfig() {
+export async function getConfig() {
 	const { getPath } = await import("@/lib/config");
 	const { readFileSync } = await import("fs");
 	const { parse } = await import("@std/toml");
@@ -43,8 +43,5 @@ export async function parseConfig() {
 
 	return { config, defaults };
 }
-
-const { memoize } = await import("es-toolkit");
-export const getConfig = memoize(parseConfig);
 
 

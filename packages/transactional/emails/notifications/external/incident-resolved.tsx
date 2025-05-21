@@ -12,30 +12,26 @@ import {
 	Text,
 } from "@react-email/components";
 
-interface PlannedMaintenanceProps {
-	maintenanceName: string;
+interface IncidentResolvedEmailProps {
+	incidentName: string;
 	monitorNames: string[];
-	date: string;
-	time: string;
 	url: string;
 }
 
-const PlannedMaintenanceEmail = ({ monitorNames = ["monitorNames"], url = "url", date = "date", time = "time", maintenanceName = "maintenanceName" }: PlannedMaintenanceProps) => (
+const IncidentResolvedEmail = ({ incidentName = "incidentName", url = "url" }: IncidentResolvedEmailProps) => (
 	<Html>
 		<Head />
-		<Preview>Maintenance has been planned</Preview>
+		<Preview>An incident has been resolved!</Preview>
 		<Body style={main}>
 			<Container style={container}>
-				<Heading style={heading}>Maintenance has been planned</Heading>
+				<Heading style={heading}>An incident has been resolved!</Heading>
 				<Text style={paragraph}>
-					A new maintenance event called "<b>{maintenanceName}</b>" has been planned and will affect {" "}
-					{monitorNames.length === 1 && `"${monitorNames[0]}"`}
-					{monitorNames.length === 2 && `"${monitorNames[0]}" and "${monitorNames[1]}"`}
-					{monitorNames.length > 2 && `${monitorNames.length} monitors`}. The event is scheduled for <b>{date}</b> at <b>{time}</b>.
+					The incident <b>{incidentName}</b> has been resolved. You can click the
+					button below to view the incident.
 				</Text>
 				<Section style={buttonContainer}>
 					<Button style={button} href={url}>
-						View Event
+						View Incident
 					</Button>
 				</Section>
 				<Hr style={hr} />
@@ -47,15 +43,13 @@ const PlannedMaintenanceEmail = ({ monitorNames = ["monitorNames"], url = "url",
 	</Html >
 );
 
-PlannedMaintenanceEmail.PreviewProps = {
-	maintenanceName: "Moving to a new server",
-	monitorNames: ["Website", "Campsite Gateway", "Campsite API"],
+IncidentResolvedEmail.PreviewProps = {
+	monitorName: "Website",
+	incidentName: "Website is down",
 	url: "https://miru.nordstud.io",
-	date: "23rd May 2025",
-	time: "12:00pm UTC"
 }
 
-export default PlannedMaintenanceEmail;
+export default IncidentResolvedEmail;
 
 const main = {
 	backgroundColor: "#ffffff",

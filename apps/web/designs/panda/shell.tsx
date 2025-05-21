@@ -5,6 +5,7 @@ import { ThemeDropdown } from "@/components/theme/dropdown";
 import Color from "color";
 import { cn } from "@/lib/utils";
 import { Menu } from "lucide-react";
+import SubscribeDropdown from "@/designs/subscribe";
 
 export default function PandaStatusPageShell({ page, header, children }: { page: StatusPageWithMonitorsExtended, header: React.ReactNode, children: React.ReactNode }) {
 	const color = Color(page.brandColor || "#5865F2");
@@ -58,9 +59,11 @@ export default function PandaStatusPageShell({ page, header, children }: { page:
 							<Button variant="link" className={cn(isLight() ? "text-neutral-900" : "text-neutral-100")}>
 								Report an Issue
 							</Button>
-							<Button variant="outline" className={cn("bg-input/30 dark border-input hover:bg-input/60 dark:hover:bg-input/60", isLight() ? "text-neutral-900 hover:text-neutral-900" : "text-neutral-100")}>
-								Subscribe
-							</Button>
+							<SubscribeDropdown>
+								<Button variant="outline" className={cn("bg-input/30 dark border-input hover:bg-input/60 dark:hover:bg-input/60", isLight() ? "text-neutral-900 hover:text-neutral-900" : "text-neutral-100")}>
+									Subscribe
+								</Button>
+							</SubscribeDropdown>
 						</div>
 						<div className="flex-row gap-2 items-center flex xs:hidden">
 							<Button size="icon" variant="outline" className="bg-input/30 dark border-input hover:bg-input/50">

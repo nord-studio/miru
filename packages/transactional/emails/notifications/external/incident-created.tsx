@@ -12,21 +12,23 @@ import {
 	Text,
 } from "@react-email/components";
 
-interface IncidentResolvedEmailProps {
+interface IncidentCreatedEmailProps {
 	incidentName: string;
 	monitorNames: string[];
 	url: string;
 }
 
-const IncidentResolvedEmail = ({ incidentName = "incidentName", url = "url" }: IncidentResolvedEmailProps) => (
+const IncidentCreatedEmail = ({ incidentName = "incidentName", monitorNames = ["monitorNames"], url = "url" }: IncidentCreatedEmailProps) => (
 	<Html>
 		<Head />
-		<Preview>An incident has been resolved!</Preview>
+		<Preview>{monitorNames.length === 1 ? `${monitorNames[0]} has` : "Some monitors have"} an issue!</Preview>
 		<Body style={main}>
 			<Container style={container}>
-				<Heading style={heading}>An incident has been resolved!</Heading>
+				<Heading style={heading}>{monitorNames.length === 1 ? `${monitorNames[0]} has` : "Some monitors have"} an issue!</Heading>
 				<Text style={paragraph}>
-					The incident <b>{incidentName}</b> has been resolved. Take a breather, you deserve it! You can click the
+					{monitorNames.length === 1 && `${monitorNames[0]} has`}
+					{monitorNames.length === 2 && `${monitorNames[0]} and ${monitorNames[1]} have`}
+					{monitorNames.length > 2 && `${monitorNames.length} monitors have`} been linked to a new incident: <b>{incidentName}</b>. Click the
 					button below to view the incident.
 				</Text>
 				<Section style={buttonContainer}>
@@ -40,16 +42,16 @@ const IncidentResolvedEmail = ({ incidentName = "incidentName", url = "url" }: I
 				</Text>
 			</Container>
 		</Body>
-	</Html >
+	</Html>
 );
 
-IncidentResolvedEmail.PreviewProps = {
-	monitorName: "Website",
-	incidentName: "Website is down",
+IncidentCreatedEmail.PreviewProps = {
+	monitorNames: ["Website"],
+	incidentName: "Problems with server",
 	url: "https://miru.nordstud.io",
 }
 
-export default IncidentResolvedEmail;
+export default IncidentCreatedEmail;
 
 const main = {
 	backgroundColor: "#ffffff",

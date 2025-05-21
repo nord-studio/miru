@@ -22,13 +22,13 @@ import Image from "next/image"
 import Link from "next/link";
 import { ColorPicker } from "@/components/ui/color-picker";
 import { Incident } from "@/types/incident";
-import { StatusMonitorBar } from "@/components/status-pages/monitor-bar";
 import { MonoStatusBanner, StatusBanner } from "@/components/ui/status-banner";
 import PandaStatusPageShell from "@/designs/panda/shell";
 import SimpleStatusPageShell from "@/designs/simple/shell";
 import StormtrooperStatusPageShell from "@/designs/stormtrooper/shell";
 import { MiruConfig } from "@/types/config";
 import { deleteAsset, uploadAsset } from "@/lib/minio/actions";
+import DummyMonitor from "@/components/status-pages/dummy-monitor";
 
 export interface StatusDayBlock {
 	date: Date;
@@ -729,36 +729,9 @@ export default function OnboardingStatusPageForm({ monitors, workspace, config }
 								<StatusBanner variant="operational" />
 							}
 						>
-							<div className="flex flex-col gap-2 items-start w-full">
-								<div className="flex flex-row gap-2 items-center justify-between w-full">
-									<p className="font-semibold text-lg font-display">
-										Test Monitor
-									</p>
-									<span className="font-mono text-sm">
-										100%
-									</span>
-								</div>
-								<div className="relative w-full h-full">
-									<div className="sm:flex flex-row gap-px sm:gap-0.5 hidden">
-										{days.toReversed().map((v, i) => {
-											return (
-												<StatusMonitorBar key={i} data={v} />
-											)
-										})}
-									</div>
-									<div className="flex-row gap-px sm:gap-0.5 flex sm:hidden">
-										{days.slice(0, 30).toReversed().map((v, i) => {
-											return (
-												<StatusMonitorBar key={i} data={v} />
-											)
-										})}
-									</div>
-								</div>
-								<div className="flex flex-row gap-2 items-center justify-between w-full">
-									<p className="text-sm before:content-['30'] sm:before:content-['45']">{" "} days ago</p>
-									<p className="text-sm">Today</p>
-								</div>
-							</div>
+							{monitorList.map((monitor) => (
+								<DummyMonitor key={monitor.id} monitor={monitor} days={days} />
+							))}
 						</StormtrooperStatusPageShell>
 					)}
 					{design === "panda" && (
@@ -783,36 +756,9 @@ export default function OnboardingStatusPageForm({ monitors, workspace, config }
 								<MonoStatusBanner variant="operational" />
 							}
 						>
-							<div className="flex flex-col gap-2 items-start w-full">
-								<div className="flex flex-row gap-2 items-center justify-between w-full">
-									<p className="font-semibold text-lg font-display">
-										Test Monitor
-									</p>
-									<span className="font-mono text-sm">
-										100%
-									</span>
-								</div>
-								<div className="relative w-full h-full">
-									<div className="sm:flex flex-row gap-px sm:gap-0.5 hidden">
-										{days.toReversed().map((v, i) => {
-											return (
-												<StatusMonitorBar key={i} data={v} />
-											)
-										})}
-									</div>
-									<div className="flex-row gap-px sm:gap-0.5 flex sm:hidden">
-										{days.slice(0, 30).toReversed().map((v, i) => {
-											return (
-												<StatusMonitorBar key={i} data={v} />
-											)
-										})}
-									</div>
-								</div>
-								<div className="flex flex-row gap-2 items-center justify-between w-full">
-									<p className="text-sm before:content-['30'] sm:before:content-['45']">{" "} days ago</p>
-									<p className="text-sm">Today</p>
-								</div>
-							</div>
+							{monitorList.map((monitor) => (
+								<DummyMonitor key={monitor.id} monitor={monitor} days={days} />
+							))}
 						</PandaStatusPageShell>
 					)}
 					{design === "simple" && (
@@ -837,36 +783,9 @@ export default function OnboardingStatusPageForm({ monitors, workspace, config }
 								<StatusBanner variant="operational" />
 							}
 						>
-							<div className="flex flex-col gap-2 items-start w-full">
-								<div className="flex flex-row gap-2 items-center justify-between w-full">
-									<p className="font-semibold text-lg font-display">
-										Test Monitor
-									</p>
-									<span className="font-mono text-sm">
-										100%
-									</span>
-								</div>
-								<div className="relative w-full h-full">
-									<div className="sm:flex flex-row gap-px sm:gap-0.5 hidden">
-										{days.toReversed().map((v, i) => {
-											return (
-												<StatusMonitorBar key={i} data={v} />
-											)
-										})}
-									</div>
-									<div className="flex-row gap-px sm:gap-0.5 flex sm:hidden">
-										{days.slice(0, 30).toReversed().map((v, i) => {
-											return (
-												<StatusMonitorBar key={i} data={v} />
-											)
-										})}
-									</div>
-								</div>
-								<div className="flex flex-row gap-2 items-center justify-between w-full">
-									<p className="text-sm before:content-['30'] sm:before:content-['45']">{" "} days ago</p>
-									<p className="text-sm">Today</p>
-								</div>
-							</div>
+							{monitorList.map((monitor) => (
+								<DummyMonitor key={monitor.id} monitor={monitor} days={days} />
+							))}
 						</SimpleStatusPageShell>
 					)}
 				</div>

@@ -1,4 +1,4 @@
-name: Publish
+name: Deploy
 
 on:
     push:
@@ -7,8 +7,8 @@ on:
     workflow_dispatch:
 
 jobs:
-    amd64:
-        name: Publish (linux/amd64)
+    build:
+        name: Build and Publish
         runs-on: ubuntu-latest
         permissions:
             packages: write
@@ -16,6 +16,17 @@ jobs:
             attestations: write
             id-token: write
         steps:
+            - name: Set up Docker
+              uses: docker/setup-docker-action@v4
+              with:
+                  daemon-config: |
+                      {
+                        "debug": true,
+                        "features": {
+                          "containerd-snapshotter": true
+                        }
+                      }
+
             - name: Checkout
               uses: actions/checkout@v4
 
@@ -26,68 +37,8 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Extract metadata for @miru/web
-              id: meta-web
-              uses: docker/metadata-action@v5
-              with:
-                  images: |
-                      ghcr.io/${{ github.repository }}/web
-                  tags: |
-                      type=semver,pattern={{version}},suffix=-amd64
-                      type=sha,suffix=-amd64
-                  flavor: |
-                      latest=true
-
-            - name: Build and push Docker image for @miru/web
-              id: push-web
-              uses: docker/build-push-action@v6
-              with:
-                  context: .
-                  file: ./apps/web/Dockerfile
-                  push: true
-                  tags: ${{ steps.meta-web.outputs.tags }}
-                  labels: ${{ steps.meta-web.outputs.labels }}
-
-            - name: Extract metadata for @miru/monitor
-              id: meta-monitor
-              uses: docker/metadata-action@v5
-              with:
-                  images: |
-                      ghcr.io/${{ github.repository }}/monitor
-                  tags: |
-                      type=semver,pattern={{version}},suffix=-amd64
-                      type=sha,suffix=-amd64
-                  flavor: |
-                      latest=true
-
-            - name: Build and push Docker image for @miru/monitor
-              id: push-monitor
-              uses: docker/build-push-action@v6
-              with:
-                  context: .
-                  file: ./apps/monitor/Dockerfile
-                  push: true
-                  tags: ${{ steps.meta-monitor.outputs.tags }}
-                  labels: ${{ steps.meta-monitor.outputs.labels }}
-
-    arm64:
-        name: Publish (linux/arm64)
-        runs-on: ubuntu-24.04-arm
-        permissions:
-            packages: write
-            contents: read
-            attestations: write
-            id-token: write
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-
-            - name: Log in to GitHub Container Registry
-              uses: docker/login-action@v3
-              with:
-                  registry: ghcr.io
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
 
             - name: Extract metadata for @miru/web
               id: meta-web
@@ -96,12 +47,12 @@ jobs:
                   images: |
                       ghcr.io/${{ github.repository }}/web
                   tags: |
-                      type=semver,pattern={{version}},suffix=-arm64
-                      type=sha,suffix=-arm64
+                      type=semver,pattern={{version}}
+                      type=sha
                   flavor: |
-                      latest=false
+                      latest=true
 
-            - name: Build and push Docker image for @miru/web
+            - name: Build and push @miru/web
               id: push-web
               uses: docker/build-push-action@v6
               with:
@@ -110,6 +61,7 @@ jobs:
                   push: true
                   tags: ${{ steps.meta-web.outputs.tags }}
                   labels: ${{ steps.meta-web.outputs.labels }}
+                  platforms: linux/amd64,linux/arm64
 
             - name: Extract metadata for @miru/monitor
               id: meta-monitor
@@ -118,12 +70,12 @@ jobs:
                   images: |
                       ghcr.io/${{ github.repository }}/monitor
                   tags: |
-                      type=semver,pattern={{version}},suffix=-arm64
-                      type=sha,suffix=-arm64
+                      type=semver,pattern={{version}}
+                      type=sha
                   flavor: |
-                      latest=false
+                      latest=true
 
-            - name: Build and push Docker image for @miru/monitor
+            - name: Build and push @miru/monitor
               id: push-monitor
               uses: docker/build-push-action@v6
               with:
@@ -132,3 +84,4 @@ jobs:
                   push: true
                   tags: ${{ steps.meta-monitor.outputs.tags }}
                   labels: ${{ steps.meta-monitor.outputs.labels }}
+                  platforms: linux/amd64,linux/arm64

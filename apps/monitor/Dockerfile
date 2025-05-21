@@ -1,4 +1,4 @@
-FROM rust:bookworm AS builder
+FROM rust:slim AS builder
 
 # Set the working directory
 WORKDIR /app
@@ -15,11 +15,11 @@ ENV SQLX_OFFLINE=true
 RUN cargo build --release
 
 # Use a minimal base image for the final stage
-FROM debian:bookworm-slim
+FROM alpine:latest
 
 # Set the working directory
 WORKDIR /app
-RUN apt-get update && apt-get upgrade -y && apt-get install -y curl
+RUN apk add --no-cache curl
 
 # Copy the built binary from the builder stage
 COPY --from=builder /app/target/release/monitor .

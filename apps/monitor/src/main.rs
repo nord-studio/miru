@@ -5,18 +5,20 @@ mod routes;
 use std::{
     env,
     sync::{Arc, OnceLock},
+    thread,
+    time::Duration,
 };
 
 use actix_cors::Cors;
-use actix_web::{web, App, HttpServer};
+use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use cron::{health::TrackedIncident, worker::JobMetadata};
 use dotenvy::dotenv;
 use log::info;
 use monitor::{read_config, MiruConfig};
 use once_cell::sync::Lazy;
 use routes::{
-    create_job_service, hello_service, not_found_service, ping_service, registry::registry_service,
-    remove_job_service, test_service, update_job_service,
+    create_job_service, hello_service, not_found_service, ping_service, remove_job_service,
+    test_service, update_job_service,
 };
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use tokio::sync::Mutex;
@@ -35,6 +37,20 @@ pub static SCHED: OnceLock<Arc<Mutex<JobScheduler>>> = OnceLock::new();
 pub static REGISTRY: OnceLock<Arc<Mutex<Vec<JobMetadata>>>> = OnceLock::new();
 pub static INCID_REGISTRY: OnceLock<Arc<Mutex<Vec<TrackedIncident>>>> = OnceLock::new();
 pub static MIRU_CONFIG: OnceLock<MiruConfig> = OnceLock::new();
+
+// Kill the current process, hopefully Docker will restart it
+async fn restart() -> impl Responder {
+    // Spawn a thread to delay restart so we can return an HTTP response first
+    thread::spawn(move || {
+        // Give Actix some time to finish the response
+        thread::sleep(Duration::from_secs(1));
+
+        // Exit the current process
+        std::process::exit(0);
+    });
+
+    HttpResponse::Ok().body("Killing current process...")
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -76,41 +92,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     cron::worker::start().await;
     cron::worker::load_jobs().await;
 
-    // info!("Reading email templates...");
-    // let transactional_path = "node_modules/@miru/transactional/out";
-    // match std::fs::read_dir(transactional_path) {
-    //     Ok(entries) => {
-    //         for entry in entries {
-    //             if let Ok(entry) = entry {
-    //                 info!("Found template: {}", entry.path().display());
-    //                 if entry.file_name().to_string_lossy() == "monitor-down.html" {
-    //                     info!("Found monitor-down.html template, applying replacements");
-    //                     let path = entry.path();
-    //                     match std::fs::read_to_string(&path) {
-    //                         Ok(content) => {
-    //                             let modified_content = content
-    //                                 .replace("monitorNames", "Website, API and Gateway")
-    //                                 .replace("url", "https://tygr.dev");
-
-    //                             if let Err(e) = std::fs::write(&path, modified_content) {
-    //                                 info!("Error writing modified template: {}", e);
-    //                             } else {
-    //                                 info!("Successfully applied replacements to monitor-down.html");
-    //                             }
-    //                         }
-    //                         Err(e) => {
-    //                             info!("Error reading monitor-down.html template: {}", e);
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     Err(e) => {
-    //         info!("Error reading email templates: {}", e);
-    //     }
-    // }
-
     info!("Starting server...");
     match HttpServer::new(|| {
         let cors = Cors::default()
@@ -126,7 +107,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .service(create_job_service)
             .service(remove_job_service)
             .service(update_job_service)
-            .service(registry_service)
+            .route("/restart", web::get().to(restart))
             .default_service(web::to(not_found_service))
     })
     .bind(("0.0.0.0", 8080))?

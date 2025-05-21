@@ -12,28 +12,28 @@ import {
 	Text,
 } from "@react-email/components";
 
-interface IncidentCreatedEmailProps {
-	incidentName: string;
+interface CancelledEventProps {
 	monitorNames: string[];
+	eventName: string;
 	url: string;
 }
 
-const IncidentCreatedEmail = ({ incidentName = "incidentName", monitorNames = ["monitorNames"], url = "url" }: IncidentCreatedEmailProps) => (
+const CancelledEventEmail = ({ monitorNames = ["monitorNames"], eventName = "eventName", url = "url" }: CancelledEventProps) => (
 	<Html>
 		<Head />
-		<Preview>{monitorNames.length === 1 ? `${monitorNames[0]} has` : "Some monitors have"} an issue!</Preview>
+		<Preview>An event has been cancelled</Preview>
 		<Body style={main}>
 			<Container style={container}>
-				<Heading style={heading}>{monitorNames.length === 1 ? `${monitorNames[0]} has` : "Some monitors have"} an issue!</Heading>
+				<Heading style={heading}>An event has been cancelled</Heading>
 				<Text style={paragraph}>
-					{monitorNames.length === 1 && `${monitorNames[0]} has`}
-					{monitorNames.length === 2 && `${monitorNames[0]} and ${monitorNames[1]} have`}
-					{monitorNames.length > 2 && `${monitorNames.length} monitors have`} been linked to a new incident: <b>{incidentName}</b>. Click the
-					button below to view the incident and take action.
+					The event called <b>{eventName}</b> which affects {" "}
+					{monitorNames.length === 1 && `${monitorNames[0]}`}
+					{monitorNames.length === 2 && `${monitorNames[0]} and ${monitorNames[1]}`}
+					{monitorNames.length > 2 && `${monitorNames.length} monitors`} has been cancelled. Click the button below to view the event.
 				</Text>
 				<Section style={buttonContainer}>
 					<Button style={button} href={url}>
-						View Incident
+						View Event
 					</Button>
 				</Section>
 				<Hr style={hr} />
@@ -42,16 +42,16 @@ const IncidentCreatedEmail = ({ incidentName = "incidentName", monitorNames = ["
 				</Text>
 			</Container>
 		</Body>
-	</Html>
+	</Html >
 );
 
-IncidentCreatedEmail.PreviewProps = {
+CancelledEventEmail.PreviewProps = {
+	eventName: "Moving to a new server",
 	monitorNames: ["Website"],
-	incidentName: "Problems with server",
 	url: "https://miru.nordstud.io",
 }
 
-export default IncidentCreatedEmail;
+export default CancelledEventEmail;
 
 const main = {
 	backgroundColor: "#ffffff",

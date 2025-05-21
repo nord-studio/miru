@@ -5,6 +5,7 @@ import { ThemeDropdown } from "@/components/theme/dropdown";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Menu } from "lucide-react";
+import SubscribeDropdown from "@/designs/subscribe";
 
 export default function SimpleStatusPageShell({ page, header, children }: { page: StatusPageWithMonitorsExtended, header: React.ReactNode, children: React.ReactNode }) {
 	return (
@@ -37,26 +38,14 @@ export default function SimpleStatusPageShell({ page, header, children }: { page
 							)}
 						</div>
 						<div className="flex-row gap-2 items-center hidden xs:flex">
-							<Tooltip>
-								<TooltipContent>
-									Coming Soon
-								</TooltipContent>
-								<TooltipTrigger asChild>
-									<Button variant="outline">
-										Report an Issue
-									</Button>
-								</TooltipTrigger>
-							</Tooltip>
-							<Tooltip>
-								<TooltipContent>
-									Coming Soon
-								</TooltipContent>
-								<TooltipTrigger asChild>
-									<Button>
-										Subscribe
-									</Button>
-								</TooltipTrigger>
-							</Tooltip>
+							<Button variant="outline">
+								Report an Issue
+							</Button>
+							<SubscribeDropdown>
+								<Button>
+									Subscribe
+								</Button>
+							</SubscribeDropdown>
 						</div>
 						<div className="flex-row gap-2 items-center flex xs:hidden">
 							<Button variant="outline" size="icon">

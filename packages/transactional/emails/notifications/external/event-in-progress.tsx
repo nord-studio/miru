@@ -12,24 +12,26 @@ import {
 	Text,
 } from "@react-email/components";
 
-interface CancelledMaintenanceProps {
+interface EventInProgressProps {
+	eventName: string;
 	monitorNames: string[];
-	maintenanceName: string;
+	date: string;
+	time: string;
 	url: string;
 }
 
-const CancelledMaintenanceEmail = ({ monitorNames = ["monitorNames"], maintenanceName = "maintenanceName", url = "url" }: CancelledMaintenanceProps) => (
+const EventInProgressEmail = ({ monitorNames = ["monitorNames"], url = "url", date = "date", time = "time", eventName = "eventName" }: EventInProgressProps) => (
 	<Html>
 		<Head />
-		<Preview>Maintenance has been cancelled</Preview>
+		<Preview>An event is in progress</Preview>
 		<Body style={main}>
 			<Container style={container}>
-				<Heading style={heading}>Maintenance has been cancelled</Heading>
+				<Heading style={heading}>An event is in progress</Heading>
 				<Text style={paragraph}>
-					The maintance event called <b>{maintenanceName}</b> which affects {" "}
-					{monitorNames.length === 1 && `${monitorNames[0]}`}
-					{monitorNames.length === 2 && `${monitorNames[0]} and ${monitorNames[1]}`}
-					{monitorNames.length > 2 && `${monitorNames.length} monitors`} has been cancelled. Click the button below to view the event.
+					A planned event called "<b>{eventName}</b>" is in progress and may affect {" "}
+					{monitorNames.length === 1 && `"${monitorNames[0]}"`}
+					{monitorNames.length === 2 && `"${monitorNames[0]}" and "${monitorNames[1]}"`}
+					{monitorNames.length > 2 && `${monitorNames.length} monitors`}. The event will end at <b>{date}</b> at <b>{time}</b>.
 				</Text>
 				<Section style={buttonContainer}>
 					<Button style={button} href={url}>
@@ -45,13 +47,15 @@ const CancelledMaintenanceEmail = ({ monitorNames = ["monitorNames"], maintenanc
 	</Html >
 );
 
-CancelledMaintenanceEmail.PreviewProps = {
-	maintenanceName: "Moving to a new server",
-	monitorNames: ["Website"],
+EventInProgressEmail.PreviewProps = {
+	eventName: "Moving to a new server",
+	monitorNames: ["Website", "Campsite Gateway", "Campsite API"],
 	url: "https://miru.nordstud.io",
+	date: "23rd May 2025",
+	time: "12:00pm UTC"
 }
 
-export default CancelledMaintenanceEmail;
+export default EventInProgressEmail;
 
 const main = {
 	backgroundColor: "#ffffff",

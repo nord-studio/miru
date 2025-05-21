@@ -12,6 +12,7 @@ import {
 import {
 	BookTextIcon,
 	CodeIcon,
+	Cog,
 	LogOut,
 	MapIcon,
 	UserIcon,
@@ -83,7 +84,7 @@ export default function UserDropdown({ user }: { user: User }) {
 								>
 									<Avatar className="border border-black/10 dark:border dark:border-white/10 size-9">
 										<AvatarImage
-											src={`/api/v1/assets/${user.image}`}
+											src={user.image ? `/api/v1/assets/${user.image}` : undefined}
 											alt="Avatar"
 											aria-label="Avatar"
 										/>
@@ -108,6 +109,14 @@ export default function UserDropdown({ user }: { user: User }) {
 												Account
 											</DropdownMenuItem>
 										</Link>
+										{user.admin && (
+											<Link href="/config">
+												<DropdownMenuItem>
+													<Cog className="mr-2 h-4 w-4" />
+													Instance Config
+												</DropdownMenuItem>
+											</Link>
+										)}
 									</DropdownMenuGroup>
 									<DropdownMenuSeparator />
 									<Link
@@ -128,10 +137,6 @@ export default function UserDropdown({ user }: { user: User }) {
 											Docs
 										</DropdownMenuItem>
 									</Link>
-									<DropdownMenuItem disabled>
-										<CodeIcon className="mr-2 h-4 w-4" />
-										API
-									</DropdownMenuItem>
 									<Link
 										href="https://github.com/orgs/nord-studio/projects/7"
 										target="_blank"
@@ -147,6 +152,7 @@ export default function UserDropdown({ user }: { user: User }) {
 											setOpen(!open);
 											setSignOutOpen(!signOutOpen);
 										}}
+										variant="destructive"
 									>
 										<LogOut className="mr-2 h-4 w-4" />
 										<span>Sign out</span>

@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams.toString();
   const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`;
 
-  if (path.startsWith("/admin")) {
+  if (path.startsWith("/admin") || path.startsWith("/config")) {
     const sessionCookie = getSessionCookie(request, {
       cookiePrefix: "miru",
     });

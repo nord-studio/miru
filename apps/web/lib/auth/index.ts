@@ -6,8 +6,7 @@ import { passkey } from "better-auth/plugins/passkey";
 import db from "@/lib/db";
 import { getAppUrl } from "@/lib/utils";
 import { getConfig } from "@/lib/config";
-import sendResetPasswordEmail, { sendEmailVerification } from "@/components/auth/actions";
-
+import { sendEmailVerification, sendResetPasswordEmail } from "@/components/auth/actions";
 const { appDomain, appUrl } = getAppUrl();
 const { config } = await getConfig();
 
@@ -32,6 +31,14 @@ export const auth = betterAuth({
     deleteUser: {
       enabled: true,
     },
+    additionalFields: {
+      admin: {
+        type: "boolean",
+        required: true,
+        defaultValue: false,
+        input: true
+      }
+    }
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
