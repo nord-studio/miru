@@ -47,6 +47,7 @@ import {
   NavProvider,
 } from 'fumadocs-ui/contexts/layout';
 import Link from 'fumadocs-core/link';
+import { SidebarProvider } from 'fumadocs-core/sidebar';
 
 export interface DocsLayoutProps extends BaseLayoutProps {
   tree: PageTree.Root;
@@ -92,83 +93,85 @@ export function DocsLayout({
 
   return (
     <TreeContextProvider tree={props.tree}>
-      <NavProvider transparentMode={transparentMode}>
-        {slot(
-          nav,
-          <Navbar className="md:hidden">
-            <Link
-              href={nav.url ?? '/'}
-              className="inline-flex items-center gap-2.5 font-semibold"
-            >
-              {nav.title}
-            </Link>
-            <div className="flex flex-1 flex-row items-center gap-1">
-              {nav.children}
-            </div>
-            {slots('sm', searchToggle, <SearchToggle hideIfDisabled />)}
-            <NavbarSidebarTrigger className="-me-2 md:hidden" />
-          </Navbar>,
-        )}
-        <main
-          id="nd-docs-layout"
-          {...props.containerProps}
-          className={cn(
-            'flex flex-1 flex-row pe-(--fd-layout-offset)',
-            variables,
-            props.containerProps?.className,
-          )}
-          style={{
-            ...layoutVariables,
-            ...props.containerProps?.style,
-          }}
-        >
+      <SidebarProvider>
+        <NavProvider transparentMode={transparentMode}>
           {slot(
-            sidebar,
-            <DocsLayoutSidebar
-              {...sidebar}
-              links={links}
-              nav={
-                <>
-                  <Link
-                    href={nav.url ?? '/'}
-                    className="inline-flex text-[15px] items-center gap-2.5 font-medium"
-                  >
-                    {nav.title}
-                  </Link>
-                  {nav.children}
-                </>
-              }
-              banner={
-                <>
-                  {tabs.length > 0 ? (
-                    <RootToggle options={tabs} className="-mx-2" />
-                  ) : null}
-                  {slots(
-                    'lg',
-                    searchToggle,
-                    <LargeSearchToggle
-                      hideIfDisabled
-                      className="rounded-lg max-md:hidden"
-                    />,
-                  )}
-                  {sidebar.banner}
-                </>
-              }
-              footer={
-                <>
-                  <DocsLayoutSidebarFooter
-                    links={links.filter((item) => item.type === 'icon')}
-                    i18n={i18n}
-                    themeSwitch={themeSwitch}
-                  />
-                  {sidebar.footer}
-                </>
-              }
-            />,
+            nav,
+            <Navbar className="md:hidden">
+              <Link
+                href={nav.url ?? '/'}
+                className="inline-flex items-center gap-2.5 font-semibold"
+              >
+                {nav.title}
+              </Link>
+              <div className="flex flex-1 flex-row items-center gap-1">
+                {nav.children}
+              </div>
+              {slots('sm', searchToggle, <SearchToggle hideIfDisabled />)}
+              <NavbarSidebarTrigger className="-me-2 md:hidden" />
+            </Navbar>,
           )}
-          <StylesProvider {...pageStyles}>{children}</StylesProvider>
-        </main>
-      </NavProvider>
+          <main
+            id="nd-docs-layout"
+            {...props.containerProps}
+            className={cn(
+              'flex flex-1 flex-row pe-(--fd-layout-offset)',
+              variables,
+              props.containerProps?.className,
+            )}
+            style={{
+              ...layoutVariables,
+              ...props.containerProps?.style,
+            }}
+          >
+            {slot(
+              sidebar,
+              <DocsLayoutSidebar
+                {...sidebar}
+                links={links}
+                nav={
+                  <>
+                    <Link
+                      href={nav.url ?? '/'}
+                      className="inline-flex text-[15px] items-center gap-2.5 font-medium"
+                    >
+                      {nav.title}
+                    </Link>
+                    {nav.children}
+                  </>
+                }
+                banner={
+                  <>
+                    {tabs.length > 0 ? (
+                      <RootToggle options={tabs} className="-mx-2" />
+                    ) : null}
+                    {slots(
+                      'lg',
+                      searchToggle,
+                      <LargeSearchToggle
+                        hideIfDisabled
+                        className="rounded-lg max-md:hidden"
+                      />,
+                    )}
+                    {sidebar.banner}
+                  </>
+                }
+                footer={
+                  <>
+                    <DocsLayoutSidebarFooter
+                      links={links.filter((item) => item.type === 'icon')}
+                      i18n={i18n}
+                      themeSwitch={themeSwitch}
+                    />
+                    {sidebar.footer}
+                  </>
+                }
+              />,
+            )}
+            <StylesProvider {...pageStyles}>{children}</StylesProvider>
+          </main>
+        </NavProvider>
+      </SidebarProvider>
     </TreeContextProvider>
   );
 }

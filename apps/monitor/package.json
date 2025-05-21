@@ -3,7 +3,7 @@
 	"version": "0.3.5",
 	"scripts": {
 		"dev": "watchexec -e rs -r RUST_LOG=trace cargo run",
-		"build": "cargo build --release",
+		"build": "SQLX_OFFLINE=TRUE cargo build --release",
 		"start": "RUST_LOG=info ./../../target/debug/monitor",
 		"lint": "cargo clippy ; cargo fmt"
 	},
