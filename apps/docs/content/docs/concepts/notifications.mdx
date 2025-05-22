@@ -1,0 +1,63 @@
+---
+title: "Notifications"
+description: "Get alerted when something requires action in your workspace."
+---
+
+## What are Notifications?
+
+Notification channels are a way to send alerts to external platforms like Discord and Slack when something requires action in your workspace.
+These alerts can be triggered by various events, such as a monitor going down, a new report being created, or a new incident being created.
+
+## Creating a Notification Channel
+
+In order to create a notification channel, you need to have the `admin` role or higher in your workspace.
+
+Head over to the admin panel and navigate to the **Notifications** section using the tabs on the navigation bar, from there you can click
+**Create Channel** to start the process of setting up a new notification channel.
+
+![](/concepts/notifications/create.png)
+
+## Channel Types
+
+Miru provides two types of Notification channels:
+
+-   **Internal**: Used to send alerts to your workspace members. They will contain all information about the event, and links to the admin dashboard so your team can take action quickly.
+-   **External**: Used to update your users in real-time in a platform they already use when something happens to a service they are using.
+
+By default, Miru will send alerts via email to workspace members that have the `admin` role or higher, but sometimes this isn't enough and you'll want to be alerted in real-time in a platform your team is already using.
+
+Optionally, you can create external channels that send alerts to your users when a service they use goes down, or when a new incident is created. This can keep your users informed as soon as possible in a way that is convenient for them.
+
+## Channel Events
+
+There are multiple types of events that can trigger a notification, they are either automatic (e.g. monitor downtime detected) or manual (e.g. a new incident is created via the admin panel).
+You can find a list of all the events that can trigger a notification below.
+
+### Auto Incidents
+
+Auto Incidents are a feature that automatically create an incident when a monitor goes down. You can find out more in the [Auto Incidents](/docs/concepts/incidents#auto-incidents) section.
+
+| Event            | Description                                             | Type      |
+| ---------------- | ------------------------------------------------------- | --------- |
+| Monitor Outage   | When a monitor is classed as failing                    | Automatic |
+| Monitor Recovery | When a failing monitor starts successfully pinging      | Automatic |
+| Monitor Relapse  | When a monitor that is recovering, starts failing again | Automatic |
+| Monitor Revive   | When a monitor that is down, comes back up again        | Automatic |
+
+### Scheduled Events
+
+| Event             | Description                           | Type      |
+| ----------------- | ------------------------------------- | --------- |
+| Event created     | When a new event is created           | Manual    |
+| Event updated     | When an event is updated              | Manual    |
+| Event cancelled   | When a scheduled event is cancelled   | Manual    |
+| Event in progress | When a scheduled event is in progress | Automatic |
+| Event completed   | When a scheduled event is over        | Automatic |
+
+### Incidents
+
+| Event                   | Description                           | Type   |
+| ----------------------- | ------------------------------------- | ------ |
+| Incident created        | When a new incident is created        | Manual |
+| Incident report created | When a new incident report is created | Manual |
+| Incident resolved       | When an incident is resolved          | Manual |
