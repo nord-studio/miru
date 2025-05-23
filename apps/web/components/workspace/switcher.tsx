@@ -23,8 +23,10 @@ import CreateWorkspace from "@/components/workspace/create-workspace";
 import { usePathname, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import JoinWorkspace from "@/components/workspace/join-workspace";
+import { MiruConfig } from "@/types/config";
+import { User } from "@/lib/auth";
 
-export function WorkspaceSwitcher({ workspaces }: { workspaces: WorkspaceWithMembers[] }) {
+export function WorkspaceSwitcher({ workspaces, user, config }: { workspaces: WorkspaceWithMembers[], user: User, config: MiruConfig }) {
 	// filter out duplicate workspaces
 	workspaces = workspaces.filter(
 		(workspace, index) =>
@@ -102,12 +104,14 @@ export function WorkspaceSwitcher({ workspaces }: { workspaces: WorkspaceWithMem
 									</CommandItem>
 								))}
 								<hr className="w-full my-1" />
-								<CommandItem
-									onSelect={() => setOpenCreate(true)}
-								>
-									Create Workspace
-									<Plus className="ml-auto" />
-								</CommandItem>
+								{user.admin || config.workspace.creation === true && (
+									<CommandItem
+										onSelect={() => setOpenCreate(true)}
+									>
+										Create Workspace
+										<Plus className="ml-auto" />
+									</CommandItem>
+								)}
 								<CommandItem
 									onSelect={() => setOpenJoin(true)}
 								>

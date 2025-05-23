@@ -48,6 +48,11 @@ jobs:
               uses: docker/metadata-action@v5
               with:
                   images: ghcr.io/${{ github.repository }}/web
+                  tags: |
+                      type=semver,pattern={{version}}
+                      type=sha
+                  flavor: |
+                      latest=true
 
             - name: Build @miru/web by digest
               id: build-web
@@ -79,6 +84,11 @@ jobs:
               uses: docker/metadata-action@v5
               with:
                   images: ghcr.io/${{ github.repository }}/monitor
+                  tags: |
+                      type=semver,pattern={{version}}
+                      type=sha
+                  flavor: |
+                      latest=true
 
             - name: Build @miru/monitor by digest
               id: build-monitor

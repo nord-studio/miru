@@ -1,43 +1,42 @@
-import { columns } from "@/app/admin/[workspaceSlug]/monitors/columns";
-import { CreateMonitorButton } from "@/components/monitors/create-monitor";
 import { DataTable } from "@/components/ui/data-table";
-import { monitors } from "@/lib/db/schema/monitors";
 import db from "@/lib/db";
-import { getAllMonitorUptime } from "@/lib/db/utils";
 import { Monitor } from "@/types/monitor";
 import { eq } from "drizzle-orm";
-import { workspaces } from "@/lib/db/schema";
+import { monitors, workspaces } from "@/lib/db/schema";
 import { RankedRoles, WorkspaceMember } from "@/types/workspace";
 import { getCurrentMember } from "@/components/workspace/actions";
 import { redirect } from "next/navigation";
-import { MonitorIcon } from "lucide-react";
+import { CalendarOff } from "lucide-react";
+import { getAllEventsWithMonitors } from "@/components/events/actions";
+import { columns } from "@/app/admin/[workspaceSlug]/events/columns";
+import { CreateEventButton } from "@/components/events/create-event";
 
 export interface MonitorRow extends Monitor {
 	uptime: number;
 }
 
-function EmptyState({ currentMember }: { currentMember: WorkspaceMember }) {
+function EmptyState({ currentMember, monitors }: { currentMember: WorkspaceMember, monitors: Monitor[] }) {
 	return (
 		<div className="flex flex-col items-center justify-center w-full h-full gap-4 py-4">
 			<div className="border rounded-lg p-2 bg-muted/80">
-				<MonitorIcon />
+				<CalendarOff />
 			</div>
 			<div className="flex flex-col gap-1 items-center">
 				<h2 className="text-lg font-semibold">
-					No monitors found
+					No events found
 				</h2>
 				<p>
-					Looks like you don&apos;t have any monitors yet.
+					Looks like you haven&apos;t scheduled any events yet.
 				</p>
 			</div>
 			{RankedRoles[currentMember.role] >= RankedRoles.admin && (
-				<CreateMonitorButton />
+				<CreateEventButton monitors={monitors} />
 			)}
 		</div>
 	)
 }
 
-export default async function MonitorsPage({
+export default async function EventsPage({
 	params,
 }: {
 	params: Promise<{ workspaceSlug: string }>;
@@ -52,29 +51,18 @@ export default async function MonitorsPage({
 			return res[0];
 		});
 
-	const raw = await db
-		.select()
-		.from(monitors)
-		.where(eq(monitors.workspaceId, workspace.id))
-		.limit(50);
-
-	const allUptimes = await getAllMonitorUptime(7);
-
 	const currentMember = await getCurrentMember(workspace.id);
 
 	if (!currentMember) {
 		return redirect("/admin");
 	}
 
-	const data: MonitorRow[] = raw.map((monitor) => {
-		const uptime = allUptimes.find((u) => u.monitor_id === monitor.id);
+	const data = await getAllEventsWithMonitors(workspace.id);
 
-		return {
-			...monitor,
-			uptime: uptime?.uptime_percentage || 0,
-			workspaceId: workspace.id
-		};
-	});
+	const mons = await db
+		.select()
+		.from(monitors)
+		.where(eq(monitors.workspaceId, workspace.id));
 
 	return (
 		<>
@@ -82,22 +70,22 @@ export default async function MonitorsPage({
 				<div className="w-full flex flex-row gap-2 items-center justify-between">
 					<div className="flex flex-col">
 						<h1 className="text-3xl font-black font-display">
-							Monitors
+							Events
 						</h1>
 						<p className="text-neutral-500 dark:text-neutral-400">
-							An automated way to keep track of your services&apos; status.
+							Schedule downtime events in advance.
 						</p>
 					</div>
 					<div className="flex flex-row gap-2 items-center">
 						{RankedRoles[currentMember.role] >= RankedRoles.admin && (
 							<>
-								<CreateMonitorButton />
+								<CreateEventButton monitors={mons} />
 							</>
 						)}
 					</div>
 				</div>
 				<div className="mt-4">
-					<DataTable columns={columns} data={data} emptyComponent={<EmptyState currentMember={currentMember} />} />
+					<DataTable columns={columns} data={data} emptyComponent={<EmptyState currentMember={currentMember} monitors={mons} />} />
 				</div>
 			</div>
 		</>

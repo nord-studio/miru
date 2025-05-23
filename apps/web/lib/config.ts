@@ -33,6 +33,12 @@ export async function getConfig() {
 		},
 		storage: {
 			max_size: 12582912 // 12MB
+		},
+		workspace: {
+			creation: false
+		},
+		users: {
+			delete_on_empty: true,
 		}
 	};
 

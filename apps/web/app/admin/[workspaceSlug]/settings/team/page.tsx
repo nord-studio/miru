@@ -4,22 +4,12 @@ import { workspaceMembers, workspaces } from "@/lib/db/schema";
 import { Plus, UserPlus } from "lucide-react";
 import { eq } from "drizzle-orm";
 import InviteMembers from "@/components/settings/team/invite-members";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import CreateInviteToken from "@/components/settings/team/create-invite";
-import LeaveWorkspaceButton from "@/components/settings/team/leave-workspace";
-import ManageMember from "@/components/settings/team/manage-member";
-import KickWorkspaceMemberButton from "@/components/settings/team/kick-member";
 import { getAppUrl } from "@/lib/utils";
-import { RankedRoles } from "@/types/workspace";
+import { DataTable } from "@/components/ui/data-table";
+import { columns } from "@/app/admin/[workspaceSlug]/settings/team/columns";
 
 export default async function ProfileSettingsPage({
   params,
@@ -67,9 +57,9 @@ export default async function ProfileSettingsPage({
       <main className="flex flex-col gap-4 w-full">
         <div className="flex flex-row gap-4 items-center w-full">
           <div className="flex flex-col w-full">
-            <h1 className="text-3xl font-black font-display">Team</h1>
+            <h1 className="text-3xl font-black font-display">{workspace.name}&apos;s Team</h1>
             <p className="text-neutral-500 dark:text-neutral-400">
-              Your workspace team settings.
+              Manage your team members and their roles in this workspace.
             </p>
           </div>
           {currentMember.role !== "member" && (
@@ -121,55 +111,14 @@ export default async function ProfileSettingsPage({
           )}
         </div>
         <div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {members.map((member) => (
-                <TableRow key={member.id}>
-                  <TableCell className="font-medium">
-                    {member.user.name}
-                  </TableCell>
-                  <TableCell>{member.user.email}</TableCell>
-                  <TableCell>{member.role}</TableCell>
-                  <TableCell className="text-right">
-                    {member.id === currentMember.id ? (
-                      <>
-                        {currentMember.role === "owner" && moreThanOneOwner && (
-                          <LeaveWorkspaceButton workspace={workspace} />
-                        )}
-                      </>
-                    ) : (
-                      <div className="flex flex-row gap-2 justify-end">
-                        {RankedRoles[
-                          currentMember?.role as keyof typeof RankedRoles
-                        ] >= RankedRoles[member.role] && (
-                            <div className="flex flex-row gap-2 justify-end">
-                              <ManageMember
-                                member={member}
-                                currentMember={currentMember}
-                              />
-                              {currentMember.role === "owner" &&
-                                currentMember.id !== member.id && (
-                                  <>
-                                    <KickWorkspaceMemberButton member={member} />
-                                  </>
-                                )}
-                            </div>
-                          )}
-                      </div>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <DataTable data={members.map((member) => {
+            return {
+              ...member,
+              currentMember,
+              workspace,
+              moreThanOneOwner,
+            }
+          })} columns={columns} />
         </div>
       </main>
     </>

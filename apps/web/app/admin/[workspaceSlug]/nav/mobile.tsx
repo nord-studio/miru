@@ -9,6 +9,7 @@ import {
 	BellIcon,
 	Code,
 	Megaphone,
+	Calendar,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -117,6 +118,24 @@ export default function MobileNavbar() {
 											>
 												<BellIcon className="w-6 h-6" />{" "}
 												Notifications
+											</Button>
+										</Drawer.Close>
+									</Link>
+									<Link
+										href={`/admin/${currentWorkspace}/events`}
+										passHref
+										className="w-full"
+									>
+										<Drawer.Close
+											className="w-full"
+											asChild
+										>
+											<Button
+												variant="ghost"
+												className="flex flex-row w-full gap-2 justify-start"
+											>
+												<Calendar className="w-6 h-6" />{" "}
+												Events
 											</Button>
 										</Drawer.Close>
 									</Link>

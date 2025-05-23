@@ -4,6 +4,7 @@ import { generateId } from "@/lib/utils";
 import { relations } from "drizzle-orm/relations";
 import { pgTable, text, timestamp, boolean, varchar, integer, primaryKey, json } from "drizzle-orm/pg-core";
 import { statusPageMonitors } from "@/lib/db/schema/status-pages";
+import { events } from "@/lib/db/schema/events";
 
 export const monitors = pgTable("monitors", {
 	/// The unique identifier for the monitor
@@ -53,6 +54,26 @@ export const monitorsToIncidentsRelations = relations(monitorsToIncidents, ({ on
 		references: [incidents.id]
 	})
 }))
+
+// Join table for the many to many relationship between monitors and events
+export const monitorsToEvents = pgTable("monitors_to_events", {
+	monitorId: varchar("monitor_id", { length: 16 }).notNull().references(() => monitors.id, { onDelete: "cascade" }),
+	eventId: varchar("event_id", { length: 16 }).notNull().references(() => events.id, { onDelete: "cascade" }),
+}, (t) => [
+	primaryKey({ columns: [t.monitorId, t.eventId] })
+]);
+
+// Many to many relationship between monitors and events
+export const monitorsToEventsRelations = relations(monitorsToEvents, ({ one }) => ({
+	monitor: one(monitors, {
+		fields: [monitorsToEvents.monitorId],
+		references: [monitors.id]
+	}),
+	event: one(events, {
+		fields: [monitorsToEvents.eventId],
+		references: [events.id]
+	})
+}));
 
 export const pings = pgTable("pings", {
 	/// The unique identifier for the ping

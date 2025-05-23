@@ -5,12 +5,12 @@ import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import React from "react";
-import { IncidentWithMonitor } from "@/types/incident";
 import { Badge } from "@/components/ui/badge";
-import IncidentActionsDropdown from "@/components/incidents/incidents-dropdown";
 import { usePathname } from "next/navigation";
+import { EventWithMonitors } from "@/types/event";
+import EventActionsDropdown from "@/components/events/dropdown";
 
-export const columns: ColumnDef<IncidentWithMonitor>[] = [
+export const columns: ColumnDef<EventWithMonitors>[] = [
 	{
 		id: "select",
 		header: ({ table }) => (
@@ -41,55 +41,31 @@ export const columns: ColumnDef<IncidentWithMonitor>[] = [
 		accessorKey: "title",
 		header: "Title",
 		cell: ({ row }) => {
-			const pathname = usePathname();
 			return (
-				<Link
-					href={`/admin/${pathname.split("/")[2]}/incidents/${row.original.id
-						}`}
-					className="w-fit"
-				>
-					<p className="font-medium hover:underline w-fit">
-						{row.original.title}
-					</p>
-				</Link>
-			);
-		},
-	},
-	{
-		accessorKey: "started_at",
-		header: "Started At",
-		cell: ({ row }) => {
-			return (
-				<p className="font-medium" suppressHydrationWarning={true}>
-					{new Date(row.original.startedAt).toLocaleString()}
+				<p className="font-medium w-fit">
+					{row.original.title}
 				</p>
 			);
 		},
 	},
 	{
-		accessorKey: "acknowledged_at",
-		header: "Acknowledged At",
+		accessorKey: "startsAt",
+		header: "Starts At",
 		cell: ({ row }) => {
 			return (
 				<p className="font-medium" suppressHydrationWarning={true}>
-					{row.original.acknowledgedAt
-						? new Date(
-							row.original.acknowledgedAt
-						).toLocaleString()
-						: "N/A"}
+					{new Date(row.original.startsAt).toLocaleString()}
 				</p>
 			);
 		},
 	},
 	{
-		accessorKey: "resolved_at",
-		header: "Resolved At",
+		accessorKey: "autoComplete",
+		header: "Auto Complete",
 		cell: ({ row }) => {
 			return (
-				<p className="font-medium" suppressHydrationWarning={true}>
-					{row.original.resolvedAt
-						? new Date(row.original.resolvedAt).toLocaleString()
-						: "N/A"}
+				<p className="font-medium">
+					{row.original.autoComplete ? "Enabled" : "Disabled"}
 				</p>
 			);
 		},
@@ -121,8 +97,8 @@ export const columns: ColumnDef<IncidentWithMonitor>[] = [
 		id: "actions",
 		cell: ({ row }) => {
 			return (
-				<IncidentActionsDropdown
-					incident={row.original}
+				<EventActionsDropdown
+					event={row.original}
 					className="h-8 w-8 p-0"
 				/>
 			);

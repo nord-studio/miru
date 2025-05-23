@@ -1,18 +1,45 @@
 import CreateApiKey from "@/components/settings/api/create-key";
-import DeleteApiKey from "@/components/settings/api/revoke-key";
 import { listApiKeys } from "@/components/settings/api/actions";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { auth } from "@/lib/auth";
 import db from "@/lib/db";
 import { workspaces } from "@/lib/db/schema";
-import { format, formatDistance } from "date-fns";
 import { eq } from "drizzle-orm";
-import { Plus } from "lucide-react";
+import { Code2, Plus } from "lucide-react";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getCurrentMember } from "@/components/workspace/actions";
-import ViewApiKey from "@/components/settings/api/view-key";
+import { DataTable } from "@/components/ui/data-table";
+import { columns } from "@/app/admin/[workspaceSlug]/settings/api/columns";
+import { Workspace, WorkspaceMember } from "@/types/workspace";
+
+function EmptyState({ workspace, currentMember }: { workspace: Workspace, currentMember: WorkspaceMember }) {
+	return (
+		<div className="flex flex-col items-center justify-center mx-auto h-full gap-4 py-4 rounded-lg w-fit">
+			<div className="border rounded-lg p-2 bg-muted/80">
+				<Code2 />
+			</div>
+			<div className="flex flex-col gap-1 items-center">
+				<h2 className="text-lg font-semibold">
+					No API keys found
+				</h2>
+				<p>
+					Looks like you haven&apos;t created any API keys yet.
+				</p>
+			</div>
+			{currentMember.role !== "member" && (
+				<CreateApiKey
+					workspace={workspace}
+				>
+					<Button>
+						<Plus />
+						Create Key
+					</Button>
+				</CreateApiKey>
+			)}
+		</div>
+	)
+}
 
 export default async function ApiSettingsPage({
 	params,
@@ -92,33 +119,7 @@ export default async function ApiSettingsPage({
 						</>
 					)}
 				</div>
-				<div>
-					<Table>
-						<TableHeader>
-							<TableRow>
-								<TableHead>Name</TableHead>
-								<TableHead>Expires In</TableHead>
-								<TableHead>Created At</TableHead>
-								<TableHead className="text-right">Actions</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							{keys?.data?.data.map((key) => (
-								<TableRow key={key.id}>
-									<TableCell className="font-medium">
-										{key.name}
-									</TableCell>
-									<TableCell>{key.expiresAt ? formatDistance(new Date(), key.expiresAt) : "Never"}</TableCell>
-									<TableCell>{format(key.createdAt, "dd-MM-yyyy")}</TableCell>
-									<TableCell className="flex flex-row gap-2 justify-end">
-										<ViewApiKey apiKey={key} />
-										<DeleteApiKey id={key.id} />
-									</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-				</div>
+				<DataTable columns={columns} data={keys.data.data} emptyComponent={<EmptyState workspace={workspace} currentMember={currentMember} />} />
 			</main>
 		</>
 	)

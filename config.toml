@@ -8,3 +8,9 @@ enabled = true
 
 [storage]
 max_size = 12582912
+
+[users]
+delete_on_empty = true
+
+[workspace]
+creation = false

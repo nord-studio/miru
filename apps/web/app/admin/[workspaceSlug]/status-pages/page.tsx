@@ -6,13 +6,13 @@ import db from "@/lib/db";
 import { workspaces } from "@/lib/db/schema";
 import { statusPages } from "@/lib/db/schema/status-pages";
 import { StatusPageWithMonitorsExtended } from "@/types/status-pages";
-import { RankedRoles } from "@/types/workspace";
+import { RankedRoles, WorkspaceMember } from "@/types/workspace";
 import { eq } from "drizzle-orm";
 import { FileTextIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-function EmptyState({ workspaceSlug }: { workspaceSlug: string }) {
+function EmptyState({ workspaceSlug, currentMember }: { workspaceSlug: string, currentMember: WorkspaceMember }) {
 	return (
 		<div className="flex flex-col items-center justify-center w-full h-full gap-4 py-4">
 			<div className="border rounded-lg p-2">
@@ -23,15 +23,17 @@ function EmptyState({ workspaceSlug }: { workspaceSlug: string }) {
 					No pages found
 				</h2>
 				<p>
-					Create a status page to communicate the status of your services to your users.
+					Looks like you don&apos;t have any status pages yet.
 				</p>
 			</div>
-			<Link href={`/admin/${workspaceSlug}/status-pages/new`}>
-				<Button>
-					<PlusIcon />
-					Create Page
-				</Button>
-			</Link>
+			{RankedRoles[currentMember.role] >= RankedRoles.admin && (
+				<Link href={`/admin/${workspaceSlug}/status-pages/new`}>
+					<Button>
+						<PlusIcon />
+						Create Page
+					</Button>
+				</Link>
+			)}
 		</div>
 	)
 }
@@ -73,7 +75,7 @@ export default async function StatusPagesIndexPage({
 							Status Pages
 						</h1>
 						<p className="text-neutral-500 dark:text-neutral-400">
-							Overview of all your pages.
+							The list of all your status pages.
 						</p>
 					</div>
 					<div className="flex flex-row gap-2 items-center">
@@ -91,7 +93,7 @@ export default async function StatusPagesIndexPage({
 					</div>
 				</div>
 				<div className="mt-4">
-					<DataTable data={pages} columns={columns} emptyComponent={<EmptyState workspaceSlug={workspace.slug} />} />
+					<DataTable data={pages} columns={columns} emptyComponent={<EmptyState workspaceSlug={workspace.slug} currentMember={currentMember} />} />
 				</div>
 			</div>
 		</>

@@ -57,8 +57,6 @@ export default async function IncidentsPage({
 
 	data = data.filter((d) => d.monitor.workspaceId === workspace.id);
 
-	// group together incidents with their monitors as a list
-	// oh my god this is so ugly 😭
 	const incids = data.reduce((acc: IncidentWithMonitor[], curr) => {
 		const found = acc.find((a) => a.id === curr.incident.id);
 		if (!found) {
@@ -81,7 +79,7 @@ export default async function IncidentsPage({
 							Incidents
 						</h1>
 						<p className="text-neutral-500 dark:text-neutral-400">
-							The full list of all your incidents.
+							Keep track of the timeline when your service goes down.
 						</p>
 					</div>
 					<div className="flex flex-row gap-2 items-center">

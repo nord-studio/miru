@@ -6,12 +6,12 @@ import db from "@/lib/db";
 import { monitors, notifications, workspaces } from "@/lib/db/schema";
 import { Monitor } from "@/types/monitor";
 import { NotificationWithMonitors } from "@/types/notifications";
-import { RankedRoles, Workspace } from "@/types/workspace";
+import { RankedRoles, Workspace, WorkspaceMember } from "@/types/workspace";
 import { eq } from "drizzle-orm";
 import { BellOffIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 
-function EmptyState({ mons, workspace }: { mons: Monitor[]; workspace: Workspace }) {
+function EmptyState({ mons, workspace, currentMember }: { mons: Monitor[]; workspace: Workspace, currentMember: WorkspaceMember }) {
 	return (
 		<div className="flex flex-col items-center justify-center w-full h-full gap-4 py-4">
 			<div className="border rounded-lg p-2">
@@ -25,7 +25,9 @@ function EmptyState({ mons, workspace }: { mons: Monitor[]; workspace: Workspace
 					Create a channel to notify your users when something goes wrong.
 				</p>
 			</div>
-			<CreateChannelButton monitors={mons} workspace={workspace} />
+			{RankedRoles[currentMember.role] >= RankedRoles.admin && (
+				<CreateChannelButton monitors={mons} workspace={workspace} />
+			)}
 		</div>
 	)
 }
@@ -86,7 +88,7 @@ export default async function NotificationsPage({
 							Notification Channels
 						</h1>
 						<p className="text-neutral-500 dark:text-neutral-400">
-							The full list of all your notification channels.
+							Keep your team and users up to date with your services&apos; status.
 						</p>
 					</div>
 					<div className="flex flex-row gap-2 items-center">
@@ -98,7 +100,7 @@ export default async function NotificationsPage({
 					</div>
 				</div>
 				<div className="mt-4">
-					<DataTable columns={columns} data={data} emptyComponent={<EmptyState mons={mons} workspace={workspace} />} />
+					<DataTable columns={columns} data={data} emptyComponent={<EmptyState mons={mons} workspace={workspace} currentMember={currentMember} />} />
 				</div>
 			</div>
 		</>

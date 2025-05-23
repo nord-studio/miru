@@ -15,6 +15,8 @@ export default function InstanceConfigForm({ config }: { config: MiruConfig }) {
 	const [emailVerification, setEmailVerification] = React.useState(config.email.verification);
 	const [autoIncidents, setAutoIncidents] = React.useState(config.incidents.auto.enabled);
 	const [maxStorageSize, setMaxStorageSize] = React.useState(config.storage.max_size);
+	const [workspaceCreation, setWorkspaceCreation] = React.useState(config.workspace.creation);
+	const [deleteOnEmpty, setDeleteOnEmpty] = React.useState(config.users.delete_on_empty);
 
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -34,6 +36,12 @@ export default function InstanceConfigForm({ config }: { config: MiruConfig }) {
 			storage: {
 				max_size: maxStorageSize,
 			},
+			users: {
+				delete_on_empty: deleteOnEmpty
+			},
+			workspace: {
+				creation: workspaceCreation
+			}
 		});
 
 		if (typeof res?.validationErrors !== "undefined") {
@@ -125,6 +133,38 @@ export default function InstanceConfigForm({ config }: { config: MiruConfig }) {
 					</p>
 				</div>
 				<Input type="number" className="w-1/3" value={maxStorageSize} onChange={(e) => setMaxStorageSize(parseInt(e.target.value))} />
+			</div>
+			<div className="flex flex-row gap-2 items-center justify-between p-3 w-full border rounded-md">
+				<div className="flex flex-col gap-0">
+					<div className="flex flex-row gap-2 items-center">
+						<h3 className="font-semibold font-display">
+							Workspace Creation
+						</h3>
+						<Link href="https://miru.nordstud.io/docs/configuration#workspace-creation" target="_blank">
+							<HelpCircle className="size-4 text-neutral-500 dark:text-neutral-400" />
+						</Link>
+					</div>
+					<p className="text-sm text-neutral-500 dark:text-neutral-400">
+						Allow any registered user to create a workspace.
+					</p>
+				</div>
+				<Switch checked={workspaceCreation} onCheckedChange={() => setWorkspaceCreation(!workspaceCreation)} />
+			</div>
+			<div className="flex flex-row gap-2 items-center justify-between p-3 w-full border rounded-md">
+				<div className="flex flex-col gap-0">
+					<div className="flex flex-row gap-2 items-center">
+						<h3 className="font-semibold font-display">
+							Auto Delete Users
+						</h3>
+						<Link href="https://miru.nordstud.io/docs/configuration#max-storage-size" target="_blank">
+							<HelpCircle className="size-4 text-neutral-500 dark:text-neutral-400" />
+						</Link>
+					</div>
+					<p className="text-sm text-neutral-500 dark:text-neutral-400">
+						When enabled, users will be automatically deleted if they don&apos;t belong to any workspace.
+					</p>
+				</div>
+				<Switch checked={deleteOnEmpty} onCheckedChange={() => setDeleteOnEmpty(!deleteOnEmpty)} />
 			</div>
 			<div className="flex flex-row gap-2 items-center justify-end w-full">
 				<Button>

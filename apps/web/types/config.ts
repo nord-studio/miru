@@ -10,5 +10,12 @@ export type MiruConfig = {
 	},
 	storage: {
 		max_size: number;
+	},
+	workspace: {
+		creation: boolean;
+	},
+	users: {
+		/// If enabled, any registered user who isn't in any workspaces will be deleted
+		delete_on_empty: boolean;
 	}
 }
