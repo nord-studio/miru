@@ -45,12 +45,11 @@ export default function DateTimePicker({ date, setDate, disabled = false }: { da
 				<Button
 					variant="outline"
 					className={cn(
-						"w-full justify-start text-left font-normal",
+						"w-full justify-start text-left px-3 font-normal",
 						!date && "text-muted-foreground"
 					)}
 					disabled={disabled}
 				>
-					<CalendarIcon className="mr-2 h-4 w-4" />
 					{date ? (
 						format(date, "MM/dd/yyyy hh:mm")
 					) : (

@@ -61,7 +61,7 @@ export default function CreateEvent({ open, setOpen, monitors }: { open: boolean
 	const [message, setMessage] = useState("");
 	const [monitorList, setMonitorList] = useState<Monitor[]>([]);
 	const [scheduledFor, setScheduledFor] = useState<Date>(new Date());
-	const [duration, setDuration] = useState<number>(0);
+	const [duration, setDuration] = useState<number>(20);
 	const [autoComplete, setAutoComplete] = useState<boolean>(true);
 
 	async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -69,6 +69,51 @@ export default function CreateEvent({ open, setOpen, monitors }: { open: boolean
 		setLoading(true);
 
 		const t = toast.loading("Creating event...");
+
+		if (title.length < 1) {
+			toast.error("Something went wrong!", {
+				description: "Title is required",
+				id: t
+			});
+			setLoading(false);
+			return;
+		}
+
+		if (message.length < 1) {
+			toast.error("Something went wrong!", {
+				description: "Message is required",
+				id: t
+			});
+			setLoading(false);
+			return;
+		}
+
+		if (monitorList.length < 1) {
+			toast.error("Something went wrong!", {
+				description: "At least 1 monitor is required",
+				id: t
+			});
+			setLoading(false);
+			return;
+		}
+
+		if (scheduledFor.getTime() < new Date().getTime()) {
+			toast.error("Something went wrong!", {
+				description: `Scheduled time must be in the future`,
+				id: t
+			});
+			setLoading(false);
+			return;
+		}
+
+		if (duration < 1) {
+			toast.error("Something went wrong!", {
+				description: "Duration must be at least 1 minute",
+				id: t
+			});
+			setLoading(false);
+			return;
+		}
 
 		const res = await createEvent({
 			title,
@@ -145,7 +190,14 @@ export default function CreateEvent({ open, setOpen, monitors }: { open: boolean
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Duration (minutes)</Label>
-									<Input type="number" value={duration} onChange={(e) => setDuration(parseInt(e.target.value))} />
+									<Input type="number" min={1} max={1440} value={duration} disabled={loading} onChange={(e) => {
+										if (parseInt(e.target.value) > 1440) {
+											setDuration(1440);
+											return;
+										}
+										setDuration(parseInt(e.target.value))
+									}
+									} />
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
 									<div className="flex flex-row gap-2 items-center">
@@ -230,26 +282,57 @@ export default function CreateEvent({ open, setOpen, monitors }: { open: boolean
 									<Label>Scheduled For</Label>
 									<DateTimePicker date={scheduledFor} setDate={setScheduledFor} />
 								</div>
+								<div className="flex flex-col gap-2 items-start w-full">
+									<Label>Duration (minutes)</Label>
+									<Input type="number" min={1} max={1440} value={duration} disabled={loading} onChange={(e) => {
+										if (parseInt(e.target.value) > 1440) {
+											setDuration(1440);
+											return;
+										}
+										setDuration(parseInt(e.target.value))
+									}
+									} />
+								</div>
+								<div className="flex flex-col gap-2 items-start w-full">
+									<div className="flex flex-row gap-2 items-center">
+										<Label>Auto Complete</Label>
+										<Link href="https://miru.nordstud.io/docs/concepts/events#auto-complete" target="_blank">
+											<HelpCircle className="size-4 text-neutral-500 dark:text-neutral-400" />
+										</Link>
+									</div>
+									<Select
+										value={autoComplete === true ? "enabled" : "disabled"}
+										onValueChange={(v) => setAutoComplete(v === "enabled")}
+										disabled={loading}
+									>
+										<SelectTrigger className="w-full">
+											<SelectValue placeholder="HTTP" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="enabled">
+												<Check /> Enabled
+											</SelectItem>
+											<SelectItem value="disabled">
+												<X /> Disabled
+											</SelectItem>
+										</SelectContent>
+									</Select>
+								</div>
 							</div>
 							<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-50/50 dark:bg-neutral-900/50 p-4">
-								<span className="text-neutral-400 dark:text-neutral-600 text-sm">
-									You can edit this later.
-								</span>
-								<div className="flex flex-row gap-2 items-center">
-									<DrawerClose asChild>
-										<Button
-											variant="outline"
-											type="button"
-											disabled={loading}
-										>
-											Cancel
-										</Button>
-									</DrawerClose>
-									<Button disabled={loading} type="submit">
-										{loading ? "Creating" : "Create"}
-										{loading && <Spinner />}
+								<DrawerClose asChild>
+									<Button
+										variant="outline"
+										type="button"
+										disabled={loading}
+									>
+										Cancel
 									</Button>
-								</div>
+								</DrawerClose>
+								<Button disabled={loading} type="submit">
+									{loading ? "Creating" : "Create"}
+									{loading && <Spinner />}
+								</Button>
 							</div>
 						</form>
 					</DrawerContent>
