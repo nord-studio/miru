@@ -1,3 +1,4 @@
+import { Event } from "@/types/event";
 import { Incident } from "@/types/incident";
 
 export type Monitor = {
@@ -20,5 +21,6 @@ export interface StatusDayBlock {
 	totalPings: number;
 	failedPings: number;
 	incidents: Incident[];
+	events: Event[];
 	downtime: number;
 }

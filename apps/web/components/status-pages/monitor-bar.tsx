@@ -32,6 +32,10 @@ export function StatusMonitorBar({ data }: { data: StatusDayBlock }) {
 		variant = "degraded";
 	}
 
+	if (data.events.length > 0) {
+		variant = "maintenance";
+	}
+
 	return (
 		<>
 			<HoverCard
@@ -49,6 +53,7 @@ export function StatusMonitorBar({ data }: { data: StatusDayBlock }) {
 							<span className="font-md font-bold text-start">
 								{variant === "empty" && "Empty"}
 								{variant === "operational" && "Operational"}
+								{variant === "maintenance" && "Maintenance"}
 								{variant === "degraded" && "Degraded"}
 							</span>
 							<span className="text-neutral-500 dark:text-neutral-400 text-sm">{format(data.date, "dd MMM")}</span>
@@ -67,7 +72,7 @@ export function StatusMonitorBar({ data }: { data: StatusDayBlock }) {
 								Failed
 							</span>
 						</div>
-						<div className="flex flex-row gap-4 items-center justify-between w-full">
+						<div className="flex flex-col gap-0 items-center justify-between w-full">
 							{data.incidents.map((incident) => {
 								return (
 									<div key={incident.id} className="flex flex-col gap-2 items-center w-full group">
@@ -76,6 +81,21 @@ export function StatusMonitorBar({ data }: { data: StatusDayBlock }) {
 											<button className="flex flex-row gap-2 items-center justify-between w-full hover:cursor-pointer px-2 pb-2" key={incident.id}>
 												<span className="text-sm text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors">
 													{incident.title.slice(0, 20)}{incident.title.length > 20 ? "..." : ""}
+												</span>
+												<ArrowRight className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+											</button>
+										</Link>
+									</div>
+								)
+							})}
+							{data.events.map((event) => {
+								return (
+									<div key={event.id} className="flex flex-col gap-2 items-center w-full group">
+										<hr className="w-full" />
+										<Link href={`/events/${event.id}`} className="w-full">
+											<button className="flex flex-row gap-2 items-center justify-between w-full hover:cursor-pointer px-2 pb-2" key={event.id}>
+												<span className="text-sm text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors">
+													{event.title.slice(0, 20)}{event.title.length > 20 ? "..." : ""}
 												</span>
 												<ArrowRight className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
 											</button>

@@ -6,6 +6,7 @@ import { sql } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { Feed } from "feed";
 import { getReportStatusLabel } from "@/components/incidents/utils";
+import { EventWithMonitors } from "@/types/event";
 
 export const revalidate = 60;
 
@@ -65,12 +66,11 @@ export async function GET(_request: Request, { params }: { params: Promise<{ dom
 		}
 	}).then((incidents) => {
 		return incidents.map((incident) => {
+			const { monitorsToIncidents, ...rest } = incident;
 			return {
-				...incident,
-				monitorsToIncidents: incident.monitorsToIncidents.map((mti) => {
-					return {
-						monitor: mti.monitor,
-					}
+				...rest,
+				monitors: monitorsToIncidents.map((mte) => {
+					return mte.monitor;
 				}),
 				reports: incident.reports.map((report) => {
 					return {
@@ -82,19 +82,65 @@ export async function GET(_request: Request, { params }: { params: Promise<{ dom
 		})
 	});
 
+	const evnts: EventWithMonitors[] = await db.query.events.findMany({
+		where: () => sql`started_at > NOW() - INTERVAL '45 days'`,
+		with: {
+			monitorsToEvents: {
+				with: {
+					monitor: true
+				}
+			}
+		}
+	}).then((events) => {
+		return events.map((event) => {
+			const { monitorsToEvents, ...rest } = event;
+			return {
+				...rest,
+				monitors: monitorsToEvents.map((mte) => {
+					return mte.monitor;
+				}),
+			}
+		})
+	})
+
 	for (const incident of incids) {
 		const url = `${baseUrl}/incidents/${incident.id}`
 		const reports = incident.reports.map((report) => {
 			const reportStatus = getReportStatusLabel(report);
 			return `[${reportStatus}]: ${report.message}`
-		}).join("\n\n")
+		}).join("\n\n");
+
+		const category = {
+			name: "Incident",
+			domain: baseUrl ?? ""
+		}
 
 		feed.addItem({
 			id: incident.id,
 			title: incident.title,
 			link: url,
 			description: reports,
-			date: incident.resolvedAt ?? incident.startedAt ?? new Date()
+			date: incident.resolvedAt ?? incident.startedAt ?? new Date(),
+			category: [category]
+		})
+	}
+
+	for (const event of evnts) {
+		const url = `${baseUrl}/events/${event.id}`;
+		const monitors = event.monitors.map((monitor) => monitor.name).join(", ");
+
+		const category = {
+			name: "Event",
+			domain: baseUrl ?? ""
+		}
+
+		feed.addItem({
+			id: event.id,
+			title: event.title,
+			link: url,
+			description: `${event.message}\n\nMonitors affected: ${monitors}`,
+			date: event.startsAt,
+			category: [category]
 		})
 	}
 

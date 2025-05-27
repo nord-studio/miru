@@ -97,15 +97,6 @@ export default function EditEvent({ open, setOpen, event, monitors }: { open: bo
 			return;
 		}
 
-		if (scheduledFor.getTime() < new Date().getTime()) {
-			toast.error("Something went wrong!", {
-				description: `Scheduled time must be in the future`,
-				id: t
-			});
-			setLoading(false);
-			return;
-		}
-
 		if (duration < 1) {
 			toast.error("Something went wrong!", {
 				description: "Duration must be at least 1 minute",

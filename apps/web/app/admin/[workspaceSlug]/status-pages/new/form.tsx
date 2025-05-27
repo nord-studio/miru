@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Sortable, SortableDragHandle, SortableItem } from "@/components/ui/sortable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/admin/[workspaceSlug]/status-pages/tabs";
-import { Monitor } from "@/types/monitor";
+import { Monitor, StatusDayBlock } from "@/types/monitor";
 import { CircleCheck, Code, FileQuestion, GripVertical, HelpCircle, Moon, Sun } from "lucide-react";
 import React from "react";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,6 @@ import { cn, generateId } from "@/lib/utils";
 import Image from "next/image"
 import Link from "next/link";
 import { ColorPicker } from "@/components/ui/color-picker";
-import { Incident } from "@/types/incident";
 import { MonoStatusBanner, StatusBanner } from "@/components/ui/status-banner";
 import PandaStatusPageShell from "@/designs/panda/shell";
 import SimpleStatusPageShell from "@/designs/simple/shell";
@@ -29,14 +28,6 @@ import StormtrooperStatusPageShell from "@/designs/stormtrooper/shell";
 import { MiruConfig } from "@/types/config";
 import { deleteAsset, uploadAsset } from "@/lib/minio/actions";
 import DummyMonitor from "@/components/status-pages/dummy-monitor";
-
-export interface StatusDayBlock {
-	date: Date;
-	totalPings: number;
-	failedPings: number;
-	incidents: Incident[];
-	downtime: number;
-}
 
 export default function NewStatusPageForm({ monitors, workspace, config }: { monitors: Monitor[], workspace: Workspace, config: MiruConfig }) {
 	const id = generateId();
@@ -227,7 +218,8 @@ export default function NewStatusPageForm({ monitors, workspace, config }: { mon
 		totalPings: 300,
 		downtime: 0,
 		failedPings: 0,
-		incidents: []
+		incidents: [],
+		events: []
 	}));
 
 	return (

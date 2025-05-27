@@ -6,6 +6,7 @@ import { sql } from "drizzle-orm";
 import PandaStatusPageDesign from "@/designs/panda/page";
 import SimpleStatusPageDesign from "@/designs/simple/page";
 import StormtrooperStatusPageDesign from "@/designs/stormtrooper/page";
+import { EventWithMonitors } from "@/types/event";
 
 type Props = {
 	params: Promise<{ domain: string }>;
@@ -62,12 +63,11 @@ export default async function StatusPage({ params }: Props) {
 		}
 	}).then((incidents) => {
 		return incidents.map((incident) => {
+			const { monitorsToIncidents, ...rest } = incident;
 			return {
-				...incident,
-				monitorsToIncidents: incident.monitorsToIncidents.map((mti) => {
-					return {
-						monitor: mti.monitor,
-					}
+				...rest,
+				monitors: monitorsToIncidents.map((mte) => {
+					return mte.monitor;
 				}),
 				reports: incident.reports.map((report) => {
 					return {
@@ -79,16 +79,37 @@ export default async function StatusPage({ params }: Props) {
 		})
 	});
 
+	const evnts: EventWithMonitors[] = await db.query.events.findMany({
+		where: () => sql`started_at > NOW() - INTERVAL '45 days'`,
+		with: {
+			monitorsToEvents: {
+				with: {
+					monitor: true
+				}
+			}
+		}
+	}).then((events) => {
+		return events.map((event) => {
+			const { monitorsToEvents, ...rest } = event;
+			return {
+				...rest,
+				monitors: monitorsToEvents.map((mte) => {
+					return mte.monitor;
+				}),
+			}
+		})
+	});
+
 	return (
 		<>
 			{statusPage.design === "simple" && (
-				<SimpleStatusPageDesign page={statusPage} incidents={incids} />
+				<SimpleStatusPageDesign page={statusPage} incidents={incids} events={evnts} />
 			)}
 			{statusPage.design === "panda" && (
-				<PandaStatusPageDesign page={statusPage} incidents={incids} />
+				<PandaStatusPageDesign page={statusPage} incidents={incids} events={evnts} />
 			)}
 			{statusPage.design === "stormtrooper" && (
-				<StormtrooperStatusPageDesign page={statusPage} incidents={incids} />
+				<StormtrooperStatusPageDesign page={statusPage} incidents={incids} events={evnts} />
 			)}
 		</>
 	)

@@ -2,11 +2,12 @@ import { StatusMonitorBar } from "@/components/status-pages/monitor-bar";
 import db from "@/lib/db";
 import { pings } from "@/lib/db/schema";
 import { getMonitorUptime } from "@/lib/db/utils";
+import { EventWithMonitors } from "@/types/event";
 import { IncidentWithReportsAndMonitors } from "@/types/incident";
 import { Monitor, StatusDayBlock } from "@/types/monitor";
 import { and, eq, sql } from "drizzle-orm";
 
-export default async function StatusPageMonitor({ monitor, incidents }: { monitor: Monitor, incidents?: IncidentWithReportsAndMonitors[] }) {
+export default async function StatusPageMonitor({ monitor, incidents, events }: { monitor: Monitor, incidents?: IncidentWithReportsAndMonitors[], events?: EventWithMonitors[] }) {
 	const uptime = await getMonitorUptime(monitor.id, 45);
 
 	if (!uptime) {
@@ -30,9 +31,14 @@ export default async function StatusPageMonitor({ monitor, incidents }: { monito
 				totalPings: pingData.length ?? 0,
 				failedPings: pingData.filter((ping) => !ping.success).length,
 				incidents: incidents?.filter((incident) => {
-					return incident.monitorsToIncidents.some((monitorToIncident) => {
-						return monitorToIncident.monitor.id === monitor.id && incident.startedAt <= date;
+					return incident.monitors.some((incidMonitor) => {
+						return incidMonitor.id === monitor.id && incident.startedAt <= date;
 					});
+				}) ?? [],
+				events: events?.filter((event) => {
+					return event.monitors.some((eventMontior) => {
+						return eventMontior.id === monitor.id && event.startsAt <= date;
+					})
 				}) ?? [],
 				downtime: 0
 			};

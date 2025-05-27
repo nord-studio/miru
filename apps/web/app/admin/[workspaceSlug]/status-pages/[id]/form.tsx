@@ -214,7 +214,8 @@ export default function EditStatusPageForm({ existing, monitors, workspace, conf
 		totalPings: 300,
 		downtime: 0,
 		failedPings: 0,
-		incidents: []
+		incidents: [],
+		events: []
 	}));
 
 	return (

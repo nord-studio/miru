@@ -55,7 +55,8 @@ export const createEvent = actionClient.schema(z.object({
 		message,
 		startsAt,
 		duration,
-		autoComplete
+		autoComplete,
+		completed: false,
 	}).returning();
 
 	if (!event) {
@@ -92,6 +93,18 @@ export const editEvent = actionClient.schema(z.object({
 	error: z.boolean(),
 	message: z.string(),
 })).action(async ({ parsedInput: { id, title, message, monitorIds, startsAt, duration, autoComplete } }) => {
+	const event = await db.query.events.findFirst({
+		where: eq(events.id, id),
+	});
+
+	if (!event) {
+		return { error: true, message: "Event not found" };
+	}
+
+	if (event.completed) {
+		return { error: true, message: "Cannot delete a completed event" };
+	}
+
 	await db.update(events).set({
 		title,
 		message,
@@ -167,4 +180,18 @@ export const deleteEvent = actionClient.schema(z.object({
 
 	revalidatePath("/admin/[workspaceSlug]/events", "layout");
 	return { error: false, message: "Event deleted successfully" };
+})
+
+export const markCompleted = actionClient.schema(z.object({
+	id: z.string(),
+})).action(async ({ parsedInput: { id } }) => {
+	await db.update(events).set({
+		completed: true
+	}).where(eq(events.id, id)).catch((err) => {
+		console.error(err);
+		return { error: true, message: "Failed to mark event as completed" };
+	})
+
+	revalidatePath(`/admin/[workspaceSlug]/events`, "layout");
+	return { error: false, message: "Event marked as completed" };
 })

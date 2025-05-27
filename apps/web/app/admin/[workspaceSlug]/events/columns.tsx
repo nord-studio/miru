@@ -49,11 +49,22 @@ export const columns: ColumnDef<EventWithMonitors>[] = [
 		},
 	},
 	{
+		accessorKey: "completed",
+		header: "Completed",
+		cell: ({ row }) => {
+			return (
+				<p>
+					{row.original.completed ? "Yes" : "No"}
+				</p>
+			);
+		},
+	},
+	{
 		accessorKey: "startsAt",
 		header: "Starts At",
 		cell: ({ row }) => {
 			return (
-				<p className="font-medium" suppressHydrationWarning={true}>
+				<p suppressHydrationWarning={true}>
 					{new Date(row.original.startsAt).toLocaleString()}
 				</p>
 			);
@@ -64,7 +75,7 @@ export const columns: ColumnDef<EventWithMonitors>[] = [
 		header: "Auto Complete",
 		cell: ({ row }) => {
 			return (
-				<p className="font-medium">
+				<p>
 					{row.original.autoComplete ? "Enabled" : "Disabled"}
 				</p>
 			);

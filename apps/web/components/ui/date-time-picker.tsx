@@ -12,7 +12,6 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { CalendarIcon } from "lucide-react";
 
 export default function DateTimePicker({ date, setDate, disabled = false }: { date: Date | undefined; setDate: (date: Date) => void, disabled?: boolean }) {
 	const [isOpen, setIsOpen] = React.useState(false);

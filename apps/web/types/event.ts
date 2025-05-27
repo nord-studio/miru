@@ -8,6 +8,7 @@ export interface Event {
 	startsAt: Date;
 	duration: number;
 	autoComplete: boolean;
+	completed: boolean;
 }
 
 export type EventWithMonitors = Event & {

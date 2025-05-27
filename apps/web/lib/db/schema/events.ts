@@ -16,6 +16,8 @@ export const events = pgTable("events", {
 	duration: integer("duration").notNull().default(60),
 	// if the event will automatically be marked as complete
 	autoComplete: boolean("auto_complete").notNull().default(false),
+	// If the event has been completed
+	completed: boolean("completed").notNull().default(false),
 	// When the event was created
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	// When the event was last updated
