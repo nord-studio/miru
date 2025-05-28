@@ -28,7 +28,8 @@ export async function getConfig() {
 		},
 		incidents: {
 			auto: {
-				enabled: false
+				enabled: false,
+				pings_threshold: 3
 			}
 		},
 		storage: {
