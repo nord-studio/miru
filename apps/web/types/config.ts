@@ -6,6 +6,7 @@ export type MiruConfig = {
 	incidents: {
 		auto: {
 			enabled: boolean;
+			grace_pings: number;
 		}
 	},
 	storage: {

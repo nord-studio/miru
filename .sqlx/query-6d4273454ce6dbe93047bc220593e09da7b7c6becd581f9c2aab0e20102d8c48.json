@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO tracked_incidents (monitor_id, id, title, started_at, acknowledged_at, resolved_at, auto_resolved, success, monitoring_created, investigating_created) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Varchar",
+        "Text",
+        "Timestamp",
+        "Timestamp",
+        "Timestamp",
+        "Bool",
+        "Int4",
+        "Bool",
+        "Bool"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "6d4273454ce6dbe93047bc220593e09da7b7c6becd581f9c2aab0e20102d8c48"
+}

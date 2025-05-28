@@ -1,0 +1,1 @@
+ALTER TABLE "tracked_incidents" ADD COLUMN "success" integer DEFAULT 0 NOT NULL;

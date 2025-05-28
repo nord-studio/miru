@@ -1,10 +1,11 @@
 
 [email]
-enabled = true
+enabled = false
 verification = false
 
 [incidents.auto]
 enabled = true
+ping_threshold = 3
 
 [storage]
 max_size = 12582912

@@ -1,7 +1,7 @@
 import { monitorsToIncidents } from "@/lib/db/schema";
 import { generateId } from "@/lib/utils";
 import { relations } from "drizzle-orm/relations";
-import { pgTable, text, timestamp, boolean, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, varchar, integer } from "drizzle-orm/pg-core";
 
 export const incidents = pgTable("incidents", {
 	/// The unique identifier for the incident
@@ -64,4 +64,10 @@ export const trackedIncidents = pgTable("tracked_incidents", {
 	resolvedAt: timestamp("resolved_at"),
 	/// If the incident was auto-resolved
 	autoResolved: boolean("auto_resolved").notNull().default(false),
+	/// How many times a failing monitor has had a successful ping
+	success: integer("success").notNull().default(0),
+	/// If the monitoring report has been created or not
+	monitoring_created: boolean("monitoring_created").notNull().default(false),
+	/// If the investigating report has been created or not
+	investigating_created: boolean("investigating_created").notNull().default(false),
 })

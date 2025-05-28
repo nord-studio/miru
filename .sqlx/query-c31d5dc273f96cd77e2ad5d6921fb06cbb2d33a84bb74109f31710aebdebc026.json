@@ -37,6 +37,21 @@
         "ordinal": 6,
         "name": "auto_resolved",
         "type_info": "Bool"
+      },
+      {
+        "ordinal": 7,
+        "name": "success",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 8,
+        "name": "monitoring_created",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 9,
+        "name": "investigating_created",
+        "type_info": "Bool"
       }
     ],
     "parameters": {
@@ -49,6 +64,9 @@
       false,
       true,
       true,
+      false,
+      false,
+      false,
       false
     ]
   },
