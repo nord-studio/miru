@@ -1,0 +1,2 @@
+ALTER TABLE "tracked_incidents" ADD COLUMN "monitoring_created" boolean DEFAULT false NOT NULL;--> statement-breakpoint
+ALTER TABLE "tracked_incidents" ADD COLUMN "investigating_created" boolean DEFAULT false NOT NULL;

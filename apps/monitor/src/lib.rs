@@ -32,6 +32,7 @@ pub struct MiruConfigIncident {
 #[derive(Deserialize, Default)]
 pub struct MiruConfigIncidentAuto {
     pub enabled: bool,
+    pub pings_threshold: u64,
 }
 
 #[derive(Deserialize, Default)]
@@ -44,6 +45,18 @@ pub struct MiruConfig {
     pub email: MiruConfigEmail,
     pub incidents: MiruConfigIncident,
     pub storage: MiruConfigStorage,
+    pub users: MiruConfigUsers,
+    pub workspace: MiruConfigWorkspace,
+}
+
+#[derive(Deserialize, Default)]
+pub struct MiruConfigUsers {
+    pub delete_on_empty: bool,
+}
+
+#[derive(Deserialize, Default)]
+pub struct MiruConfigWorkspace {
+    pub creation: bool,
 }
 
 pub fn read_config() -> MiruConfig {
@@ -53,9 +66,16 @@ pub fn read_config() -> MiruConfig {
             verification: true,
         },
         incidents: MiruConfigIncident {
-            auto: MiruConfigIncidentAuto { enabled: true },
+            auto: MiruConfigIncidentAuto {
+                enabled: true,
+                pings_threshold: 3,
+            },
         },
         storage: MiruConfigStorage { max_size: 12582912 },
+        users: MiruConfigUsers {
+            delete_on_empty: true,
+        },
+        workspace: MiruConfigWorkspace { creation: true },
     };
 
     let path = match std::env::current_dir() {

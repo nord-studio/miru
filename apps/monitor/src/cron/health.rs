@@ -1,12 +1,12 @@
 use chrono::NaiveDateTime;
-use log::error;
+use log::{error, info};
 use monitor::generate_id;
 use sqlx::query;
 use tokio::sync::MutexGuard;
 
-use crate::{INCID_REGISTRY, POOL};
+use crate::{INCID_REGISTRY, MIRU_CONFIG, POOL};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Incident {
     pub id: String,
     pub title: String,
@@ -16,17 +16,27 @@ pub struct Incident {
     pub auto_resolved: bool,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct TrackedIncident {
     pub monitor_id: String,
     pub incident: Incident,
+    pub success: u32,
+    pub monitoring_created: bool,
+    pub investigating_created: bool,
 }
 
 /// Check the health of a monitor and create an incident if necessary.
-/// This function checks the last two pings of a monitor and if both have failed,
+/// This function checks the last few (threshold) pings of a monitor and if all have failed,
 /// it creates a new incident in the database and adds it to the incident registry.
 pub async fn check_health(monitor_id: String, url: String) {
     let pool = POOL.clone();
+    let config = match MIRU_CONFIG.get() {
+        Some(config) => config,
+        None => {
+            error!("Failed to get Miru config");
+            return;
+        }
+    };
 
     let sched = match INCID_REGISTRY.get() {
         Some(sched) => sched,
@@ -36,76 +46,127 @@ pub async fn check_health(monitor_id: String, url: String) {
         }
     };
 
-    // Check if this monitor is already being tracked
-    let mut tracked = false;
-    {
-        let incid_registry = sched.lock().await;
-        for incident in incid_registry.iter() {
-            if incident.monitor_id == monitor_id {
-                tracked = true;
-                break;
-            }
-        }
-    }
+    let tracked_incid = {
+        let locked = sched.lock().await;
+        locked
+            .iter()
+            .find(|inc| inc.monitor_id == monitor_id)
+            .cloned()
+    };
 
-    if tracked {
-        // If the monitor is already being tracked, we don't need to check again
-        return;
-    }
-
-    // Get the last two pings and check if they have also failed
-    let last_two_pings = query!(
-        "SELECT * FROM pings WHERE monitor_id = $1 ORDER BY created_at DESC LIMIT 2",
+    let monitor = match query!(
+        "SELECT * FROM monitors WHERE id = $1",
         monitor_id.to_string()
+    )
+    .fetch_one(&pool)
+    .await
+    {
+        Ok(monitor) => monitor,
+        Err(e) => {
+            error!("Error fetching monitor: {}", e.to_string());
+            return;
+        }
+    };
+
+    if let Some(tracked_incid) = &tracked_incid {
+        // If the recovering monitor fails again, reset the success count and create investigating report
+        if !tracked_incid.investigating_created
+            && tracked_incid.monitoring_created
+            && tracked_incid.success != 0
+        {
+            let report_query = query!(
+                    "INSERT INTO incident_reports (id, incident_id, message, status) VALUES ($1, $2, $3, $4)",
+                    generate_id(),
+                    tracked_incid.incident.id.to_string(),
+                    format!("{} is failing to ping again. We're looking into this now.", monitor.name.to_string()),
+                    "investigating"
+                )
+                .execute(&pool)
+                .await;
+
+            if let Err(e) = report_query {
+                error!("Error creating incident report: {}", e.to_string());
+            }
+
+            // Reset the success count
+            let mut incid_registry = sched.lock().await;
+            for tracked in incid_registry.iter_mut() {
+                if tracked.incident.id == tracked_incid.incident.id {
+                    tracked.success = 0;
+                    tracked.investigating_created = true;
+                }
+            }
+
+            // Sync the registry with the database
+            sync_registry(incid_registry).await;
+            return;
+        }
+    };
+
+    // Get the pings_threshold amount of pings and check if they have also failed
+    let threshold_pings = query!(
+        "SELECT * FROM pings WHERE monitor_id = $1 ORDER BY created_at DESC LIMIT $2",
+        monitor_id.to_string(),
+        config.incidents.auto.pings_threshold as i64
     )
     .fetch_all(&pool)
     .await
     .unwrap_or_else(|_| vec![]);
 
-    if last_two_pings.len() >= 2 {
-        let last_ping = &last_two_pings[0];
-        let second_last_ping = &last_two_pings[1];
+    if threshold_pings.len() < config.incidents.auto.pings_threshold as usize {
+        // If we don't have enough pings, we can't create an incident
+        return;
+    }
 
-        if last_ping.success == false && second_last_ping.success == false {
-            // If both pings have failed, create a new incident
-            let incid_query = query!(
-                "INSERT INTO incidents (id, title) VALUES ($1, $2) RETURNING *",
-                generate_id(),
-                format!("{} is down", url.to_string())
-            )
-            .fetch_one(&pool)
-            .await;
+    let last_threshold_pings = threshold_pings
+        .iter()
+        .take((config.incidents.auto.pings_threshold) as usize)
+        .collect::<Vec<_>>();
 
-            let incident: Incident = match incid_query {
-                Ok(incid) => Incident {
-                    id: incid.id,
-                    title: incid.title,
-                    started_at: incid.started_at,
-                    acknowledged_at: None,
-                    resolved_at: None,
-                    auto_resolved: false,
-                },
-                Err(e) => {
-                    error!("Error creating incident: {}", e.to_string());
-                    return;
-                }
-            };
+    if last_threshold_pings
+        .iter()
+        .all(|ping| ping.success == false)
+    {
+        // If all previous pings have failed, create a new incident
+        let incid_query = query!(
+            "INSERT INTO incidents (id, title) VALUES ($1, $2) RETURNING *",
+            generate_id(),
+            // TODO: Use custom message from config
+            format!("{} is down", monitor.name.to_string())
+        )
+        .fetch_one(&pool)
+        .await;
 
-            let incid_id = incident.clone().id;
-
-            let mti_query = query!(
-                "INSERT INTO monitors_to_incidents (monitor_id, incident_id) VALUES ($1, $2)",
-                monitor_id.to_string(),
-                incid_id.clone()
-            )
-            .execute(&pool)
-            .await;
-
-            if let Err(e) = mti_query {
-                error!("Error linking monitor to incident: {}", e.to_string());
+        let incident: Incident = match incid_query {
+            Ok(incid) => Incident {
+                id: incid.id,
+                title: incid.title,
+                started_at: incid.started_at,
+                acknowledged_at: None,
+                resolved_at: None,
+                auto_resolved: false,
+            },
+            Err(e) => {
+                error!("Error creating incident: {}", e.to_string());
+                return;
             }
+        };
 
-            let report_query = query!(
+        let incid_id = incident.clone().id;
+
+        let mti_query = query!(
+            "INSERT INTO monitors_to_incidents (monitor_id, incident_id) VALUES ($1, $2)",
+            monitor_id.to_string(),
+            incid_id.clone()
+        )
+        .execute(&pool)
+        .await;
+
+        if let Err(e) = mti_query {
+            error!("Error linking monitor to incident: {}", e.to_string());
+        }
+
+        let report_query = query!(
                 "INSERT INTO incident_reports (id, incident_id, message, status) VALUES ($1, $2, $3, $4)",
                 generate_id(),
                 incid_id.clone(),
@@ -113,51 +174,63 @@ pub async fn check_health(monitor_id: String, url: String) {
                 "investigating"
             ).execute(&pool).await;
 
-            if let Err(e) = report_query {
-                error!("Error creating incident report: {}", e.to_string());
-            }
-
-            // Add the incident to the registry
-            let mut incid_registry = sched.lock().await;
-            incid_registry.push(TrackedIncident {
-                monitor_id: monitor_id.clone(),
-                incident: incident.clone(),
-            });
-
-            // Sync the registry with the database
-            sync_registry(incid_registry).await;
+        if let Err(e) = report_query {
+            error!("Error creating incident report: {}", e.to_string());
         }
+
+        // Add the incident to the registry
+        let mut incid_registry = sched.lock().await;
+        incid_registry.push(TrackedIncident {
+            monitor_id: monitor_id.clone(),
+            incident: incident.clone(),
+            success: 0,
+            monitoring_created: false,
+            investigating_created: false,
+        });
+
+        // Sync the registry with the database
+        sync_registry(incid_registry).await;
     }
 }
 
 /// Run a check when a ping is successful to see if there are any tracked incidents in the registry related to that monitor.
-/// If there are, create a resolve incident report, and remove the incident from the registry.
+/// If this is the first successful ping after an incident, create a `monitoring` report
+/// If this isn't the first successful ping, increase the `success` count by 1 and do nothing
+/// Check if `success` is equals to `pings_threshold` and if so, resolve the incident
 pub async fn resolve_incident(monitor_id: String) {
     let pool = POOL.clone();
+    let config = match MIRU_CONFIG.get() {
+        Some(config) => config,
+        None => {
+            error!("Failed to get Miru config");
+            return;
+        }
+    };
 
     // Find if the monitor is being tracked
     let sched = INCID_REGISTRY.get().unwrap();
-    let mut tracked = false;
-    let mut incident_id = String::new();
-    {
+
+    // Get the TrackedIncident from the registry
+    let tracked_incid = {
         let incid_registry = sched.lock().await;
-        for incident in incid_registry.iter() {
-            if incident.monitor_id == monitor_id {
-                tracked = true;
-                incident_id = incident.incident.id.clone();
-                break;
-            }
+        incid_registry
+            .iter()
+            .find(|inc| inc.monitor_id == monitor_id)
+            .cloned()
+    };
+
+    let tracked_incid = match tracked_incid {
+        Some(inc) => inc,
+        None => {
+            // If the monitor is not being tracked, we don't need to resolve anything
+            return;
         }
-    }
-    if !tracked {
-        // If the monitor is not being tracked, we don't need to resolve anything
-        return;
-    }
+    };
 
     // Check if the incident is already resolved
     let incid_query = query!(
         "SELECT * FROM incidents WHERE id = $1",
-        incident_id.to_string()
+        tracked_incid.incident.id.to_string()
     )
     .fetch_one(&pool)
     .await;
@@ -177,12 +250,17 @@ pub async fn resolve_incident(monitor_id: String) {
         }
     };
 
+    // If the incident is already resolved, we don't need to resolve it again. Remove from registry.
     if incident.resolved_at.is_some() || incident.auto_resolved {
-        // If the incident is already resolved, we don't need to resolve it again
+        let sched = INCID_REGISTRY.get().unwrap();
+        let mut incid_registry = sched.lock().await;
+        incid_registry.retain(|inc| inc.incident.id != tracked_incid.incident.id);
+
+        // Sync the registry with the database
+        sync_registry(incid_registry).await;
         return;
     }
 
-    // Get monitor info
     let monitor_query = query!(
         "SELECT * FROM monitors WHERE id = $1",
         monitor_id.to_string()
@@ -198,42 +276,89 @@ pub async fn resolve_incident(monitor_id: String) {
         }
     };
 
-    // Create a new incident report
-    let report_query =
-        query!(
+    if tracked_incid.success >= 1 {
+        // If the incident is already being tracked and the success count is greater than 0,
+        // just increase the success count and continue
+        let sched = INCID_REGISTRY.get().unwrap();
+        let mut incid_registry = sched.lock().await;
+        for tracked in incid_registry.iter_mut() {
+            if tracked.incident.id == incident.id {
+                tracked.success += 1;
+            }
+        }
+    } else {
+        if tracked_incid.monitoring_created == false {
+            // This is the first successful ping after an incident, so we need to create a monitoring report
+            let report_query = query!(
+                "INSERT INTO incident_reports (id, incident_id, message, status) VALUES ($1, $2, $3, $4)",
+                generate_id(),
+                incident.id.to_string(),
+                format!("{} is back online. Monitoring for stability.", monitor.name.to_string()),
+                "monitoring"
+            );
+            let report_query = report_query.execute(&pool).await;
+
+            if let Err(e) = report_query {
+                error!("Error creating incident report: {}", e.to_string());
+            }
+        }
+
+        // Increase the success count
+        let sched = INCID_REGISTRY.get().unwrap();
+        let mut incid_registry = sched.lock().await;
+        for tracked in incid_registry.iter_mut() {
+            if tracked.incident.id == incident.id {
+                tracked.success += 1;
+                // Set the monitoring_created flag to true so we don't loop reports
+                tracked.monitoring_created = true;
+            }
+        }
+
+        // Sync the registry with the database
+        sync_registry(incid_registry).await;
+    }
+
+    info!("Success count: {}", tracked_incid.success);
+
+    if tracked_incid.success == config.incidents.auto.pings_threshold as u32 {
+        // If we have reached the pings threshold, we can resolve the incident
+
+        // Create a new incident report
+        let report_query = query!(
         "INSERT INTO incident_reports (id, incident_id, message, status) VALUES ($1, $2, $3, $4)",
         generate_id(),
-        incident_id.clone(),
+        tracked_incid.incident.id.clone(),
         format!("The incident has been resolved. {} is back online.", monitor.name),
         "resolved"
     )
         .execute(&pool)
         .await;
 
-    if let Err(e) = report_query {
-        error!("Error creating incident report: {}", e.to_string());
+        if let Err(e) = report_query {
+            error!("Error creating incident report: {}", e.to_string());
+        }
+
+        // Update the incident in the database
+        let query = query!(
+            "UPDATE incidents SET resolved_at = $1, auto_resolved = true WHERE id = $2",
+            chrono::Utc::now().naive_utc(),
+            tracked_incid.incident.id.to_string()
+        )
+        .execute(&pool)
+        .await;
+
+        if let Err(e) = query {
+            error!("Error resolving incident: {}", e.to_string());
+        }
+
+        // Remove the incident from the registry
+        let sched = INCID_REGISTRY.get().unwrap();
+        let mut incid_registry = sched.lock().await;
+        incid_registry.retain(|incident| incident.incident.id != tracked_incid.incident.id);
+
+        // Sync the registry with the database
+        sync_registry(incid_registry).await;
     }
-
-    // Update the incident in the database
-    let query = query!(
-        "UPDATE incidents SET resolved_at = $1, auto_resolved = true WHERE id = $2",
-        chrono::Utc::now().naive_utc(),
-        incident_id.to_string()
-    )
-    .execute(&pool)
-    .await;
-
-    if let Err(e) = query {
-        error!("Error resolving incident: {}", e.to_string());
-    }
-
-    // Remove the incident from the registry
-    let sched = INCID_REGISTRY.get().unwrap();
-    let mut incid_registry = sched.lock().await;
-    incid_registry.retain(|incident| incident.incident.id != incident_id);
-
-    // Sync the registry with the database
-    sync_registry(incid_registry).await;
 }
 
 /// Sync the registry with the database.
@@ -264,7 +389,7 @@ pub async fn sync_registry(registry: MutexGuard<'_, Vec<TrackedIncident>>) {
     // Insert any new incidents into the database
     for incident in tracked_incidents.iter() {
         let query = query!(
-            "INSERT INTO tracked_incidents (monitor_id, id, title, started_at, acknowledged_at, resolved_at, auto_resolved) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+            "INSERT INTO tracked_incidents (monitor_id, id, title, started_at, acknowledged_at, resolved_at, auto_resolved, success, monitoring_created, investigating_created) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
             incident.monitor_id.to_string(),
             incident.incident.id.to_string(),
             incident.incident.title.to_string(),
@@ -272,6 +397,9 @@ pub async fn sync_registry(registry: MutexGuard<'_, Vec<TrackedIncident>>) {
             incident.incident.acknowledged_at,
             incident.incident.resolved_at,
             incident.incident.auto_resolved,
+            incident.success as i32,
+            incident.monitoring_created as bool,
+            incident.investigating_created as bool
         )
         .execute(&pool)
         .await;
@@ -344,6 +472,9 @@ pub async fn load_registry() {
                 resolved_at: incident.resolved_at,
                 auto_resolved: incident.auto_resolved,
             },
+            success: incident.success as u32,
+            monitoring_created: incident.monitoring_created,
+            investigating_created: incident.investigating_created,
         });
     }
 }
