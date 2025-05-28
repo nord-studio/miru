@@ -17,7 +17,7 @@ export default function InstanceConfigForm({ config }: { config: MiruConfig }) {
 	const [maxStorageSize, setMaxStorageSize] = React.useState(config.storage.max_size);
 	const [workspaceCreation, setWorkspaceCreation] = React.useState(config.workspace.creation);
 	const [deleteOnEmpty, setDeleteOnEmpty] = React.useState(config.users.delete_on_empty);
-	const [gracePings, setGracePings] = React.useState(config.incidents.auto.grace_pings);
+	const [pingsThreshold, setPingsThreshold] = React.useState(config.incidents.auto.pings_threshold);
 
 	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -32,7 +32,7 @@ export default function InstanceConfigForm({ config }: { config: MiruConfig }) {
 			incidents: {
 				auto: {
 					enabled: autoIncidents,
-					grace_pings: gracePings,
+					pings_threshold: pingsThreshold,
 				},
 			},
 			storage: {
@@ -125,9 +125,9 @@ export default function InstanceConfigForm({ config }: { config: MiruConfig }) {
 					<div className="flex flex-col gap-0">
 						<div className="flex flex-row gap-2 items-center">
 							<h3 className="font-semibold font-display">
-								Graceful Pings
+								Pings Threshold
 							</h3>
-							<Link href="https://miru.nordstud.io/docs/configuration#graceful-pings" target="_blank">
+							<Link href="https://miru.nordstud.io/docs/configuration#pings-threshold" target="_blank">
 								<HelpCircle className="size-4 text-neutral-500 dark:text-neutral-400" />
 							</Link>
 						</div>
@@ -135,7 +135,7 @@ export default function InstanceConfigForm({ config }: { config: MiruConfig }) {
 							The amount of pings needed before action can be taken on auto incidents.
 						</p>
 					</div>
-					<Input type="number" className="w-1/3" value={gracePings} onChange={(e) => setGracePings(parseInt(e.target.value))} />
+					<Input type="number" className="w-1/3" value={pingsThreshold} onChange={(e) => setPingsThreshold(parseInt(e.target.value))} />
 				</div>
 			)}
 			<div className="flex flex-row gap-2 items-center justify-between p-3 w-full border rounded-md">

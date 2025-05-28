@@ -78,7 +78,7 @@ pub async fn check_health(monitor_id: String, url: String) {
                     "INSERT INTO incident_reports (id, incident_id, message, status) VALUES ($1, $2, $3, $4)",
                     generate_id(),
                     tracked_incid.incident.id.to_string(),
-                    format!("{} is failing to ping again. We looking into this now.", monitor.name.to_string()),
+                    format!("{} is failing to ping again. We're looking into this now.", monitor.name.to_string()),
                     "investigating"
                 )
                 .execute(&pool)
@@ -103,7 +103,7 @@ pub async fn check_health(monitor_id: String, url: String) {
         }
     };
 
-    // Get the ping_threshold amount of pings and check if they have also failed
+    // Get the pings_threshold amount of pings and check if they have also failed
     let threshold_pings = query!(
         "SELECT * FROM pings WHERE monitor_id = $1 ORDER BY created_at DESC LIMIT $2",
         monitor_id.to_string(),

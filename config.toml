@@ -5,7 +5,7 @@ verification = false
 
 [incidents.auto]
 enabled = true
-ping_threshold = 3
+pings_threshold = 3
 
 [storage]
 max_size = 12582912
