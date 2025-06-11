@@ -9,15 +9,23 @@ use tokio::{sync::Mutex, task::JoinHandle};
 use tokio_cron_scheduler::JobScheduler;
 use uuid::Uuid;
 
-use crate::{INCID_REGISTRY, POOL, REGISTRY, SCHED};
-
-use super::health::{load_registry, TrackedIncident};
+use crate::{
+    monitors::health::{load_registry, TrackedIncident},
+    EVENT_REGISTRY, INCID_REGISTRY, MON_REGISTRY, POOL, SCHED,
+};
 
 #[derive(Debug, Clone)]
-pub struct JobMetadata {
+pub struct MonitorJobMetadata {
     pub id: Uuid,
     pub cron_expr: String,
     pub monitor_id: String,
+    pub created_at: SystemTime,
+}
+
+#[derive(Debug, Clone)]
+pub struct EventJobMetadata {
+    pub id: Uuid,
+    pub event_id: String,
     pub created_at: SystemTime,
 }
 
@@ -26,7 +34,8 @@ pub static HANDLE: OnceLock<JoinHandle<()>> = OnceLock::new();
 /// Start the cron worker
 pub async fn start() {
     let scheduler = Arc::new(Mutex::new(JobScheduler::new().await.unwrap()));
-    let registry = Arc::new(Mutex::new(Vec::<JobMetadata>::new()));
+    let monitor_registry = Arc::new(Mutex::new(Vec::<MonitorJobMetadata>::new()));
+    let event_registry = Arc::new(Mutex::new(Vec::<EventJobMetadata>::new()));
     let incid_registry = Arc::new(Mutex::new(Vec::<TrackedIncident>::new()));
 
     let sched_clone = scheduler.clone();
@@ -39,9 +48,14 @@ pub async fn start() {
         .map_err(|_| error!("Failed to set scheduler"))
         .ok();
 
-    REGISTRY
-        .set(registry)
-        .map_err(|_| error!("Failed to set registry"))
+    MON_REGISTRY
+        .set(monitor_registry)
+        .map_err(|_| error!("Failed to set monitor registry"))
+        .ok();
+
+    EVENT_REGISTRY
+        .set(event_registry)
+        .map_err(|_| error!("Failed to set event registry"))
         .ok();
 
     INCID_REGISTRY
@@ -60,10 +74,18 @@ pub async fn start() {
 
 /// Load all the monitors from the database and create a ping cron job for them
 pub async fn load_jobs() {
-    let reg = match REGISTRY.get() {
+    let mon_reg = match MON_REGISTRY.get() {
         Some(reg) => reg,
         None => {
-            error!("Failed to get registry");
+            error!("Failed to get monitor registry");
+            return;
+        }
+    };
+
+    let event_reg = match EVENT_REGISTRY.get() {
+        Some(reg) => reg,
+        None => {
+            error!("Failed to get event registry");
             return;
         }
     };
@@ -77,24 +99,24 @@ pub async fn load_jobs() {
     };
 
     let pool = POOL.clone();
-    let tasks = match query!("SELECT * FROM monitors ORDER BY created_at DESC")
+    let mon_tasks = match query!("SELECT * FROM monitors ORDER BY created_at DESC")
         .fetch_all(&pool)
         .await
     {
         Ok(query) => query.into_iter().map(|row| {
             tokio::spawn(async move {
-                match crate::cron::create_job(
+                match crate::monitors::create_job(
                     row.id,
                     row.url,
                     row.r#type,
                     row.interval.to_string(),
                     sched.lock().await,
-                    reg.lock().await,
+                    mon_reg.lock().await,
                 )
                 .await
                 {
-                    Ok(_) => info!("Created job"),
-                    Err(e) => error!("Failed to create job: {:?}", e),
+                    Ok(_) => info!("Created monitor job"),
+                    Err(e) => error!("Failed to create monitor job: {:?}", e),
                 }
             })
         }),
@@ -104,9 +126,42 @@ pub async fn load_jobs() {
         }
     };
 
-    for task in tasks {
-        task.await
+    let event_tasks =
+        match query!("SELECT * FROM events WHERE completed is false AND auto_complete is true ORDER BY created_at DESC")
+            .fetch_all(&pool)
+            .await
+        {
+            Ok(query) => query.into_iter().map(|row| {
+                tokio::spawn(async move {
+                    match crate::events::create_job(
+                        row.id,
+                        sched.lock().await,
+                        event_reg.lock().await,
+                    )
+                    .await
+                    {
+                        Ok(_) => info!("Created event job"),
+                        Err(e) => error!("Failed to create event job: {:?}", e),
+                    }
+                })
+            }),
+            Err(e) => {
+                error!("Failed to fetch events: {:?}", e);
+                return;
+            }
+        };
+
+    for monitor_task in mon_tasks {
+        monitor_task
+            .await
             .map_err(|e| error!("Failed to await cron task: {:?}", e))
+            .ok();
+    }
+
+    for event_task in event_tasks {
+        event_task
+            .await
+            .map_err(|e| error!("Failed to await event task: {:?}", e))
             .ok();
     }
 }

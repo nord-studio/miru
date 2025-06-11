@@ -2,10 +2,10 @@ use actix_web::{post, web, HttpResponse, Responder};
 use log::info;
 use serde_json::json;
 
-use crate::{REGISTRY, SCHED};
+use crate::{MON_REGISTRY, SCHED};
 
-#[post("/cron/remove/{monitor_id}")]
-pub async fn remove_job_service(path: web::Path<String>) -> impl Responder {
+#[post("/cron/monitors/remove/{monitor_id}")]
+pub async fn remove_monitor_job_service(path: web::Path<String>) -> impl Responder {
     let monitor_id = path.into_inner();
 
     let sched = match SCHED.get() {
@@ -17,11 +17,11 @@ pub async fn remove_job_service(path: web::Path<String>) -> impl Responder {
         }
     };
 
-    let reg = match REGISTRY.get() {
+    let reg = match MON_REGISTRY.get() {
         Some(reg) => reg,
         None => {
             return HttpResponse::InternalServerError().json(json!({
-                "error": "Failed to get registry"
+                "error": "Failed to get monitor registry"
             }))
         }
     };

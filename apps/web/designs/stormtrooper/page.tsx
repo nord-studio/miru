@@ -48,7 +48,11 @@ export default function StormtrooperStatusPageDesign({ page, incidents, events }
 	if (allEvents.length > 0) {
 		const eventInProgress = allEvents.every((event) => {
 			const endsAt = event.duration ? new Date(event.startsAt.getTime() + event.duration * 60 * 1000) : null;
-			return event.startsAt <= new Date() && (!endsAt || endsAt >= new Date());
+			if (!event.completed) {
+				return event.startsAt <= new Date() && (!endsAt || endsAt >= new Date());
+			} else {
+				return false;
+			}
 		});
 
 		if (eventInProgress) {

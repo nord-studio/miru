@@ -1,10 +1,10 @@
 use actix_web::{post, web, HttpResponse, Responder};
 use serde_json::json;
 
-use crate::{cron, REGISTRY, SCHED};
+use crate::{monitors, MON_REGISTRY, SCHED};
 
-#[post("/cron/update/{monitor_id}")]
-pub async fn update_job_service(path: web::Path<String>) -> impl Responder {
+#[post("/cron/monitors/update/{monitor_id}")]
+pub async fn update_monitor_job_service(path: web::Path<String>) -> impl Responder {
     let monitor_id = path.into_inner();
 
     let sched = match SCHED.get() {
@@ -16,16 +16,16 @@ pub async fn update_job_service(path: web::Path<String>) -> impl Responder {
         }
     };
 
-    let reg = match REGISTRY.get() {
+    let reg = match MON_REGISTRY.get() {
         Some(reg) => reg,
         None => {
             return HttpResponse::InternalServerError().json(json!({
-                "error": "Failed to get registry"
+                "error": "Failed to get monitor registry"
             }))
         }
     };
 
-    match cron::update_job(
+    match monitors::update_job(
         monitor_id,
         sched.clone().lock().await,
         reg.clone().lock().await,

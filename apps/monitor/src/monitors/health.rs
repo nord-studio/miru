@@ -1,12 +1,15 @@
 use chrono::NaiveDateTime;
 use log::{error, info};
-use monitor::generate_id;
+use monitor::{generate_id, get_app_url};
+use serde::Serialize;
 use sqlx::query;
 use tokio::sync::MutexGuard;
 
-use crate::{INCID_REGISTRY, MIRU_CONFIG, POOL};
+use crate::{
+    email::send::send_email, notifs::discord::send::send_discord, INCID_REGISTRY, MIRU_CONFIG, POOL,
+};
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize)]
 pub struct Incident {
     pub id: String,
     pub title: String,
@@ -17,6 +20,12 @@ pub struct Incident {
 }
 
 #[derive(Debug, Clone, Default)]
+pub struct Workspace {
+    pub id: String,
+    pub slug: String,
+}
+
+#[derive(Debug, Clone, Default, Serialize)]
 pub struct TrackedIncident {
     pub monitor_id: String,
     pub incident: Incident,
@@ -100,18 +109,26 @@ pub async fn check_health(monitor_id: String, url: String) {
             // Sync the registry with the database
             sync_registry(incid_registry).await;
             return;
+        } else {
+            return;
         }
     };
 
     // Get the pings_threshold amount of pings and check if they have also failed
-    let threshold_pings = query!(
+    let threshold_pings = match query!(
         "SELECT * FROM pings WHERE monitor_id = $1 ORDER BY created_at DESC LIMIT $2",
         monitor_id.to_string(),
         config.incidents.auto.pings_threshold as i64
     )
     .fetch_all(&pool)
     .await
-    .unwrap_or_else(|_| vec![]);
+    {
+        Ok(pings) => pings,
+        Err(e) => {
+            error!("Error fetching pings: {}", e.to_string());
+            return;
+        }
+    };
 
     if threshold_pings.len() < config.incidents.auto.pings_threshold as usize {
         // If we don't have enough pings, we can't create an incident
@@ -190,6 +207,87 @@ pub async fn check_health(monitor_id: String, url: String) {
 
         // Sync the registry with the database
         sync_registry(incid_registry).await;
+
+        // Get all workspace member emails to send notifications
+        let workspace_user_ids = match query!(
+            "SELECT user_id FROM workspace_members WHERE workspace_id = $1",
+            monitor.workspace_id
+        )
+        .fetch_all(&pool)
+        .await
+        {
+            Ok(ids) => ids.into_iter().map(|id| id.user_id).collect::<Vec<_>>(),
+            Err(e) => {
+                error!("Error fetching workspace members: {}", e.to_string());
+                return;
+            }
+        };
+
+        // Get the emails of the users
+        let emails = match query!(
+            "SELECT email FROM public.user WHERE id = ANY($1) AND email_verified = true",
+            &workspace_user_ids
+        )
+        .fetch_all(&pool)
+        .await
+        {
+            Ok(emails) => emails
+                .into_iter()
+                .map(|email| email.email)
+                .collect::<Vec<_>>(),
+            Err(e) => {
+                error!("Error fetching user emails: {}", e.to_string());
+                return;
+            }
+        };
+
+        let app_url = get_app_url();
+
+        let workspace: Workspace = match query!(
+            "SELECT * FROM workspaces WHERE id = $1",
+            monitor.workspace_id
+        )
+        .fetch_one(&pool)
+        .await
+        {
+            Ok(workspace) => Workspace {
+                id: workspace.id,
+                slug: workspace.slug,
+            },
+            Err(e) => {
+                error!("Error fetching workspace: {}", e.to_string());
+                return;
+            }
+        };
+
+        // Send `auto-incid-create` email and notification
+        for email in emails.iter() {
+            match send_email(
+                crate::email::send::TemplateOptions::AutoIncidentCreate,
+                email,
+                Some(serde_json::json!({
+                    "monitorNames": monitor.name,
+                    "url": format!("{}/admin/{}/incidents/{}", app_url, workspace.slug, incident.id)
+                })),
+            )
+            .await
+            {
+                Ok(_) => info!("Sent incident creation email to {}", email),
+                Err(e) => error!("{}", e),
+            }
+        }
+
+        // Send `auto-incid-create` Discord notifications if any
+        match send_discord(
+            crate::email::send::TemplateOptions::AutoIncidentCreate,
+            workspace,
+            incident.clone(),
+        )
+        .await
+        {
+            Ok(_) => info!("Sent incident creation Discord notification(s)"),
+            Err(e) => error!("Failed to send Discord notification(s): {}", e),
+        }
     }
 }
 
@@ -276,6 +374,7 @@ pub async fn resolve_incident(monitor_id: String) {
         }
     };
 
+    // This is the culprit for the missing tracked_monitor issue
     if tracked_incid.success >= 1 {
         // If the incident is already being tracked and the success count is greater than 0,
         // just increase the success count and continue
@@ -309,8 +408,6 @@ pub async fn resolve_incident(monitor_id: String) {
         for tracked in incid_registry.iter_mut() {
             if tracked.incident.id == incident.id {
                 tracked.success += 1;
-                // Set the monitoring_created flag to true so we don't loop reports
-                tracked.monitoring_created = true;
             }
         }
 
@@ -318,6 +415,7 @@ pub async fn resolve_incident(monitor_id: String) {
         sync_registry(incid_registry).await;
     }
 
+    // the culprit for the missing tracked_monitor issue
     info!("Success count: {}", tracked_incid.success);
 
     if tracked_incid.success == config.incidents.auto.pings_threshold as u32 {
@@ -339,15 +437,14 @@ pub async fn resolve_incident(monitor_id: String) {
         }
 
         // Update the incident in the database
-        let query = query!(
+        if let Err(e) = query!(
             "UPDATE incidents SET resolved_at = $1, auto_resolved = true WHERE id = $2",
             chrono::Utc::now().naive_utc(),
             tracked_incid.incident.id.to_string()
         )
         .execute(&pool)
-        .await;
-
-        if let Err(e) = query {
+        .await
+        {
             error!("Error resolving incident: {}", e.to_string());
         }
 
@@ -372,10 +469,16 @@ pub async fn sync_registry(registry: MutexGuard<'_, Vec<TrackedIncident>>) {
     }
 
     // Get all incidents from the database and check if they are already in the database
-    let db_incidents = query!("SELECT * FROM tracked_incidents")
+    let db_incidents = match query!("SELECT id FROM tracked_incidents")
         .fetch_all(&pool)
         .await
-        .unwrap_or_else(|_| vec![]);
+    {
+        Ok(incidents) => incidents,
+        Err(e) => {
+            error!("Error fetching tracked incidents from the database: {}", e);
+            return;
+        }
+    };
 
     let mut db_incidents_ids = vec![];
 
@@ -383,7 +486,6 @@ pub async fn sync_registry(registry: MutexGuard<'_, Vec<TrackedIncident>>) {
         db_incidents_ids.push(incident.id.clone());
     }
 
-    // Remove any incidents from the registry that are already in the database
     tracked_incidents.retain(|incident| !db_incidents_ids.contains(&incident.incident.id));
 
     // Insert any new incidents into the database
@@ -438,30 +540,68 @@ pub async fn sync_registry(registry: MutexGuard<'_, Vec<TrackedIncident>>) {
 pub async fn load_registry() {
     let pool = POOL.clone();
 
-    let sched = INCID_REGISTRY.get().unwrap();
+    let sched = match INCID_REGISTRY.get() {
+        Some(sched) => sched,
+        None => {
+            error!("Failed to get incident registry");
+            return;
+        }
+    };
     let mut incid_registry = sched.lock().await;
 
     // Get all incidents from the database
-    let mut db_incidents = query!("SELECT * FROM tracked_incidents")
+    let mut tracked_incids = match query!("SELECT * FROM tracked_incidents")
         .fetch_all(&pool)
         .await
-        .unwrap_or_else(|_| vec![]);
+    {
+        Ok(incidents) => incidents,
+        Err(e) => {
+            error!("Error fetching tracked incidents: {}", e.to_string());
+            return;
+        }
+    };
 
     // Do some cleaning up anc check if the incidents ACTUALLY exist in the database
-    let incidents =
-        query!("SELECT * FROM incidents WHERE id IN (SELECT id FROM tracked_incidents)")
-            .fetch_all(&pool)
-            .await
-            .unwrap_or_else(|_| vec![]);
+    let incidents = match query!(
+        "SELECT id FROM incidents WHERE id = ANY($1)",
+        &tracked_incids
+            .iter()
+            .map(|inc| inc.id.clone())
+            .collect::<Vec<String>>()
+    )
+    .fetch_all(&pool)
+    .await
+    {
+        Ok(incidents) => incidents,
+        Err(e) => {
+            error!("Error fetching incidents: {}", e.to_string());
+            return;
+        }
+    };
 
-    let mut incident_ids = vec![];
-    for incident in incidents.iter() {
-        incident_ids.push(incident.id.clone());
+    info!(
+        "Loaded {} tracked incidents from the database",
+        incidents.len()
+    );
+
+    let incident_ids: Vec<String> = incidents
+        .iter()
+        .map(|incident| incident.id.clone())
+        .collect();
+
+    if incident_ids.is_empty() {
+        return;
     }
 
-    db_incidents.retain(|incident| incident_ids.contains(&incident.id));
+    tracked_incids.retain(|incident| {
+        let is_valid = incident_ids.contains(&incident.id);
+        if !is_valid {
+            info!("Filtered out invalid incident: {}", incident.id);
+        }
+        is_valid
+    });
 
-    for incident in db_incidents.iter() {
+    for incident in tracked_incids.iter() {
         incid_registry.push(TrackedIncident {
             monitor_id: incident.monitor_id.to_string(),
             incident: Incident {

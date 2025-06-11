@@ -1,7 +1,7 @@
-pub mod create;
-pub mod remove;
-pub mod update;
+pub mod events;
+pub mod monitors;
 
-pub use create::create_job_service;
-pub use remove::remove_job_service;
-pub use update::update_job_service;
+pub use events::create_event_job_service;
+pub use monitors::{
+    create_monitor_job_service, remove_monitor_job_service, update_monitor_job_service,
+};

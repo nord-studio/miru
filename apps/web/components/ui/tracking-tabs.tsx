@@ -12,13 +12,14 @@ export default function TrackingTabs({ links, bottomBorder = false }: {
   }[],
   bottomBorder?: boolean
 }) {
-  const pathname = usePathname()
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [activeStyle, setActiveStyle] = useState({ left: "0px", width: "0px" })
-  const tabRefs = useRef<(HTMLAnchorElement | null)[]>([])
-  const lastHoveredIndexRef = useRef<number | null>(null)
-  const isMouseOutsideRef = useRef(true)
+  const pathname = usePathname();
+
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeStyle, setActiveStyle] = useState({ left: "0px", width: "0px" });
+  const tabRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const lastHoveredIndexRef = useRef<number | null>(null);
+  const isMouseOutsideRef = useRef(true);
 
   // Update active indicator position
   useEffect(() => {

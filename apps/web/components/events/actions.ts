@@ -49,6 +49,9 @@ export const createEvent = actionClient.schema(z.object({
 })).action(async ({ parsedInput: { title, message, monitorIds, startsAt, duration, autoComplete } }) => {
 	const id = generateId();
 
+	startsAt.setSeconds(0);
+	startsAt.setMilliseconds(0);
+
 	const event = await db.insert(events).values({
 		id,
 		title,
@@ -72,6 +75,30 @@ export const createEvent = actionClient.schema(z.object({
 			eventId: event[0].id
 		})
 	}
+
+	await fetch(`${process.env.MONITOR_URL}/cron/events/create/${id}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"Access-Control-Allow-Origin": "*",
+		}
+	}).then(async (res) => {
+		if (res.status === 200) {
+			revalidatePath("/admin/[workspaceSlug]/events", "layout");
+		} else {
+			const json = await res.json();
+			if (json.error) {
+				revalidatePath("/admin/[workspaceSlug]/events", "layout");
+				return { error: true, message: json.error };
+			} else {
+				revalidatePath("/admin/[workspaceSlug]/events", "layout");
+				return { error: true, message: "Failed to start cron job" };
+			}
+		}
+	}).catch((e) => {
+		console.error(e);
+		return { error: true, message: "Couldn't reach the monitor service. Is it running?" };
+	})
 
 	revalidatePath(`/admin/[workspaceSlug]/events`, "layout");
 

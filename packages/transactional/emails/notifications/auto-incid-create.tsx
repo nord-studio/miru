@@ -12,12 +12,12 @@ import {
 	Text,
 } from "@react-email/components";
 
-interface MonitorDownEmailProps {
+interface AutoIncidCreateProps {
 	monitorNames: string[];
 	url: string;
 }
 
-const MonitorDownEmail = ({ monitorNames = ["monitorNames"], url = "url" }: MonitorDownEmailProps) => (
+const AutoIncidCreate = ({ monitorNames = ["monitorNames"], url = "url" }: AutoIncidCreateProps) => (
 	<Html>
 		<Head />
 		<Preview>{monitorNames.length === 1 ? `${monitorNames[0]} is` : "Some monitors are"} down!</Preview>
@@ -28,8 +28,8 @@ const MonitorDownEmail = ({ monitorNames = ["monitorNames"], url = "url" }: Moni
 					The monitoring service has detected that {" "}
 					{monitorNames.length === 1 && `${monitorNames[0]} is down.`}
 					{monitorNames.length === 2 && `${monitorNames[0]} and ${monitorNames[1]} are down`}
-					{monitorNames.length > 2 && `${monitorNames.length} monitors are down`}. Click the
-					button below to view the incident and take action.
+					{monitorNames.length > 2 && `${monitorNames.length} monitors are down`} Click the
+					button below to view the incident.
 				</Text>
 				<Section style={buttonContainer}>
 					<Button style={button} href={url}>
@@ -45,12 +45,12 @@ const MonitorDownEmail = ({ monitorNames = ["monitorNames"], url = "url" }: Moni
 	</Html>
 );
 
-MonitorDownEmail.PreviewProps = {
+AutoIncidCreate.PreviewProps = {
 	monitorNames: ["Website", "Campsite Gateway"],
 	url: "https://miru.nordstud.io",
 }
 
-export default MonitorDownEmail;
+export default AutoIncidCreate;
 
 const main = {
 	backgroundColor: "#ffffff",

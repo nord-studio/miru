@@ -78,7 +78,8 @@ export async function testWebhook(url: string, provider: "discord" | "slack") {
 
 	switch (provider) {
 		case "discord": {
-			const res = await sendDiscordMessage(url, "This is a test from Miru. If you are reading this, it means the webhook is working! 🎉");
+			// const res = await sendDiscordMessage(url, "This is a test from Miru. If you are reading this, it means the webhook is working! 🎉");
+			const res = await sendDiscordMessage(url, `## Some monitors are down! \n\nAffected monitors: \n- Website (tygr.dev)\n- Nord Site (nordstud.io)\n\nStarted: <t:1748098056:R>\nCurrently: Investigating\n\n[[View Incident](https://tygr.dev)]`);
 
 			if (res.error) {
 				return {

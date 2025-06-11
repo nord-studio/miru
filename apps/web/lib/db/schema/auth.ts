@@ -11,6 +11,7 @@ export const user = pgTable("user", {
 	updatedAt: timestamp('updated_at').notNull(),
 	username: text('username').unique(),
 	displayUsername: text('display_username'),
+	// Custom fields
 	admin: boolean("admin").notNull().default(false),
 });
 

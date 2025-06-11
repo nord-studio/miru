@@ -75,7 +75,7 @@ export const createMonitor = actionClient.schema(z.object({
 	await pingMonitor(id);
 
 	// Start cron job
-	await fetch(`${process.env.MONITOR_URL}/cron/create/${id}`, {
+	await fetch(`${process.env.MONITOR_URL}/cron/monitors/create/${id}`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -181,7 +181,7 @@ export const editMonitor = actionClient.schema(z.object({
 
 	await db.update(monitors).set(newData).where(eq(monitors.id, id)).then(async () => {
 		if (newData.interval || newData.url || newData.type) {
-			await fetch(`${process.env.MONITOR_URL}/cron/update/${id}`, {
+			await fetch(`${process.env.MONITOR_URL}/cron/monitors/update/${id}`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -219,7 +219,7 @@ export const deleteMonitor = actionClient.schema(z.string().nonempty()).outputSc
 	message: z.string(),
 })).action(async ({ parsedInput: id }) => {
 	await db.delete(monitors).where(eq(monitors.id, id)).then(async () => {
-		await fetch(`${process.env.MONITOR_URL}/cron/remove/${id}`, {
+		await fetch(`${process.env.MONITOR_URL}/cron/monitors/remove/${id}`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

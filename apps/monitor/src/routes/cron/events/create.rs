@@ -2,11 +2,11 @@ use actix_web::{post, web, HttpResponse, Responder};
 use serde_json::json;
 use sqlx::query;
 
-use crate::{cron, POOL, REGISTRY, SCHED};
+use crate::{events, EVENT_REGISTRY, POOL, SCHED};
 
-#[post("/cron/create/{monitor_id}")]
-pub async fn create_job_service(path: web::Path<String>) -> impl Responder {
-    let monitor_id = path.into_inner();
+#[post("/cron/events/create/{event_id}")]
+pub async fn create_event_job_service(path: web::Path<String>) -> impl Responder {
+    let event_id = path.into_inner();
 
     let sched = match SCHED.get() {
         Some(sched) => sched,
@@ -17,34 +17,31 @@ pub async fn create_job_service(path: web::Path<String>) -> impl Responder {
         }
     };
 
-    let reg = match REGISTRY.get() {
+    let reg = match EVENT_REGISTRY.get() {
         Some(reg) => reg,
         None => {
             return HttpResponse::InternalServerError().json(json!({
-                "error": "Failed to get registry"
+                "error": "Failed to get event registry"
             }))
         }
     };
 
     let pool = POOL.clone();
 
-    let monitor = match query!("SELECT * FROM monitors WHERE id = $1", monitor_id)
+    let event = match query!("SELECT * FROM events WHERE id = $1", event_id)
         .fetch_one(&pool)
         .await
     {
-        Ok(monitor) => monitor,
+        Ok(event) => event,
         Err(_) => {
             return HttpResponse::NotFound().json(json!({
-                "error": "Monitor not found"
+                "error": "Event not found"
             }))
         }
     };
 
-    match cron::create_job(
-        monitor_id,
-        monitor.url,
-        monitor.r#type,
-        monitor.interval.to_string(),
+    match events::create_job(
+        event.id,
         sched.clone().lock().await,
         reg.clone().lock().await,
     )
@@ -53,10 +50,10 @@ pub async fn create_job_service(path: web::Path<String>) -> impl Responder {
         Ok(_) => {}
         Err(e) => {
             return HttpResponse::InternalServerError().json(json!({
-                "error": format!("Failed to create job: {:?}", e)
+                "error": format!("Failed to create event job: {:?}", e)
             }))
         }
     }
 
-    HttpResponse::Ok().json(json!({ "message": "Job created" }))
+    HttpResponse::Ok().json(json!({ "message": "Event job created" }))
 }

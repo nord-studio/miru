@@ -14,7 +14,6 @@ import {
 
 interface IncidentResolvedEmailProps {
 	incidentName: string;
-	monitorNames: string[];
 	url: string;
 }
 
@@ -24,7 +23,7 @@ const IncidentResolvedEmail = ({ incidentName = "incidentName", url = "url" }: I
 		<Preview>An incident has been resolved!</Preview>
 		<Body style={main}>
 			<Container style={container}>
-				<Heading style={heading}>An incident has been resolved!</Heading>
+				<Heading style={heading}><b>{incidentName}</b> has been resolved!</Heading>
 				<Text style={paragraph}>
 					The incident <b>{incidentName}</b> has been resolved. You can click the
 					button below to view the incident.
@@ -44,7 +43,6 @@ const IncidentResolvedEmail = ({ incidentName = "incidentName", url = "url" }: I
 );
 
 IncidentResolvedEmail.PreviewProps = {
-	monitorName: "Website",
 	incidentName: "Website is down",
 	url: "https://miru.nordstud.io",
 }

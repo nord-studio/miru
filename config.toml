@@ -11,7 +11,7 @@ pings_threshold = 3
 max_size = 12582912
 
 [users]
-delete_on_empty = true
+delete_on_empty = false
 
 [workspace]
-creation = false
+creation = true

@@ -8,15 +8,11 @@ use tokio_cron_scheduler::{Job, JobScheduler};
 use uuid::Uuid;
 
 use crate::{
-    cron::{
-        self,
-        health::{check_health, resolve_incident},
-    },
+    cron::{self, worker::MonitorJobMetadata},
+    monitors::health::{check_health, resolve_incident},
     ping::{http_ping, tcp_ping},
     MIRU_CONFIG, POOL,
 };
-
-use super::worker::JobMetadata;
 
 pub async fn create_job<'a>(
     monitor_id: String,
@@ -24,8 +20,10 @@ pub async fn create_job<'a>(
     r#type: String,
     interval: String,
     sched: MutexGuard<'a, JobScheduler>,
-    mut registry: MutexGuard<'a, Vec<JobMetadata>>,
+    mut registry: MutexGuard<'a, Vec<MonitorJobMetadata>>,
 ) -> Result<Uuid, Box<dyn std::error::Error>> {
+    info!("Creating monitor job with ID: {}", monitor_id);
+
     let interval = match interval.to_string().as_str() {
         "1" => cron::ONE_MINUTE_CRON.to_string(),
         "5" => cron::FIVE_MINUTE_CRON.to_string(),
@@ -240,7 +238,7 @@ pub async fn create_job<'a>(
 
     let job_id = job.guid();
 
-    registry.push(JobMetadata {
+    registry.push(MonitorJobMetadata {
         id: job_id,
         monitor_id: monitor_id_clone.to_string(),
         cron_expr: interval.to_owned(),

@@ -105,7 +105,7 @@ export async function POST(request: Request) {
 
 	await pingMonitor(data.id);
 
-	await fetch(`${process.env.MONITOR_URL}/cron/create/${data.id}`, {
+	await fetch(`${process.env.MONITOR_URL}/cron/monitors/create/${data.id}`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
