@@ -1,6 +1,6 @@
 {
 	"name": "@miru/monitor",
-	"version": "0.3.5",
+	"version": "0.4.0",
 	"scripts": {
 		"dev": "watchexec -e rs -r RUST_LOG=info cargo run",
 		"build": "SQLX_OFFLINE=TRUE cargo build --release",

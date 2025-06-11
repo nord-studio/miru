@@ -88,21 +88,10 @@ docker run -d --name database --network=miru --env-file ./.env -v ./database:/va
 <Step>
 Create and run the Miru dashboard container:
 
-<Tabs groupId="arch" items={["amd64", "arm64"]}>
-<Tab value="amd64">
 ```bash
-docker run -d --name web --network=miru --env-file ./.env -p 3000:3000 ghcr.io/nord-studio/miru/web:0.3.5-amd64 ;
-docker run -d --name monitor --network=miru --env-file ./.env -p 8080:8080 ghcr.io/nord-studio/miru/monitor:0.3.5-amd64
+docker run -d --name web --network=miru --env-file ./.env -p 3000:3000 ghcr.io/nord-studio/miru/web:latest ;
+docker run -d --name monitor --network=miru --env-file ./.env -p 8080:8080 ghcr.io/nord-studio/miru/monitor:latest
 ```
-</Tab>
-
-<Tab value="arm64">
-```bash
-docker run -d --name web --network=miru --env-file ./.env -p 3000:3000 ghcr.io/nord-studio/miru/web:0.3.5-arm64 ;
-docker run -d --name monitor --network=miru --env-file ./.env -p 8080:8080 ghcr.io/nord-studio/miru/monitor:0.3.5-arm64
-```
-</Tab>
-</Tabs>
 
 </Step>
 

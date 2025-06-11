@@ -1,6 +1,6 @@
 {
 	"name": "miru",
-	"version": "0.3.5",
+	"version": "0.4.0",
 	"scripts": {
 		"dev": "pnpm drizzle migrate ; turbo dev",
 		"build": "turbo build",
@@ -19,8 +19,9 @@
 	"packageManager": "pnpm@10.11.0",
 	"pnpm": {
 		"onlyBuiltDependencies": [
-			"@tailwindcss/oxide",
-			"esbuild"
+			"esbuild",
+			"sharp",
+			"unrs-resolver"
 		]
 	}
 }
