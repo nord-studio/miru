@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT * FROM incidents WHERE id IN (SELECT id FROM tracked_incidents)",
+  "query": "SELECT * FROM workspaces WHERE id = $1",
   "describe": {
     "columns": [
       {
@@ -10,41 +10,37 @@
       },
       {
         "ordinal": 1,
-        "name": "title",
+        "name": "name",
         "type_info": "Text"
       },
       {
         "ordinal": 2,
-        "name": "started_at",
+        "name": "created_at",
         "type_info": "Timestamp"
       },
       {
         "ordinal": 3,
-        "name": "acknowledged_at",
+        "name": "updated_at",
         "type_info": "Timestamp"
       },
       {
         "ordinal": 4,
-        "name": "resolved_at",
-        "type_info": "Timestamp"
-      },
-      {
-        "ordinal": 5,
-        "name": "auto_resolved",
-        "type_info": "Bool"
+        "name": "slug",
+        "type_info": "Text"
       }
     ],
     "parameters": {
-      "Left": []
+      "Left": [
+        "Text"
+      ]
     },
     "nullable": [
       false,
       false,
       false,
-      true,
-      true,
+      false,
       false
     ]
   },
-  "hash": "f51adcacebec9efdbdc1b1a42dd85c0f10de3143b7542d92bd44bd32dbf6362d"
+  "hash": "b702c1ee31be8aeede43e3d35092652c74ece781fe2f66e082573c8d51f1e9db"
 }

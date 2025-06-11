@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT m.id AS monitor_id, m.name AS monitor_name, m.url AS monitor_url\n        FROM monitors_to_incidents mti\n        INNER JOIN monitors m ON mti.monitor_id = m.id\n        WHERE mti.incident_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "monitor_id",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 1,
+        "name": "monitor_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "monitor_url",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "eab967a200b80736a7260cccc16537ad49c4e4661246f5f10db98a065ffd54ef"
+}
