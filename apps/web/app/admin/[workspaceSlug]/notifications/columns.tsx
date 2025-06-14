@@ -60,6 +60,18 @@ export const columns: ColumnDef<NotificationWithMonitors>[] = [
 		},
 	},
 	{
+		accessorKey: "type",
+		header: "Type",
+		cell: ({ row }) => {
+			return (
+				<p className="font-medium w-fit">
+					{row.original.type[0].toUpperCase() +
+						row.original.type.slice(1)}
+				</p>
+			);
+		},
+	},
+	{
 		accessorKey: "monitors",
 		header: "Monitors",
 		cell: ({ row }) => {

@@ -2,9 +2,9 @@
 
 import { sendDiscordMessage, sendSlackMessage } from "@/components/notifications/utils";
 import db from "@/lib/db";
-import { incidents, monitors, notifications, notificationsToMonitors, workspaces } from "@/lib/db/schema";
+import { monitors, notifications, notificationsToMonitors, workspaces } from "@/lib/db/schema";
 import { actionClient } from "@/lib/safe-action";
-import { generateId, getAppUrl, isValidUrl } from "@/lib/utils";
+import { generateId, isValidUrl } from "@/lib/utils";
 import { eq } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
@@ -15,13 +15,14 @@ export const createChannel = actionClient.schema(z.object({
 	provider: z.enum(["slack", "discord"]),
 	workspaceSlug: z.string().nonempty(),
 	monitorIds: z.array(z.string()).min(1),
-	url: z.string().optional(),
+	url: z.string(),
+	type: z.enum(["external", "internal"]).default("internal"),
 }), {
 	handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors
 }).outputSchema(z.object({
 	error: z.boolean(),
 	message: z.string()
-})).action(async ({ parsedInput: { name, provider, workspaceSlug, url, monitorIds } }) => {
+})).action(async ({ parsedInput: { name, provider, workspaceSlug, url, monitorIds, type } }) => {
 	const id = generateId();
 
 	const workspace = await db.query.workspaces.findFirst({
@@ -38,6 +39,7 @@ export const createChannel = actionClient.schema(z.object({
 		provider,
 		workspaceId: workspace.id,
 		url,
+		type: type as "external" | "internal"
 	}).returning().then((res) => res[0]);
 
 	if (!channel) {
@@ -78,8 +80,8 @@ export async function testWebhook(url: string, provider: "discord" | "slack") {
 
 	switch (provider) {
 		case "discord": {
-			// const res = await sendDiscordMessage(url, "This is a test from Miru. If you are reading this, it means the webhook is working! 🎉");
-			const res = await sendDiscordMessage(url, `## Some monitors are down! \n\nAffected monitors: \n- Website (tygr.dev)\n- Nord Site (nordstud.io)\n\nStarted: <t:1748098056:R>\nCurrently: Investigating\n\n[[View Incident](https://tygr.dev)]`);
+			const res = await sendDiscordMessage(url, "This is a test from Miru. If you are reading this, it means the webhook is working! 🎉");
+			// const res = await sendDiscordMessage(url, `## Some monitors are down! \n\nAffected monitors: \n- Website (tygr.dev)\n- Nord Site (nordstud.io)\n\nStarted: <t:1748098056:R>\nCurrently: Investigating\n\n[[View Incident](https://tygr.dev)]`);
 
 			if (res.error) {
 				return {
@@ -221,115 +223,3 @@ export const getAllChannels = async (workspaceId: string) => {
 
 	return mapped;
 }
-
-/// Sends a message to all channels that an incident has been created
-export const sendIncidentCreated = actionClient.schema(z.object({
-	workspaceId: z.string().nonempty(),
-	incidentId: z.string().nonempty(),
-}), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).action(async ({ parsedInput: { workspaceId, incidentId } }) => {
-	const wkrspc = await db.query.workspaces.findFirst({
-		where: () => eq(workspaces.id, workspaceId)
-	});
-
-	if (!wkrspc) {
-		return { error: true, message: "Workspace not found" };
-	}
-
-	const channels = await getAllChannels(wkrspc.id);
-
-	if (!channels) {
-		return { error: true, message: "No channels found" };
-	}
-
-	const incident = await db.query.incidents.findFirst({
-		where: () => eq(incidents.id, incidentId),
-		with: {
-			monitorsToIncidents: {
-				with: {
-					monitor: true
-				}
-			}
-		}
-	});
-
-	if (!incident) {
-		return { error: true, message: "Incident not found" };
-	}
-
-	const monitors = incident.monitorsToIncidents.map((m) => m.monitor);
-
-	const { appUrl } = getAppUrl();
-
-	for (const channel of channels) {
-		switch (channel.provider) {
-			case "discord": {
-				if (!channel.url) {
-					continue;
-				}
-
-				const linkedMonitors = monitors.map((m) => {
-					return `[${m.name} (${m.url})](${appUrl}/admin/${wkrspc.slug}/monitors/${m.id})`
-				});
-
-				const res = await sendDiscordMessage(channel.url, `## New Incident: [${incident.title}](${appUrl}/admin/${wkrspc.slug}/incidents/${incident.id})\n\nAffected monitors: ${linkedMonitors.join(", ")}\n\nStarted: <t:${Math.floor(incident.startedAt.getTime() / 1000)}:R>\n\n[[View Incident](${appUrl}/admin/${wkrspc.slug}/incidents/${incident.id})]`);
-				if (res.error) {
-					console.error("Failed to send Discord message: " + res.message);
-				}
-				break;
-			}
-			case "slack": {
-				if (!channel.url) {
-					continue;
-				}
-
-				const linkedMonitors = monitors.map((m) => {
-					return `<${appUrl}/admin/${wkrspc.slug}/monitors/${m.id}|${m.name}> (${m.url})`
-				})
-
-				const res = await sendSlackMessage(channel.url, {
-					"blocks": [
-						{
-							"type": "header",
-							"text": {
-								"type": "plain_text",
-								"text": `New Incident: ${incident.title}`,
-								"emoji": true
-							}
-						},
-						{
-							"type": "section",
-							"text": {
-								"type": "mrkdwn",
-								"text": `Affected monitors: ${linkedMonitors.join(", ")}`
-							}
-						},
-						{
-							"type": "section",
-							"text": {
-								"type": "plain_text",
-								"text": `Started At: ${incident.startedAt.toLocaleString()}`,
-								"emoji": true
-							}
-						},
-						{
-							"type": "section",
-							"text": {
-								"type": "mrkdwn",
-								"text": `View the incident <${appUrl}/admin/${wkrspc.slug}/incidents/${incident.id}|here>`
-							}
-						}
-					]
-				});
-
-				if (res.error) {
-					console.error("Failed to send Slack message: " + res.message);
-				}
-				break;
-			}
-			default: {
-				console.warn("Invalid provider: " + channel.provider + " for channel: " + channel.id);
-				continue;
-			}
-		}
-	}
-})

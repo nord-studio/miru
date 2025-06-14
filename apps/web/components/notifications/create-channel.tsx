@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { HelpCircle, PlusIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Spinner from "@/components/ui/spinner";
@@ -40,6 +40,7 @@ import { toast } from "sonner";
 import { createChannel, testWebhook } from "@/components/notifications/actions";
 import { Workspace } from "@/types/workspace";
 import { Notification } from "@/types/notifications";
+import Link from "next/link";
 
 export function CreateChannelButton({ monitors, workspace }: { monitors: Monitor[], workspace: Workspace }) {
 	const [open, setOpen] = React.useState(false);
@@ -84,6 +85,7 @@ export default function CreateChannel({ open, setOpen, monitors, workspace }: { 
 
 	const [name, setName] = useState("");
 	const [provider, setProvider] = useState<Notification["provider"]>("discord");
+	const [type, setType] = useState<Notification["type"]>("internal");
 	const [selectedMonitors, setSelectedMonitors] = useState<Monitor[]>([]);
 
 	// Discord provider
@@ -102,7 +104,8 @@ export default function CreateChannel({ open, setOpen, monitors, workspace }: { 
 			provider,
 			workspaceSlug: workspace.slug,
 			monitorIds: selectedMonitors.map((m) => m.id),
-			url
+			url,
+			type
 		}).then((res) => {
 			if (typeof res?.validationErrors !== "undefined") {
 				return toast.error(`Invalid ${Object.keys(res.validationErrors)[0]}`, {
@@ -184,6 +187,31 @@ export default function CreateChannel({ open, setOpen, monitors, workspace }: { 
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Monitors</Label>
 									<MonitorSelection monitors={monitors} value={selectedMonitors} setValue={setSelectedMonitors} min={1} />
+								</div>
+								<div className="flex flex-col gap-2 items-start w-full">
+									<div className="flex flex-row gap-2 items-center">
+										<Label>Type</Label>
+										<Link href="https://miru.nordstud.io/docs/concepts/notifications#channel-types" target="_blank" rel="noopener noreferrer">
+											<HelpCircle size={16} className="text-neutral-500 dark:text-neutral-400" />
+										</Link>
+									</div>
+									<Select
+										value={type}
+										onValueChange={(v) => setType(v as "external" | "internal")}
+										disabled={loading}
+									>
+										<SelectTrigger className="w-full">
+											<SelectValue placeholder="internal" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="internal">
+												Internal
+											</SelectItem>
+											<SelectItem value="external">
+												External
+											</SelectItem>
+										</SelectContent>
+									</Select>
 								</div>
 								<div className="flex flex-col gap-2 items-start w-full">
 									<Label>Provider</Label>

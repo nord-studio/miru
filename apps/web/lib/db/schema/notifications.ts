@@ -12,8 +12,10 @@ export const notifications = pgTable("notifications", {
 	name: text("name").notNull().unique(),
 	/// The provider of the notification (e.g. slack, discord, webook, etc)
 	provider: text("provider", { enum: ["slack", "discord"] }).notNull(),
-	/// The URL for the notification (if applicable)
-	url: text("url"),
+	/// The URL of the webhook for the notification
+	url: text("url").notNull(),
+	/// The type of the channel (external or internal)
+	type: text("type", { enum: ["external", "internal"] }).notNull()
 });
 
 // Many (notifications) to many (monitors) relationship

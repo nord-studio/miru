@@ -1,6 +1,6 @@
 "use server";
 
-import { sendIncidentCreated } from "@/components/notifications/actions";
+import { sendIncidentCreated } from "@/components/notifications/messages/incident-create";
 import db from "@/lib/db";
 import { workspaces } from "@/lib/db/schema";
 import { incidentReports, incidents } from "@/lib/db/schema/incidents";
@@ -19,7 +19,7 @@ export const createIncident = actionClient.schema(z.object({
 	message: z.string().nonempty(),
 	status: z.custom<IncidentReportStatus>(async (status) => {
 		return Object.values(IncidentReportStatus).includes(status);
-	})
+	}),
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).action(async ({ parsedInput: { monitorIds, title, message, status } }) => {
 	const id = generateId();
 
