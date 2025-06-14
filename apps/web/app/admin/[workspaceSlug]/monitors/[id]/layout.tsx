@@ -74,7 +74,7 @@ export default async function MonitorSingletonLayout({
 						/>
 					</div>
 				</div>
-				<div className="container mx-auto mt-4">{children}</div>
+				<div className="mt-4 w-full">{children}</div>
 			</div>
 		</>
 	);

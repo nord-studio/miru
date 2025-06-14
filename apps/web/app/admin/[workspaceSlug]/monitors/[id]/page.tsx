@@ -1,11 +1,12 @@
+import MonitorGraph from "@/app/admin/[workspaceSlug]/monitors/[id]/graph";
 import { StatChip } from "@/components/ui/stat-chip";
 import db from "@/lib/db";
-import { monitors } from "@/lib/db/schema/monitors";
+import { monitors, pings } from "@/lib/db/schema/monitors";
 import {
 	getMonitorUptime,
 	getSingleMonitorLatencyPercentiles,
 } from "@/lib/db/utils";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 
 export default async function MonitorSingletonPage({
@@ -25,11 +26,34 @@ export default async function MonitorSingletonPage({
 	if (!uptime) {
 		return null;
 	}
+
 	const percentiles = await getSingleMonitorLatencyPercentiles(id, 7);
 
 	if (!monitor) {
 		return notFound();
 	}
+
+	let pngs = await db.query.pings.findMany({
+		where: and(eq(pings.monitorId, id), eq(pings.success, true)),
+		columns: {
+			id: true,
+			latency: true,
+			createdAt: true,
+		},
+		orderBy: (pings, { asc }) => [asc(pings.createdAt)],
+		limit: 100
+	});
+
+	// Use pngs to create an array of objects that match { date: "June 10th 12:51pm", latency: 100 }
+	const formattedPings = pngs.map((ping) => ({
+		date: new Date(ping.createdAt).toLocaleString("en-US", {
+			month: "long",
+			day: "numeric",
+			hour: "numeric",
+			minute: "numeric",
+		}),
+		latency: ping.latency,
+	}));
 
 	return (
 		<>
@@ -70,6 +94,7 @@ export default async function MonitorSingletonPage({
 					variant="neutral"
 				/>
 			</div>
+			<MonitorGraph data={formattedPings} />
 		</>
 	);
 }
