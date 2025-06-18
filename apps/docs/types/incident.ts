@@ -1,5 +1,9 @@
-import { Incident, IncidentReport, Monitor } from "@miru/types";
+import { Incident as MiruIncident, IncidentReport as MiruIncidentReport, Monitor } from "@miru/types";
 import { BaseResponsePartialMessage } from "@/types/response";
+
+export type Incident = MiruIncident;
+
+export type IncidentReport = MiruIncidentReport;
 
 // Incidents
 export type IncidentWithMonitors = Incident & {
