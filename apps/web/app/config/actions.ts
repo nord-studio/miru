@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { getPath } from "@/lib/config";
 import { actionClient } from "@/lib/safe-action";
-import { MiruConfig } from "@/types/config";
+import { MiruConfig } from "@miru/types";
 import { stringify } from "@std/toml";
 import { flattenValidationErrors } from "next-safe-action";
 import { headers } from "next/headers";

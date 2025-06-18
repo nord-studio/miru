@@ -13,13 +13,13 @@ import {
 import { toast } from "sonner";
 import React from "react";
 import { VariantProps } from "class-variance-authority";
-import { RankedRoles, WorkspaceMemberWithUser } from "@/types/workspace";
+import { RankedRoles, WorkspaceMemberWithUser } from "@miru/types";
 import { getCurrentMember } from "@/components/workspace/actions";
 import Spinner from "@/components/ui/spinner";
-import { NotificationWithMonitors } from "@/types/notifications";
+import { NotificationWithMonitors } from "@miru/types";
 import DeleteNotification from "@/components/notifications/delete-channel";
 import EditNotification from "@/components/notifications/edit-channel";
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "@miru/types";
 import { getAllMonitors } from "@/components/monitors/actions";
 
 export default function NotificationActionsDropdown({

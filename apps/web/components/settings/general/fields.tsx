@@ -1,6 +1,6 @@
 "use client";
 
-import { Workspace } from "@/types/workspace";
+import { Workspace } from "@miru/types";
 import SettingsCard from "@/components/settings/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

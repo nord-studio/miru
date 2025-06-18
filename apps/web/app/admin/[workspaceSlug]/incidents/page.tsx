@@ -2,12 +2,12 @@ import CreateIncident from "@/components/incidents/create-incident";
 import { DataTable } from "@/components/ui/data-table";
 import db from "@/lib/db";
 import { monitors, workspaces } from "@/lib/db/schema";
-import { IncidentWithMonitor } from "@/types/incident";
+import { IncidentWithMonitor } from "@miru/types";
 import { columns } from "@/app/admin/[workspaceSlug]/incidents/columns";
 import React from "react";
 import { eq } from "drizzle-orm";
 import { TriangleDashedIcon } from "lucide-react";
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "@miru/types";
 
 function EmptyState({ mons }: { mons: Monitor[] }) {
 	return (

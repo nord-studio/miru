@@ -20,7 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { getMonitorPings } from "@/app/admin/[workspaceSlug]/monitors/[id]/logs/actions";
-import { Ping } from "@/types/ping";
+import { Ping } from "@miru/types";
 import { Chip } from "@/components/ui/chip";
 import { Checkbox } from "@/components/ui/checkbox";
 import {

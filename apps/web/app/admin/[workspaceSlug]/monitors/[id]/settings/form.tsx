@@ -1,6 +1,6 @@
 "use client";
 
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "@miru/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

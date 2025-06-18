@@ -1,12 +1,12 @@
 import db from "@/lib/db";
 import { getAppUrl } from "@/lib/utils";
-import { IncidentWithReportsAndMonitors } from "@/types/incident";
-import { IncidentReportStatus } from "@/types/incident-report";
+import { IncidentWithReportsAndMonitors } from "@miru/types";
+import { IncidentReportStatus } from "@miru/types";
 import { sql } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { Feed } from "feed";
 import { getReportStatusLabel } from "@/components/incidents/utils";
-import { EventWithMonitors } from "@/types/event";
+import { EventWithMonitors } from "@miru/types";
 
 export const revalidate = 60;
 

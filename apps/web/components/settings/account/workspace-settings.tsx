@@ -2,7 +2,7 @@
 
 import LeaveWorkspaceButton from "@/components/settings/team/leave-workspace"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { WorkspaceWithMembers } from "@/types/workspace"
+import { WorkspaceWithMembers } from "@miru/types"
 import React from "react"
 
 export default function WorkspaceSettings({ workspaces }: { workspaces: WorkspaceWithMembers[] }) {

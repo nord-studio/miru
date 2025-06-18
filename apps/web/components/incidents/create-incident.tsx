@@ -38,9 +38,9 @@ import Spinner from "@/components/ui/spinner";
 import React from "react";
 import { createIncident } from "@/components/incidents/actions";
 import { Textarea } from "@/components/ui/textarea";
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "@miru/types";
 import MonitorSelection from "@/components/monitors/monitor-select";
-import { IncidentReportStatus } from "@/types/incident-report";
+import { IncidentReportStatus } from "@miru/types";
 
 export default function CreateIncident({
 	monitors,

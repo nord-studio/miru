@@ -16,11 +16,11 @@ import { pingMonitor } from "@/components/monitors/actions";
 import React from "react";
 import EditMonitor from "@/components/monitors/edit-monitor";
 import DeleteMonitor from "@/components/monitors/delete-monitor";
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "@miru/types";
 import { testUrl } from "@/components/monitors/utils";
 import { VariantProps } from "class-variance-authority";
 import { usePathname } from "next/navigation";
-import { RankedRoles, WorkspaceMemberWithUser } from "@/types/workspace";
+import { RankedRoles, WorkspaceMemberWithUser } from "@miru/types";
 import { getCurrentMember } from "@/components/workspace/actions";
 import Spinner from "@/components/ui/spinner";
 

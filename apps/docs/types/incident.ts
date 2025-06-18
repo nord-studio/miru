@@ -1,29 +1,5 @@
-import { Monitor } from "@miru/types";
+import { Incident, IncidentReport, Monitor } from "@miru/types";
 import { BaseResponsePartialMessage } from "@/types/response";
-
-export interface Incident {
-	id: string;
-	title: string;
-	startedAt: Date;
-	acknowledgedAt: Date | null;
-	resolvedAt: Date | null;
-	autoResolved: boolean;
-}
-
-export enum IncidentReportStatus {
-	INVESTIGATING = "investigating",
-	IDENTIFIED = "identified",
-	MONITORING = "monitoring",
-	RESOLVED = "resolved",
-}
-
-export interface IncidentReport {
-	id: string;
-	incidentId: string;
-	message: string;
-	status: IncidentReportStatus;
-	timestamp: Date;
-}
 
 // Incidents
 export type IncidentWithMonitors = Incident & {

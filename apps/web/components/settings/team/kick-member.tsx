@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { kickWorkspaceMember } from "@/components/workspace/actions";
-import { WorkspaceMemberWithUser } from "@/types/workspace";
+import { WorkspaceMemberWithUser } from "@miru/types";
 import React from "react";
 import { toast } from "sonner"
 import { useMediaQuery } from "usehooks-ts";

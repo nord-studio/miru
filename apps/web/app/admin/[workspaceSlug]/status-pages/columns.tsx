@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import React from "react";
 import { usePathname } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
-import { StatusPageWithMonitorsExtended } from "@/types/status-pages";
+import { StatusPageWithMonitorsExtended } from "@miru/types";
 import StatusPageDropdown from "@/components/status-pages/status-page-dropdown";
 
 export const columns: ColumnDef<StatusPageWithMonitorsExtended>[] = [

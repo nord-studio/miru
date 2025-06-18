@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 import Link from "next/link";
 import React from "react";
 import { workspaces } from "@/lib/db/schema";
-import { RankedRoles } from "@/types/workspace";
+import { RankedRoles } from "@miru/types";
 import { getCurrentMember } from "@/components/workspace/actions";
 import { redirect } from "next/navigation";
 

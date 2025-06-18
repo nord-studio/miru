@@ -28,7 +28,7 @@ import React from "react";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { IncidentReport, IncidentReportStatus } from "@/types/incident-report";
+import { IncidentReport, IncidentReportStatus } from "@miru/types";
 import { toast } from "sonner";
 import { editIncidentReport } from "@/components/incidents/reports/actions";
 

@@ -2,7 +2,7 @@
 
 import OnboardingCreateMonitor from "@/app/onboarding/monitor/create";
 import { Button } from "@/components/ui/button";
-import { Workspace } from "@/types/workspace";
+import { Workspace } from "@miru/types";
 import { ArrowLeft, ArrowRightIcon, Plus } from "lucide-react";
 import Link from "next/link";
 import React from "react";

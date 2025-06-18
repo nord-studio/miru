@@ -2,9 +2,9 @@ import { StatusMonitorBar } from "@/components/status-pages/monitor-bar";
 import db from "@/lib/db";
 import { pings } from "@/lib/db/schema";
 import { getMonitorUptime } from "@/lib/db/utils";
-import { EventWithMonitors } from "@/types/event";
-import { IncidentWithReportsAndMonitors } from "@/types/incident";
-import { Monitor, StatusDayBlock } from "@/types/monitor";
+import { EventWithMonitors } from "@miru/types";
+import { IncidentWithReportsAndMonitors } from "@miru/types";
+import { Monitor, StatusDayBlock } from "@miru/types";
 import { and, eq, sql } from "drizzle-orm";
 
 export default async function StatusPageMonitor({ monitor, incidents, events }: { monitor: Monitor, incidents?: IncidentWithReportsAndMonitors[], events?: EventWithMonitors[] }) {

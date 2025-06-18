@@ -3,7 +3,7 @@ import validateKey from "@/app/api/utils";
 import db from "@/lib/db";
 import { incidentReports, incidents, monitors, monitorsToIncidents, workspaces } from "@/lib/db/schema";
 import { generateId } from "@/lib/utils";
-import { IncidentReportStatus } from "@/types/incident-report";
+import { IncidentReportStatus } from "@miru/types";
 import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 

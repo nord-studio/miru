@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "@miru/types";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { ArrowUpRightIcon } from "lucide-react";

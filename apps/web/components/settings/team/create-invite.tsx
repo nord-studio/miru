@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import Spinner from "@/components/ui/spinner";
 import { createWorkspaceInvite } from "@/components/workspace/actions";
 import { generateId } from "@/lib/utils";
-import { RankedRoles, Workspace, WorkspaceMemberWithUser } from "@/types/workspace";
+import { RankedRoles, Workspace, WorkspaceMemberWithUser } from "@miru/types";
 import React from "react";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";

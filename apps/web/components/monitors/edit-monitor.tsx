@@ -32,7 +32,7 @@ import { Label } from "@/components/ui/label";
 import { editMonitor } from "@/components/monitors/actions";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "@miru/types";
 import { Pen } from "lucide-react";
 import { VariantProps } from "class-variance-authority";
 

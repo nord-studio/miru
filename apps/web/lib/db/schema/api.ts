@@ -1,6 +1,6 @@
 import { workspaces } from "@/lib/db/schema";
 import { generateId } from "@/lib/utils";
-import { ApiKeyPermissions } from "@/types/api";
+import { ApiKeyPermissions } from "@miru/types";
 import { json, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
 export const apikey = pgTable("apikey", {

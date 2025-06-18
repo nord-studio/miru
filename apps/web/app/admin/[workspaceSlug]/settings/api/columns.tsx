@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import React from "react";
-import { ApiKey } from "@/types/api";
+import { ApiKey } from "@miru/types";
 import { format, formatDistance } from "date-fns";
 import ViewApiKey from "@/components/settings/api/view-key";
 import DeleteApiKey from "@/components/settings/api/revoke-key";

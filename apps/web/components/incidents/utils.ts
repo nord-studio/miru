@@ -1,4 +1,4 @@
-import { IncidentReport } from "@/types/incident-report";
+import { IncidentReport } from "@miru/types";
 
 export function getReportStatusLabel(report: IncidentReport) {
 	switch (report.status) {

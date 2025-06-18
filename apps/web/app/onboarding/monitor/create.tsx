@@ -38,7 +38,7 @@ import React from "react";
 import Alert from "@/components/ui/alert";
 import { testUrl } from "@/components/monitors/utils";
 import { redirect } from "next/navigation";
-import { Workspace } from "@/types/workspace";
+import { Workspace } from "@miru/types";
 
 export default function OnboardingCreateMonitor({ open, setOpen, workspace }: { open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>, workspace: Workspace }) {
 	const [brokenWarning, setBrokenWarning] = useState(false);

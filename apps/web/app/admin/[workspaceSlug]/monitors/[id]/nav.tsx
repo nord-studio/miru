@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { RankedRoles, WorkspaceMemberWithUser } from "@/types/workspace";
+import { RankedRoles, WorkspaceMemberWithUser } from "@miru/types";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 

@@ -35,11 +35,11 @@ import Spinner from "@/components/ui/spinner";
 import React from "react";
 import { Icons } from "@/components/ui/icons";
 import MonitorSelection from "@/components/monitors/monitor-select";
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "@miru/types";
 import { toast } from "sonner";
 import { createChannel, testWebhook } from "@/components/notifications/actions";
-import { Workspace } from "@/types/workspace";
-import { Notification } from "@/types/notifications";
+import { Workspace } from "@miru/types";
+import { Notification } from "@miru/types";
 import Link from "next/link";
 
 export function CreateChannelButton({ monitors, workspace }: { monitors: Monitor[], workspace: Workspace }) {

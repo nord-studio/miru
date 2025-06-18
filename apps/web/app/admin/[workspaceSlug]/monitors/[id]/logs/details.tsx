@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Ping } from "@/types/ping";
+import { Ping } from "@miru/types";
 
 export default function PingDetails({ ping }: { ping: Ping }) {
 	return (

@@ -1,6 +1,6 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { cn } from "@/lib/utils";
-import { StatusDayBlock } from "@/types/monitor";
+import { StatusDayBlock } from "@miru/types";
 import { cva } from "class-variance-authority";
 import { format } from "date-fns";
 import { ArrowRight } from "lucide-react";

@@ -4,7 +4,7 @@ import db from "@/lib/db";
 import { incidentReports, incidents } from "@/lib/db/schema";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
-import { IncidentReport, IncidentReportStatus } from "@/types/incident-report";
+import { IncidentReport, IncidentReportStatus } from "@miru/types";
 import { eq } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";

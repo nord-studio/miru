@@ -4,7 +4,7 @@ import db from "@/lib/db";
 import { events, monitors, monitorsToEvents } from "@/lib/db/schema";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
-import { EventWithMonitors } from "@/types/event";
+import { EventWithMonitors } from "@miru/types";
 import { eq } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";

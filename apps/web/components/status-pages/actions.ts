@@ -5,7 +5,7 @@ import { monitors, workspaces } from "@/lib/db/schema";
 import { statusPageMonitors, statusPages } from "@/lib/db/schema/status-pages";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
-import { StatusPage } from "@/types/status-pages";
+import { StatusPage } from "@miru/types";
 import { and, eq } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";

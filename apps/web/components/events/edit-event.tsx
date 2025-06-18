@@ -28,13 +28,13 @@ import Spinner from "@/components/ui/spinner";
 import React from "react";
 import { Textarea } from "@/components/ui/textarea";
 import MonitorSelection from "@/components/monitors/monitor-select";
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "@miru/types";
 import DateTimePicker from "@/components/ui/date-time-picker";
 import { toast } from "sonner";
 import { editEvent } from "@/components/events/actions";
 import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { EventWithMonitors } from "@/types/event";
+import { EventWithMonitors } from "@miru/types";
 
 export function EditEventButton({ event, monitors }: { event: EventWithMonitors, monitors: Monitor[] }) {
 	const [open, setOpen] = React.useState(false);

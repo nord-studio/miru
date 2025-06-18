@@ -10,7 +10,7 @@ import WorkspaceInviteEmail from "@miru/transactional/emails/workspace-invite";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { z } from "zod";
 import React, { cache } from "react";
-import { RankedRoles, Workspace } from "@/types/workspace";
+import { RankedRoles, Workspace } from "@miru/types";
 import { apikey, monitors, notifications, statusPages, workspaceInvites, workspaceMembers, workspaces } from "@/lib/db/schema";
 import { generateId, getAppUrl } from "@/lib/utils";
 import db from "@/lib/db";

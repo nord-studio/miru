@@ -6,11 +6,15 @@ import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { generateId } from "@/lib/utils";
 import { workspaces } from "@/lib/db/schema";
-import TestEndpoint from "@/types/monitor-service/test";
 import { actionClient } from "@/lib/safe-action";
 import { z } from "zod";
 import { flattenValidationErrors } from "next-safe-action";
 import { cache } from "react";
+
+export default interface TestEndpoint {
+	latency: number,
+	success: boolean,
+}
 
 export const testMonitor = actionClient.schema(z.object({
 	url: z.string().nonempty(),

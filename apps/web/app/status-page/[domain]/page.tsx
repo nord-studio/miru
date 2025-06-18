@@ -1,12 +1,12 @@
 import db from "@/lib/db";
-import { IncidentWithReportsAndMonitors } from "@/types/incident";
-import { IncidentReportStatus } from "@/types/incident-report";
+import { IncidentWithReportsAndMonitors } from "@miru/types";
+import { IncidentReportStatus } from "@miru/types";
 import { sql } from "drizzle-orm";
 
 import PandaStatusPageDesign from "@/designs/panda/page";
 import SimpleStatusPageDesign from "@/designs/simple/page";
 import StormtrooperStatusPageDesign from "@/designs/stormtrooper/page";
-import { EventWithMonitors } from "@/types/event";
+import { EventWithMonitors } from "@miru/types";
 
 type Props = {
 	params: Promise<{ domain: string }>;

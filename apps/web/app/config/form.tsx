@@ -4,7 +4,7 @@ import { updateConfig } from "@/app/config/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { MiruConfig } from "@/types/config";
+import { MiruConfig } from "@miru/types";
 import { HelpCircle, Save } from "lucide-react";
 import Link from "next/link";
 import React from "react";

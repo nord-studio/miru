@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import Image from "next/image";
-import { StatusPageWithMonitorsExtended } from "@/types/status-pages"
+import { StatusPageWithMonitorsExtended } from "@miru/types"
 import { ThemeDropdown } from "@/components/theme/dropdown";
 import Color from "color";
 import { cn } from "@/lib/utils";

@@ -8,7 +8,7 @@ import { flattenValidationErrors } from "next-safe-action";
 import { z } from "zod";
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache";
-import type { ApiKey, ApiKeyPermissions } from "@/types/api";
+import type { ApiKey, ApiKeyPermissions } from "@miru/types";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getCurrentMember } from "@/components/workspace/actions";

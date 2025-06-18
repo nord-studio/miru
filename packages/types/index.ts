@@ -1,6 +1,5 @@
 export * from "./src/api";
 export * from "./src/config";
-export * from "./src/form";
 export * from "./src/incident-report";
 export * from "./src/incident";
 export * from "./src/monitor";
@@ -8,4 +7,5 @@ export * from "./src/notifications";
 export * from "./src/ping";
 export * from "./src/status-pages";
 export * from "./src/webhook";
+export * from "./src/event";
 export * from "./src/workspace";

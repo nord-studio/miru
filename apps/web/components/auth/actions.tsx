@@ -5,7 +5,6 @@ import db from "@/lib/db";
 import { user, workspaceInvites, workspaceMembers, workspaces } from "@/lib/db/schema";
 import { actionClient } from "@/lib/safe-action";
 import { verifyEmailInput } from "@/lib/utils";
-import { ActionResult } from "@/types/form";
 import { render } from "@react-email/render";
 import { eq } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
@@ -17,6 +16,11 @@ import { cache } from "react";
 import { z } from "zod";
 import VerifyAccountEmail from "@miru/transactional/emails/verify-account";
 import ResetPasswordEmail from "@miru/transactional/emails/reset-password";
+
+export interface ActionResult {
+	error: boolean;
+	message: string | null;
+}
 
 export async function logIn(prevState: ActionResult, formData: FormData) {
 	const email = formData.get("email");

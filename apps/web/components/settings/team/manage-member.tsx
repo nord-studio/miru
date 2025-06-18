@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Spinner from "@/components/ui/spinner";
 import { editWorkspaceMember } from "@/components/workspace/actions";
-import { RankedRoles, WorkspaceMemberWithUser } from "@/types/workspace";
+import { RankedRoles, WorkspaceMemberWithUser } from "@miru/types";
 import React from "react";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";

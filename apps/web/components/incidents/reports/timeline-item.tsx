@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Activity, Check, FingerprintIcon, Search, Trash } from "lucide-react";
 import { format } from "date-fns";
-import { IncidentReport, IncidentReportStatus } from "@/types/incident-report";
+import { IncidentReport, IncidentReportStatus } from "@miru/types";
 import Alert from "@/components/ui/alert";
 import { deleteIncidentReport } from "@/components/incidents/reports/actions";
 import { useState } from "react";

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import db from "@/lib/db";
 import { monitorsToIncidents } from "@/lib/db/schema";
-import { IncidentWithMonitor } from "@/types/incident";
+import { IncidentWithMonitor } from "@miru/types";
 import { eq, sql } from "drizzle-orm";
 
 type UptimePercentageRow = {

@@ -2,7 +2,7 @@ import React from "react";
 import OnboardingWorkspaceForm from "@/app/onboarding/workspace/form";
 import { getFirstWorkspace } from "@/app/onboarding/actions";
 import Image from "next/image";
-import { RankedRoles } from "@/types/workspace";
+import { RankedRoles } from "@miru/types";
 import { getCurrentMember } from "@/components/workspace/actions";
 import { redirect } from "next/navigation";
 

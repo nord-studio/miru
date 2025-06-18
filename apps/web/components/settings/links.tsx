@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { RankedRoles, WorkspaceMemberWithUser } from "@/types/workspace";
+import { RankedRoles, WorkspaceMemberWithUser } from "@miru/types";
 import { Code, Cog, TriangleAlert, User, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

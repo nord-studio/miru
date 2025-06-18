@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
 import Spinner from "@/components/ui/spinner";
 import { editWorkspace } from "@/components/workspace/actions";
-import { Workspace } from "@/types/workspace"
+import { Workspace } from "@miru/types"
 import { ArrowRightIcon, Save } from "lucide-react";
 import Link from "next/link";
 import React from "react";

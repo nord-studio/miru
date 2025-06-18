@@ -12,7 +12,7 @@ import Spinner from "@/components/ui/spinner";
 import { getAllUsers, inviteMemberViaEmail } from "@/components/workspace/actions";
 import { User } from "@/lib/auth";
 import { cn } from "@/lib/utils";
-import { RankedRoles, Workspace, WorkspaceMemberWithUser } from "@/types/workspace";
+import { RankedRoles, Workspace, WorkspaceMemberWithUser } from "@miru/types";
 import { Check, ChevronsUpDown } from "lucide-react";
 import React, { useEffect } from "react";
 import { toast } from "sonner";

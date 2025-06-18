@@ -1,4 +1,4 @@
-import { IncidentReportStatus } from "@/types/incident-report";
+import { IncidentReportStatus } from "@miru/types";
 import { z } from "zod";
 
 export const createIncidentSchema = z.object({

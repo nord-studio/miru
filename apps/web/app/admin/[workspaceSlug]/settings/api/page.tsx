@@ -11,7 +11,7 @@ import { notFound } from "next/navigation";
 import { getCurrentMember } from "@/components/workspace/actions";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "@/app/admin/[workspaceSlug]/settings/api/columns";
-import { Workspace, WorkspaceMember } from "@/types/workspace";
+import { Workspace, WorkspaceMember } from "@miru/types";
 
 function EmptyState({ workspace, currentMember }: { workspace: Workspace, currentMember: WorkspaceMember }) {
 	return (

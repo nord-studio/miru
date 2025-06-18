@@ -33,7 +33,7 @@ export default async function MonitorSingletonPage({
 		return notFound();
 	}
 
-	let pngs = await db.query.pings.findMany({
+	const pngs = await db.query.pings.findMany({
 		where: and(eq(pings.monitorId, id), eq(pings.success, true)),
 		columns: {
 			id: true,

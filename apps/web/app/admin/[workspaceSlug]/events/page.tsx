@@ -1,9 +1,9 @@
 import { DataTable } from "@/components/ui/data-table";
 import db from "@/lib/db";
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "@miru/types";
 import { eq } from "drizzle-orm";
 import { monitors, workspaces } from "@/lib/db/schema";
-import { RankedRoles, WorkspaceMember } from "@/types/workspace";
+import { RankedRoles, WorkspaceMember } from "@miru/types";
 import { getCurrentMember } from "@/components/workspace/actions";
 import { redirect } from "next/navigation";
 import { CalendarOff } from "lucide-react";

@@ -3,8 +3,8 @@ import { getCurrentMember } from "@/components/workspace/actions";
 import { getConfig } from "@/lib/config";
 import db from "@/lib/db";
 import { monitors, statusPages, workspaces } from "@/lib/db/schema";
-import { StatusPageWithMonitorsExtended } from "@/types/status-pages";
-import { RankedRoles } from "@/types/workspace";
+import { StatusPageWithMonitorsExtended } from "@miru/types";
+import { RankedRoles } from "@miru/types";
 import { eq } from "drizzle-orm"
 import { notFound, redirect } from "next/navigation";
 

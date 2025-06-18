@@ -25,11 +25,11 @@ import { Button } from "@/components/ui/button";
 import { Activity, Check, Fingerprint, PlusIcon, Search } from "lucide-react";
 import Spinner from "@/components/ui/spinner";
 import React from "react";
-import { Incident } from "@/types/incident";
+import { Incident } from "@miru/types";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { IncidentReportStatus } from "@/types/incident-report";
+import { IncidentReportStatus } from "@miru/types";
 import { toast } from "sonner";
 import { createIncidentReport } from "@/components/incidents/reports/actions";
 

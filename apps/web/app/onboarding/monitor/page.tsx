@@ -1,7 +1,7 @@
 import { getFirstWorkspace } from "@/app/onboarding/actions";
 import OnboardingMonitorForm from "@/app/onboarding/monitor/form";
 import { getCurrentMember } from "@/components/workspace/actions";
-import { RankedRoles } from "@/types/workspace";
+import { RankedRoles } from "@miru/types";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 

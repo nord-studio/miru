@@ -18,12 +18,12 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import { WorkspaceWithMembers } from "@/types/workspace";
+import { WorkspaceWithMembers } from "@miru/types";
 import CreateWorkspace from "@/components/workspace/create-workspace";
 import { usePathname, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import JoinWorkspace from "@/components/workspace/join-workspace";
-import { MiruConfig } from "@/types/config";
+import { MiruConfig } from "@miru/types";
 import { User } from "@/lib/auth";
 
 export function WorkspaceSwitcher({ workspaces, user, config }: { workspaces: WorkspaceWithMembers[], user: User, config: MiruConfig }) {

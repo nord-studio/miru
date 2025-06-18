@@ -2,7 +2,7 @@ import WorkspaceGeneralSettingsFields from "@/components/settings/general/fields
 import { getCurrentMember } from "@/components/workspace/actions";
 import db from "@/lib/db";
 import { workspaces } from "@/lib/db/schema";
-import { RankedRoles } from "@/types/workspace";
+import { RankedRoles } from "@miru/types";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 

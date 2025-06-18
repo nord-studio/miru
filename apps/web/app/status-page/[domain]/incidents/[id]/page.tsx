@@ -3,7 +3,7 @@ import { incidents } from "@/lib/db/schema";
 import { notFound } from "next/navigation";
 import { eq, sql } from "drizzle-orm";
 import SimpleStatusPageShell from "@/designs/simple/shell";
-import { IncidentReport, IncidentReportStatus } from "@/types/incident-report";
+import { IncidentReport, IncidentReportStatus } from "@miru/types";
 import StormtrooperStatusPageShell from "@/designs/stormtrooper/shell";
 import BackButton from "@/components/back-button";
 import IncidentTimelineItem from "@/components/incidents/reports/timeline-item";

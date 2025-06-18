@@ -1,4 +1,4 @@
-import { MiruConfig } from "@/types/config";
+import { MiruConfig } from "@miru/types";
 
 export async function getPath() {
 	const path = await import("path");

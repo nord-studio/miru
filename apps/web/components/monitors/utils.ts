@@ -1,5 +1,9 @@
 "use server"
-import TestEndpoint from "@/types/monitor-service/test";
+
+export default interface TestEndpoint {
+	latency: number,
+	success: boolean,
+}
 
 export async function testUrl(method: string, url: string) {
 	await fetch(`${process.env.MONITOR_URL}/test/${method}/${url}`, {

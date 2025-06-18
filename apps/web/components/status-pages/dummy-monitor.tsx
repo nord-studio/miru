@@ -1,5 +1,5 @@
 import { StatusMonitorBar } from "@/components/status-pages/monitor-bar"
-import { Monitor, StatusDayBlock } from "@/types/monitor"
+import { Monitor, StatusDayBlock } from "@miru/types"
 
 export default function DummyMonitor({ monitor, days }: { monitor: Monitor, days: StatusDayBlock[] }) {
 	return (

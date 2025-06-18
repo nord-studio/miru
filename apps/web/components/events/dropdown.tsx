@@ -12,10 +12,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import React from "react";
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "@miru/types";
 import { VariantProps } from "class-variance-authority";
 import { getAllMonitors } from "@/components/monitors/actions";
-import { EventWithMonitors } from "@/types/event";
+import { EventWithMonitors } from "@miru/types";
 import EditEvent from "@/components/events/edit-event";
 import DeleteEvent from "@/components/events/delete-event";
 import CompleteEvent from "@/components/events/complete-event";

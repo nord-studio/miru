@@ -28,7 +28,7 @@ import Spinner from "@/components/ui/spinner";
 import React from "react";
 import { Textarea } from "@/components/ui/textarea";
 import MonitorSelection from "@/components/monitors/monitor-select";
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "@miru/types";
 import DateTimePicker from "@/components/ui/date-time-picker";
 import { toast } from "sonner";
 import { createEvent } from "@/components/events/actions";

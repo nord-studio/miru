@@ -19,8 +19,6 @@ export interface IncidentWithReports extends Incident {
 }
 
 export interface IncidentWithReportsAndMonitors extends Incident {
-	monitorsToIncidents: {
-		monitor: Monitor;
-	}[];
+	monitors: Monitor[];
 	reports: IncidentReport[];
 }

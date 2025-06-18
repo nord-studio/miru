@@ -5,7 +5,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, Di
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { ApiKey } from "@/types/api";
+import { ApiKey } from "@miru/types";
 import { Eye } from "lucide-react";
 import React from "react";
 import { useMediaQuery } from "usehooks-ts";

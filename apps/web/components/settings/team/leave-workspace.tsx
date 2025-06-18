@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button"
 import { leaveWorkspace } from "@/components/workspace/actions";
-import { Workspace } from "@/types/workspace";
+import { Workspace } from "@miru/types";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner"
 import { useMediaQuery } from "usehooks-ts";

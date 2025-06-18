@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import React from "react";
-import { RankedRoles, Workspace, WorkspaceMemberWithUser } from "@/types/workspace";
+import { RankedRoles, Workspace, WorkspaceMemberWithUser } from "@miru/types";
 import KickWorkspaceMemberButton from "@/components/settings/team/kick-member";
 import LeaveWorkspaceButton from "@/components/settings/team/leave-workspace";
 import ManageMember from "@/components/settings/team/manage-member";

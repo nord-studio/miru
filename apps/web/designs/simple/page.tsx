@@ -1,9 +1,9 @@
-import { StatusPageWithMonitorsExtended } from "@/types/status-pages"
+import { StatusPageWithMonitorsExtended } from "@miru/types"
 import { StatusBanner } from "@/components/ui/status-banner";
 import StatusPageMonitor from "@/components/status-pages/status-monitor";
-import { IncidentWithReportsAndMonitors } from "@/types/incident";
+import { IncidentWithReportsAndMonitors } from "@miru/types";
 import SimpleStatusPageShell from "@/designs/simple/shell";
-import { EventWithMonitors } from "@/types/event";
+import { EventWithMonitors } from "@miru/types";
 
 export default function SimpleStatusPageDesign({ page, incidents, events }: { page: StatusPageWithMonitorsExtended, incidents: IncidentWithReportsAndMonitors[], events: EventWithMonitors[] }) {
 	let variant: "operational" | "degraded" | "down" | "maintenance" = "operational";

@@ -1,10 +1,10 @@
-import { StatusPageWithMonitorsExtended } from "@/types/status-pages"
+import { StatusPageWithMonitorsExtended } from "@miru/types"
 import { MonoStatusBanner } from "@/components/ui/status-banner";
 import StatusPageMonitor from "@/components/status-pages/status-monitor";
 import Color from "color";
-import { IncidentWithReportsAndMonitors } from "@/types/incident";
+import { IncidentWithReportsAndMonitors } from "@miru/types";
 import PandaStatusPageShell from "@/designs/panda/shell";
-import { EventWithMonitors } from "@/types/event";
+import { EventWithMonitors } from "@miru/types";
 
 export default function PandaStatusPageDesign({ page, incidents, events }: { page: StatusPageWithMonitorsExtended, incidents: IncidentWithReportsAndMonitors[], events: EventWithMonitors[] }) {
 	let variant: "operational" | "degraded" | "down" | "maintenance" = "operational";

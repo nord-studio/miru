@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { usePathname } from "next/navigation";
-import { EventWithMonitors } from "@/types/event";
+import { EventWithMonitors } from "@miru/types";
 import EventActionsDropdown from "@/components/events/dropdown";
 
 export const columns: ColumnDef<EventWithMonitors>[] = [

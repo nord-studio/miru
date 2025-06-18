@@ -4,7 +4,7 @@ import { getCurrentMember } from "@/components/workspace/actions";
 import { getConfig } from "@/lib/config";
 import db from "@/lib/db";
 import { monitors } from "@/lib/db/schema";
-import { RankedRoles } from "@/types/workspace";
+import { RankedRoles } from "@miru/types";
 import { eq } from "drizzle-orm"
 import { redirect } from "next/navigation";
 

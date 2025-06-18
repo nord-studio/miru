@@ -3,7 +3,7 @@ import { getCurrentMember } from "@/components/workspace/actions";
 import db from "@/lib/db";
 import { workspaces } from "@/lib/db/schema";
 import { monitors } from "@/lib/db/schema/monitors";
-import { RankedRoles } from "@/types/workspace";
+import { RankedRoles } from "@miru/types";
 import { eq } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 

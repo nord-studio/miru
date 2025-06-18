@@ -7,7 +7,7 @@ import { incidentReports, incidents } from "@/lib/db/schema/incidents";
 import { monitors, monitorsToIncidents } from "@/lib/db/schema/monitors";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
-import { IncidentReportStatus } from "@/types/incident-report";
+import { IncidentReportStatus } from "@miru/types";
 import { eq } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";

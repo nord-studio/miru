@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import React from "react";
 import { usePathname } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { NotificationWithMonitors } from "@/types/notifications";
+import { NotificationWithMonitors } from "@miru/types";
 import NotificationActionsDropdown from "@/components/notifications/dropdown";
 
 export const columns: ColumnDef<NotificationWithMonitors>[] = [

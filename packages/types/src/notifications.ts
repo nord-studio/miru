@@ -5,6 +5,7 @@ export interface Notification {
 	name: string;
 	workspaceId: string;
 	provider: "slack" | "discord";
+	type: "external" | "internal";
 	url: string | null;
 }
 

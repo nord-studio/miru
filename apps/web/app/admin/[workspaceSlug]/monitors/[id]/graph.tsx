@@ -1,5 +1,5 @@
 "use client";
-import { HeartPulseIcon, TrendingUp } from "lucide-react"
+import { HeartPulseIcon } from "lucide-react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
 import {
@@ -58,10 +58,9 @@ export default function MonitorGraph({ data }: {
 							tickMargin={8}
 							tickFormatter={(value) => value.slice(0, 3)}
 						/>
-						<ChartTooltip cursor={false} content={({ active, payload, label }) => {
+						<ChartTooltip cursor={false} content={({ active, payload }) => {
 							if (active && payload && payload.length) {
-								const data = payload[0]
-								console.log(data)
+								const data = payload[0];
 								return (
 									<div className="rounded-lg border bg-background p-2 shadow-md">
 										<div className="grid grid-rows-2 gap-2">

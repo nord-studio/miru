@@ -1,6 +1,6 @@
 import db from "@/lib/db";
 import { apikey } from "@/lib/db/schema";
-import { ApiKey } from "@/types/api";
+import { ApiKey } from "@miru/types";
 import { eq } from "drizzle-orm";
 
 type Permission = "create" | "read" | "update" | "delete";

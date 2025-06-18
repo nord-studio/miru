@@ -1,9 +1,9 @@
-import { StatusPageWithMonitorsExtended } from "@/types/status-pages"
+import { StatusPageWithMonitorsExtended } from "@miru/types"
 import { StatusBanner } from "@/components/ui/status-banner";
 import StatusPageMonitor from "@/components/status-pages/status-monitor";
-import { IncidentWithReportsAndMonitors } from "@/types/incident";
+import { IncidentWithReportsAndMonitors } from "@miru/types";
 import StormtrooperStatusPageShell from "@/designs/stormtrooper/shell";
-import { EventWithMonitors } from "@/types/event";
+import { EventWithMonitors } from "@miru/types";
 
 export default function StormtrooperStatusPageDesign({ page, incidents, events }: { page: StatusPageWithMonitorsExtended, incidents: IncidentWithReportsAndMonitors[], events: EventWithMonitors[] }) {
 	let variant: "operational" | "degraded" | "down" | "maintenance" = "operational";

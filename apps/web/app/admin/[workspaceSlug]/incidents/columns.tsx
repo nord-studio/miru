@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import React from "react";
-import { IncidentWithMonitor } from "@/types/incident";
+import { IncidentWithMonitor } from "@miru/types";
 import { Badge } from "@/components/ui/badge";
 import IncidentActionsDropdown from "@/components/incidents/incidents-dropdown";
 import { usePathname } from "next/navigation";

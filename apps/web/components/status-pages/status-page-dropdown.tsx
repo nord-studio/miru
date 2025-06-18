@@ -15,10 +15,10 @@ import { toast } from "sonner";
 import React from "react";
 import { VariantProps } from "class-variance-authority";
 import { usePathname } from "next/navigation";
-import { RankedRoles, WorkspaceMemberWithUser } from "@/types/workspace";
+import { RankedRoles, WorkspaceMemberWithUser } from "@miru/types";
 import { getCurrentMember } from "@/components/workspace/actions";
 import Spinner from "@/components/ui/spinner";
-import { StatusPageWithMonitorsExtended } from "@/types/status-pages";
+import { StatusPageWithMonitorsExtended } from "@miru/types";
 import DeleteStatusPage from "@/components/status-pages/delete-status-page";
 
 export default function StatusPageDropdown({

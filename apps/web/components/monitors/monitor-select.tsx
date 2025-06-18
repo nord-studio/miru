@@ -17,7 +17,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import { Monitor } from "@/types/monitor";
+import { Monitor } from "@miru/types";
 
 export default function MonitorSelection({
 	monitors,
