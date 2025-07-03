@@ -19,17 +19,5 @@ pub async fn get_discord_urls(workspace_id: String) -> Result<Vec<String>, Strin
         }
     };
 
-    channels
-        .into_iter()
-        .map(|channel| {
-            if let Some(url) = channel.url {
-                Ok(url)
-            } else {
-                Err(format!(
-                    "Discord channel with ID {} does not have a URL",
-                    channel.id
-                ))
-            }
-        })
-        .collect()
+    Ok(channels.into_iter().map(|c| c.url).collect::<Vec<String>>())
 }

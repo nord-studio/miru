@@ -8,3 +8,45 @@ description: "Configure your Miru instance to suit your needs."
 One of Miru's main goals is to be as flexible and customizable as possible, we understand that each and every user has different needs and requirements, and we want to make sure that Miru can be configured to suit those needs.
 
 This is where the configuration file comes in. The configuration file is a TOML file that contains all the settings for your Miru instance. This includes everything from toggling features, customising white labels, and everything inbetween.
+
+## `email`
+
+SMTP settings and other email-related settings will be added in the future as we roll out more features that utilize email notifications.
+
+| Key            | Type   | description                                              | Default |
+| -------------- | ------ | -------------------------------------------------------- | ------- |
+| `enabled`      | `bool` | Whether to enable email notifications.                   | `false` |
+| `verification` | `bool` | Whether to require email verification before logging in. | `false` |
+
+## `incidents.auto`
+
+Configure how [Auto Incidents](/docs/concepts/incidents#auto-incidents) work in your instance. More fields will be added at a later date, giving you more control over how incidents are created automatically.
+
+| Key               | Type   | description                                                       | Default |
+| ----------------- | ------ | ----------------------------------------------------------------- | ------- |
+| `enabled`         | `bool` | Whether to enable automatic incident creation.                    | `true`  |
+| `pings_threshold` | `int`  | The number of pings required to create an incident automatically. | `3`     |
+
+## `storage`
+
+Configure your S3 storage settings, which are used to store logos, screenshots, and other files uploaded by outsiders (if enabled). This is also where you can set the maximum file size for uploads.
+
+| Key        | Type  | description                                                 | Default    |
+| ---------- | ----- | ----------------------------------------------------------- | ---------- |
+| `max_size` | `int` | The maximum size of a file that can be uploaded (in bytes). | `12582912` |
+
+## `users`
+
+More fields will be added in the future to allow for more user management features.
+
+| Key               | Type   | description                                              | Default |
+| ----------------- | ------ | -------------------------------------------------------- | ------- |
+| `delete_on_empty` | `bool` | Whether to delete the user when they have no workspaces. | `false` |
+
+## `workspace`
+
+As an instance owner, it's important to control whether users can create their own workspaces. This setting allows you to enable or disable workspace creation for users.
+
+| Key        | Type   | description                                  | Default |
+| ---------- | ------ | -------------------------------------------- | ------- |
+| `creation` | `bool` | Whether to allow users to create workspaces. | `true`  |

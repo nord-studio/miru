@@ -55,6 +55,8 @@ services:
         image: ghcr.io/nord-studio/miru/monitor:latest
         ports:
             - "8080:8080"
+        volumes:
+            - ./config.toml/:/config.toml
         environment:
             - DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
             - DATABASE_SSL=false
@@ -65,6 +67,8 @@ services:
     web:
         container_name: web
         image: ghcr.io/nord-studio/miru/web:latest
+        volumes:
+            - ./config.toml/:/app/apps/web/config.toml
         ports:
             - "3000:3000"
         environment:
@@ -89,6 +93,30 @@ services:
         depends_on:
             - database
             - minio
+```
+
+</Step>
+
+<Step>
+Create a new `config.toml` file in the same directory as your `docker-compose.yml` file. This file is used to [configure various features](/docs/configuration) that Miru supports. You can start with the following content:
+
+```toml
+[email]
+enabled = false
+verification = false
+
+[incidents.auto]
+enabled = true
+pings_threshold = 3
+
+[storage]
+max_size = 12582912
+
+[users]
+delete_on_empty = false
+
+[workspace]
+creation = true
 ```
 
 </Step>

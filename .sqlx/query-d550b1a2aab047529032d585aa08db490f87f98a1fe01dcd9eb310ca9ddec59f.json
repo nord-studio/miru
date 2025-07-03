@@ -27,6 +27,11 @@
         "ordinal": 4,
         "name": "url",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "type",
+        "type_info": "Text"
       }
     ],
     "parameters": {
@@ -39,7 +44,8 @@
       false,
       false,
       false,
-      true
+      false,
+      false
     ]
   },
   "hash": "d550b1a2aab047529032d585aa08db490f87f98a1fe01dcd9eb310ca9ddec59f"

@@ -11,9 +11,9 @@
 		"knip": "knip"
 	},
 	"devDependencies": {
-		"@types/node": "^22.15.21",
-		"knip": "^5.57.0",
-		"turbo": "^2.5.3",
+		"@types/node": "^24.0.10",
+		"knip": "^5.61.3",
+		"turbo": "^2.5.4",
 		"typescript": "^5.8.3"
 	},
 	"packageManager": "pnpm@10.11.0",

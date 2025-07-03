@@ -41,14 +41,11 @@ DATABASE_URL=postgresql://miru:VerySecurePassword123@database:5432/miru
 DATABASE_SSL=false
 
 # JWT Secret
-BETTER_AUTH_SECRET=
+BETTER_AUTH_SECRET=1
 
 # URL Settings
 APP_DOMAIN=localhost
 MONITOR_URL=http://localhost:8080
-
-# If you must verify your email before logging in
-EMAIL_VERIFICATION=true
 
 # SMTP Settings
 ENABLE_EMAIL=true
@@ -58,6 +55,30 @@ SMTP_SECURE=true
 SMTP_USER=plunk
 SMTP_PASSWORD=
 SMTP_FROM=hello@nordstud.io
+```
+
+</Step>
+
+<Step>
+Create a new `config.toml` file in the same directory as your `.env` file. This file is used to [configure various features](/docs/configuration) that Miru supports. You can start with the following content:
+
+```toml
+[email]
+enabled = false
+verification = false
+
+[incidents.auto]
+enabled = true
+pings_threshold = 3
+
+[storage]
+max_size = 12582912
+
+[users]
+delete_on_empty = false
+
+[workspace]
+creation = true
 ```
 
 </Step>
