@@ -67,7 +67,7 @@ pub async fn create_job<'a>(
     let event_id_clone = Arc::new(event.id.clone());
 
     let job = match Job::new_one_shot_async(duration, move |_, _| {
-        let event_id = Arc::clone(&event_id_clone);
+        let event_id: Arc<String> = Arc::clone(&event_id_clone);
         Box::pin({
             async move {
                 info!("Marking event {} as completed", event_id);

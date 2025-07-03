@@ -7,7 +7,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y libssl-dev openss
 
 # Copy the rest of the application code
 COPY ./Cargo.toml ./Cargo.lock ./
-COPY ./apps/monitor ./apps/monitor
+COPY ./apps/monitor ./
 COPY ./.sqlx ./.sqlx
 
 # Build the Rust application
@@ -15,11 +15,11 @@ ENV SQLX_OFFLINE=true
 RUN cargo build --release
 
 # Use a minimal base image for the final stage
-FROM alpine:latest
+FROM debian:bookworm-slim
 
 # Set the working directory
 WORKDIR /app
-RUN apk add --no-cache curl
+RUN apt-get update && apt-get upgrade -y && apt-get install -y ca-certificates
 
 # Copy the built binary from the builder stage
 COPY --from=builder /app/target/release/monitor .

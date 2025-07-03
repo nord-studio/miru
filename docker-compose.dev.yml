@@ -50,7 +50,7 @@ services:
         networks:
             - miru
         volumes:
-            - ./config.toml:/app/config.toml
+            - ./config.toml/:/app/config.toml
 
     web:
         container_name: web
@@ -66,4 +66,4 @@ services:
         networks:
             - miru
         volumes:
-            - ./config.toml:/app/config.toml
+            - ./config.toml/:/app/apps/web/config.toml
