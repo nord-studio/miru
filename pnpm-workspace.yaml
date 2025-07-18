@@ -1,5 +1,9 @@
 packages:
     - apps/*
     - packages/*
+
 onlyBuiltDependencies:
     - esbuild
+    - oxc-resolver
+    - sharp
+    - unrs-resolver
