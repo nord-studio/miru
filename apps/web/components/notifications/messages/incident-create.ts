@@ -9,7 +9,7 @@ import { flattenValidationErrors } from "next-safe-action";
 import z from "zod";
 
 /// Sends a message to all channels that an incident has been created
-export const sendIncidentCreated = actionClient.schema(z.object({
+export const sendIncidentCreated = actionClient.inputSchema(z.object({
 	workspaceId: z.string().nonempty(),
 	incidentId: z.string().nonempty(),
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).action(async ({ parsedInput: { workspaceId, incidentId } }) => {

@@ -1,9 +1,9 @@
 packages:
-    - apps/*
-    - packages/*
-
+  - apps/*
+  - packages/*
 onlyBuiltDependencies:
-    - esbuild
-    - oxc-resolver
-    - sharp
-    - unrs-resolver
+  - '@tailwindcss/oxide'
+  - esbuild
+  - oxc-resolver
+  - sharp
+  - unrs-resolver

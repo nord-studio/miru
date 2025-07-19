@@ -287,7 +287,7 @@ export const getCurrentUser = cache(async () => {
 	return currentUser;
 })
 
-export const updatePassword = actionClient.schema(z.object({
+export const updatePassword = actionClient.inputSchema(z.object({
 	id: z.string(),
 	password: z.string().min(8).max(255),
 	passwordConfirm: z.string().min(8).max(255),

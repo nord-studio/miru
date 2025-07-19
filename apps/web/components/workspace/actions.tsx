@@ -45,7 +45,7 @@ export const getAllUsers = cache(actionClient.action(async () => {
 }));
 
 export const createWorkspace = actionClient
-	.schema(
+	.inputSchema(
 		z.object({
 			name: z.string().nonempty(),
 			slug: z.string().optional(),
@@ -92,7 +92,7 @@ export const createWorkspace = actionClient
 		};
 	});
 
-export const editWorkspace = actionClient.schema(z.object({
+export const editWorkspace = actionClient.inputSchema(z.object({
 	id: z.string().nonempty(),
 	name: z.string().optional(),
 	slug: z.string().optional(),
@@ -135,7 +135,7 @@ export const editWorkspace = actionClient.schema(z.object({
 	})
 });
 
-export const deleteWorkspace = actionClient.schema(z.object({
+export const deleteWorkspace = actionClient.inputSchema(z.object({
 	id: z.string().nonempty()
 })).outputSchema(z.object({
 	error: z.boolean(),
@@ -168,7 +168,7 @@ export const deleteWorkspace = actionClient.schema(z.object({
 	return { error: false, message: "Workspace deleted successfully" };
 });
 
-export const wipeWorkspace = actionClient.schema(z.object({
+export const wipeWorkspace = actionClient.inputSchema(z.object({
 	id: z.string().nonempty()
 })).outputSchema(z.object({
 	error: z.boolean(),
@@ -192,7 +192,7 @@ export const wipeWorkspace = actionClient.schema(z.object({
 	return { error: false, message: "Workspace wiped successfully" };
 });
 
-export const joinWorkspace = actionClient.schema(z.object({
+export const joinWorkspace = actionClient.inputSchema(z.object({
 	inviteToken: z.string().nonempty(),
 	autoRedirect: z.boolean().default(true).optional(),
 }), {
@@ -243,7 +243,7 @@ export const joinWorkspace = actionClient.schema(z.object({
 	}
 });
 
-export const inviteMemberViaEmail = actionClient.schema(z.object({
+export const inviteMemberViaEmail = actionClient.inputSchema(z.object({
 	workspace: z.custom<Workspace>(),
 	email: z.string().email(),
 	role: z.enum(["admin", "member", "owner"]),
@@ -301,7 +301,7 @@ export const inviteMemberViaEmail = actionClient.schema(z.object({
 	};
 })
 
-export const createWorkspaceInvite = actionClient.schema(z.object({
+export const createWorkspaceInvite = actionClient.inputSchema(z.object({
 	inviteToken: z.string().nonempty(),
 	workspaceId: z.string().nonempty(),
 	role: z.enum(["admin", "member", "owner"]),
@@ -323,7 +323,7 @@ export const createWorkspaceInvite = actionClient.schema(z.object({
 	};
 })
 
-export const leaveWorkspace = actionClient.schema(z.object({
+export const leaveWorkspace = actionClient.inputSchema(z.object({
 	workspaceId: z.string().nonempty(),
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
 	error: z.boolean(),
@@ -363,7 +363,7 @@ export const leaveWorkspace = actionClient.schema(z.object({
 	return { error: false, message: "You've left the workspace successfully" };
 })
 
-export const kickWorkspaceMember = actionClient.schema(z.object({
+export const kickWorkspaceMember = actionClient.inputSchema(z.object({
 	workspaceId: z.string().nonempty(),
 	memberId: z.string().nonempty(),
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
@@ -448,7 +448,7 @@ export const getCurrentMember = async (workspaceId: string, userId?: string) => 
 	}
 };
 
-export const declineInvite = actionClient.schema(z.object({
+export const declineInvite = actionClient.inputSchema(z.object({
 	inviteToken: z.string().nonempty()
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
 	error: z.boolean(),
@@ -467,7 +467,7 @@ export const declineInvite = actionClient.schema(z.object({
 	return { error: false, message: "Invite declined successfully" };
 })
 
-export const editWorkspaceMember = actionClient.schema(z.object({
+export const editWorkspaceMember = actionClient.inputSchema(z.object({
 	id: z.string().nonempty(),
 	workspaceId: z.string().nonempty(),
 	role: z.enum(["admin", "member", "owner"]),

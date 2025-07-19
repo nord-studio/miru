@@ -16,7 +16,7 @@ export default interface TestEndpoint {
 	success: boolean,
 }
 
-export const testMonitor = actionClient.schema(z.object({
+export const testMonitor = actionClient.inputSchema(z.object({
 	url: z.string().nonempty(),
 	method: z.enum(["http", "tcp"])
 })).outputSchema(z.object({
@@ -42,7 +42,7 @@ export const testMonitor = actionClient.schema(z.object({
 	return res;
 });
 
-export const createMonitor = actionClient.schema(z.object({
+export const createMonitor = actionClient.inputSchema(z.object({
 	name: z.string().nonempty(),
 	type: z.enum(["http", "tcp"]),
 	url: z.string().nonempty(),
@@ -107,7 +107,7 @@ export const createMonitor = actionClient.schema(z.object({
 	return { error: false, message: "Monitor created successfully" };
 });
 
-export const pingMonitor = actionClient.schema(z.string().nonempty()).outputSchema(z.object({
+export const pingMonitor = actionClient.inputSchema(z.string().nonempty()).outputSchema(z.object({
 	error: z.boolean(),
 	message: z.string(),
 })).action(async ({ parsedInput: id }) => {
@@ -139,7 +139,7 @@ export const pingMonitor = actionClient.schema(z.string().nonempty()).outputSche
 	return res;
 });
 
-export const editMonitor = actionClient.schema(z.object({
+export const editMonitor = actionClient.inputSchema(z.object({
 	id: z.string().nonempty(),
 	data: z.object({
 		name: z.string().optional(),
@@ -218,7 +218,7 @@ export const editMonitor = actionClient.schema(z.object({
 	return { error: false, message: "Monitor updated successfully" };
 });
 
-export const deleteMonitor = actionClient.schema(z.string().nonempty()).outputSchema(z.object({
+export const deleteMonitor = actionClient.inputSchema(z.string().nonempty()).outputSchema(z.object({
 	error: z.boolean(),
 	message: z.string(),
 })).action(async ({ parsedInput: id }) => {

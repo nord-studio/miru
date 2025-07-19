@@ -6,7 +6,7 @@ export const createIncidentSchema = z.object({
 	title: z.string().nonempty(),
 	message: z.string().nonempty(),
 	status: z.custom<IncidentReportStatus>(async (status) => {
-		return Object.values(IncidentReportStatus).includes(status);
+		return Object.values(IncidentReportStatus).includes(status as IncidentReportStatus);
 	})
 });
 

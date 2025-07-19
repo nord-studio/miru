@@ -36,7 +36,7 @@ export async function getAllEventsWithMonitors(workspaceId: string): Promise<Eve
 	return events;
 }
 
-export const createEvent = actionClient.schema(z.object({
+export const createEvent = actionClient.inputSchema(z.object({
 	title: z.string(),
 	message: z.string(),
 	monitorIds: z.array(z.string()),
@@ -108,7 +108,7 @@ export const createEvent = actionClient.schema(z.object({
 	}
 })
 
-export const editEvent = actionClient.schema(z.object({
+export const editEvent = actionClient.inputSchema(z.object({
 	id: z.string(),
 	title: z.string().optional(),
 	message: z.string().optional(),
@@ -190,7 +190,7 @@ export const editEvent = actionClient.schema(z.object({
 	}
 })
 
-export const deleteEvent = actionClient.schema(z.object({
+export const deleteEvent = actionClient.inputSchema(z.object({
 	id: z.string()
 })).action(async ({ parsedInput: { id } }) => {
 	// Delete event
@@ -209,7 +209,7 @@ export const deleteEvent = actionClient.schema(z.object({
 	return { error: false, message: "Event deleted successfully" };
 })
 
-export const markCompleted = actionClient.schema(z.object({
+export const markCompleted = actionClient.inputSchema(z.object({
 	id: z.string(),
 })).action(async ({ parsedInput: { id } }) => {
 	await db.update(events).set({

@@ -11,7 +11,7 @@ import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-export const createStatusPage = actionClient.schema(z.object({
+export const createStatusPage = actionClient.inputSchema(z.object({
 	id: z.string().optional(),
 	workspaceId: z.string(),
 	name: z.string(),
@@ -141,7 +141,7 @@ export const createStatusPage = actionClient.schema(z.object({
 	};
 })
 
-export const editStatusPage = actionClient.schema(z.object({
+export const editStatusPage = actionClient.inputSchema(z.object({
 	id: z.string(),
 	workspaceId: z.string(),
 	name: z.string(),
@@ -240,7 +240,7 @@ export const editStatusPage = actionClient.schema(z.object({
 	return { error: false, message: "Status page updated" };
 });
 
-export const deleteStatusPage = actionClient.schema(z.object({
+export const deleteStatusPage = actionClient.inputSchema(z.object({
 	id: z.string(),
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
 	error: z.boolean(),

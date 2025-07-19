@@ -11,7 +11,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 /// The latest report is always the first in the array.
-export const getIncidentWithReports = actionClient.schema(z.string().nonempty()).action(async ({ parsedInput: id }) => {
+export const getIncidentWithReports = actionClient.inputSchema(z.string().nonempty()).action(async ({ parsedInput: id }) => {
 	const incident = await db
 		.select()
 		.from(incidents)
@@ -41,7 +41,7 @@ export const getIncidentWithReports = actionClient.schema(z.string().nonempty())
 });
 
 export const createIncidentReport = actionClient
-	.schema(
+	.inputSchema(
 		z.object({
 			incidentId: z.string().nonempty(),
 			status: z.string().nonempty(),
@@ -101,7 +101,7 @@ export const createIncidentReport = actionClient
 	});
 
 export const deleteIncidentReport = actionClient
-	.schema(z.object({
+	.inputSchema(z.object({
 		id: z.string().nonempty(),
 		incidentId: z.string().nonempty(),
 	}), {
@@ -159,7 +159,7 @@ export const deleteIncidentReport = actionClient
 	});
 
 export const editIncidentReport = actionClient
-	.schema(
+	.inputSchema(
 		z.object({
 			id: z.string().nonempty(),
 			status: z.string().nonempty(),

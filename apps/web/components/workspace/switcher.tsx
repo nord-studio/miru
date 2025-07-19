@@ -41,6 +41,8 @@ export function WorkspaceSwitcher({ workspaces, user, config }: { workspaces: Wo
 	const [openJoin, setOpenJoin] = React.useState(false);
 	const [currentWorkspace, setCurrentWorkspace] = React.useState<string>();
 
+	const canCreate = config.workspace.creation === true || user.admin;
+
 	React.useEffect(() => {
 		if (pathname.split("/")[2]) {
 			setCurrentWorkspace(pathname.split("/")[2]);
@@ -104,7 +106,7 @@ export function WorkspaceSwitcher({ workspaces, user, config }: { workspaces: Wo
 									</CommandItem>
 								))}
 								<hr className="w-full my-1" />
-								{user.admin || config.workspace.creation === true && (
+								{canCreate && (
 									<CommandItem
 										onSelect={() => setOpenCreate(true)}
 									>

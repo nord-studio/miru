@@ -11,7 +11,7 @@ import { z } from "zod";
 import { writeFile } from "fs/promises";
 
 export const updateConfig = actionClient
-	.schema(z.custom<MiruConfig>(), {
+	.inputSchema(z.custom<MiruConfig>(), {
 		handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors
 	})
 	.outputSchema(z.object({

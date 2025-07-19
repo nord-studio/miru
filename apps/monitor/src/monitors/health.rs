@@ -6,7 +6,8 @@ use sqlx::query;
 use tokio::sync::MutexGuard;
 
 use crate::{
-    email::send::send_email, notifs::discord::send::send_discord, INCID_REGISTRY, MIRU_CONFIG, POOL,
+    config::get_config, email::send::send_email, notifs::discord::send::send_discord,
+    INCID_REGISTRY, POOL,
 };
 
 #[derive(Debug, Clone, Default, Serialize)]
@@ -39,13 +40,7 @@ pub struct TrackedIncident {
 /// it creates a new incident in the database and adds it to the incident registry.
 pub async fn check_health(monitor_id: String, url: String) {
     let pool = POOL.clone();
-    let config = match MIRU_CONFIG.get() {
-        Some(config) => config,
-        None => {
-            error!("Failed to get Miru config");
-            return;
-        }
-    };
+    let config = get_config();
 
     let sched = match INCID_REGISTRY.get() {
         Some(sched) => sched,
@@ -297,13 +292,7 @@ pub async fn check_health(monitor_id: String, url: String) {
 /// Check if `success` is equals to `pings_threshold` and if so, resolve the incident
 pub async fn resolve_incident(monitor_id: String) {
     let pool = POOL.clone();
-    let config = match MIRU_CONFIG.get() {
-        Some(config) => config,
-        None => {
-            error!("Failed to get Miru config");
-            return;
-        }
-    };
+    let config = get_config();
 
     // Find if the monitor is being tracked
     let sched = INCID_REGISTRY.get().unwrap();

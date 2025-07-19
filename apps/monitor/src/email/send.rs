@@ -6,7 +6,7 @@ use lettre::{
 };
 use log::info;
 
-use crate::MIRU_CONFIG;
+use crate::config::get_config;
 
 use super::paths::find_template;
 
@@ -22,7 +22,7 @@ pub async fn send_email(
     to: &str,
     replace_values: Option<serde_json::Value>,
 ) -> Result<(), String> {
-    let config = MIRU_CONFIG.get().expect("Failed to get MIRU_CONFIG");
+    let config = get_config();
 
     // Find the template content based on the provided template option
     let template_name = match template {

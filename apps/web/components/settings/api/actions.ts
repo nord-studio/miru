@@ -13,7 +13,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getCurrentMember } from "@/components/workspace/actions";
 
-export const createApiKey = actionClient.schema(z.object({
+export const createApiKey = actionClient.inputSchema(z.object({
 	workspaceId: z.string().nonempty(),
 	name: z.string().nonempty(),
 	expires: z.enum(["7d", "30d", "60d", "90d", "none"]),
@@ -97,7 +97,7 @@ export const createApiKey = actionClient.schema(z.object({
 	}
 });
 
-export const deleteApiKey = actionClient.schema(z.object({
+export const deleteApiKey = actionClient.inputSchema(z.object({
 	id: z.string()
 }), {
 	handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors
@@ -148,7 +148,7 @@ export const deleteApiKey = actionClient.schema(z.object({
 	}
 })
 
-export const listApiKeys = actionClient.schema(z.object({
+export const listApiKeys = actionClient.inputSchema(z.object({
 	workspaceId: z.string().nonempty(),
 }), {
 	handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors

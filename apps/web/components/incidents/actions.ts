@@ -13,12 +13,12 @@ import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-export const createIncident = actionClient.schema(z.object({
+export const createIncident = actionClient.inputSchema(z.object({
 	monitorIds: z.array(z.string()).min(1),
 	title: z.string().nonempty(),
 	message: z.string().nonempty(),
 	status: z.custom<IncidentReportStatus>(async (status) => {
-		return Object.values(IncidentReportStatus).includes(status);
+		return Object.values(IncidentReportStatus).includes(status as IncidentReportStatus);
 	}),
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).action(async ({ parsedInput: { monitorIds, title, message, status } }) => {
 	const id = generateId();
@@ -72,7 +72,7 @@ export const createIncident = actionClient.schema(z.object({
 	return { error: false, message: "Incident created successfully" };
 });
 
-export const editIncident = actionClient.schema(z.object({
+export const editIncident = actionClient.inputSchema(z.object({
 	id: z.string(),
 	title: z.string().min(3),
 	monitors: z.array(z.string().nonempty()).min(1),
@@ -127,7 +127,7 @@ export const editIncident = actionClient.schema(z.object({
 	return { error: false, message: "Incident edited successfully" };
 })
 
-export const deleteIncident = actionClient.schema(z.object({
+export const deleteIncident = actionClient.inputSchema(z.object({
 	id: z.string()
 })).action(async ({ parsedInput: { id } }) => {
 	// Delete incident

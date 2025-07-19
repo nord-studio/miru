@@ -10,7 +10,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { zfd } from "zod-form-data";
 
-export const uploadAsset = actionClient.schema(zfd.formData({
+export const uploadAsset = actionClient.inputSchema(zfd.formData({
 	// Asset to upload
 	file: zfd.file(),
 	// Optional id for the asset
@@ -53,7 +53,7 @@ export const uploadAsset = actionClient.schema(zfd.formData({
 	}
 });
 
-export const deleteAsset = actionClient.schema(z.object({
+export const deleteAsset = actionClient.inputSchema(z.object({
 	// Asset to delete
 	id: z.string(),
 }), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({

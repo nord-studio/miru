@@ -10,7 +10,7 @@ import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-export const createChannel = actionClient.schema(z.object({
+export const createChannel = actionClient.inputSchema(z.object({
 	name: z.string().nonempty(),
 	provider: z.enum(["slack", "discord"]),
 	workspaceSlug: z.string().nonempty(),
@@ -129,7 +129,7 @@ export async function testWebhook(url: string, provider: "discord" | "slack") {
 	}
 }
 
-export const deleteNotification = actionClient.schema(z.object({
+export const deleteNotification = actionClient.inputSchema(z.object({
 	id: z.string()
 })).action(async ({ parsedInput: { id } }) => {
 	// Delete notification
@@ -142,7 +142,7 @@ export const deleteNotification = actionClient.schema(z.object({
 	return { error: false, message: "Notification deleted successfully" };
 })
 
-export const editNotification = actionClient.schema(z.object({
+export const editNotification = actionClient.inputSchema(z.object({
 	id: z.string(),
 	name: z.string().min(3),
 	monitors: z.array(z.string().nonempty()).min(1),

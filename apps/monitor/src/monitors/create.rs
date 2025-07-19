@@ -8,10 +8,11 @@ use tokio_cron_scheduler::{Job, JobScheduler};
 use uuid::Uuid;
 
 use crate::{
+    config::get_config,
     cron::{self, worker::MonitorJobMetadata},
     monitors::health::{check_health, resolve_incident},
     ping::{http_ping, tcp_ping},
-    MIRU_CONFIG, POOL,
+    POOL,
 };
 
 pub async fn create_job<'a>(
@@ -63,13 +64,7 @@ pub async fn create_job<'a>(
                                     result.latency
                                 );
 
-                                let config = match MIRU_CONFIG.get() {
-                                    Some(config) => config,
-                                    None => {
-                                        error!("Failed to get config");
-                                        return;
-                                    }
-                                };
+                                let config = get_config();
 
                                 if config.incidents.auto.enabled {
                                     resolve_incident(monitor_id.to_string()).await;
@@ -104,13 +99,7 @@ pub async fn create_job<'a>(
                                     error!("Error inserting failed ping: {}", e.to_string());
                                 }
 
-                                let config = match MIRU_CONFIG.get() {
-                                    Some(config) => config,
-                                    None => {
-                                        error!("Failed to get config");
-                                        return;
-                                    }
-                                };
+                                let config = get_config();
 
                                 if config.incidents.auto.enabled {
                                     check_health(monitor_id.to_string(), url.to_string()).await;
@@ -154,13 +143,7 @@ pub async fn create_job<'a>(
                                     result.latency
                                 );
 
-                                let config = match MIRU_CONFIG.get() {
-                                    Some(config) => config,
-                                    None => {
-                                        error!("Failed to get config");
-                                        return;
-                                    }
-                                };
+                                let config = get_config();
 
                                 if config.incidents.auto.enabled {
                                     resolve_incident(monitor_id.to_string()).await;
@@ -191,13 +174,7 @@ pub async fn create_job<'a>(
                                     error!("Error inserting failed ping: {}", e.to_string());
                                 }
 
-                                let config = match MIRU_CONFIG.get() {
-                                    Some(config) => config,
-                                    None => {
-                                        error!("Failed to get config");
-                                        return;
-                                    }
-                                };
+                                let config = get_config();
 
                                 if config.incidents.auto.enabled {
                                     check_health(monitor_id.to_string(), url.to_string()).await;

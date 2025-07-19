@@ -78,7 +78,7 @@ export default function InstanceConfigForm({ config }: { config: MiruConfig }) {
 						<h3 className="font-semibold font-display">
 							Enable Email
 						</h3>
-						<Link href="https://miru.nordstud.io/docs/configuration#enable-email" target="_blank">
+						<Link href="https://miru.nordstud.io/docs/configuration#email" target="_blank">
 							<HelpCircle className="size-4 text-neutral-500 dark:text-neutral-400" />
 						</Link>
 					</div>
@@ -94,7 +94,7 @@ export default function InstanceConfigForm({ config }: { config: MiruConfig }) {
 						<h3 className="font-semibold font-display">
 							Email Verification
 						</h3>
-						<Link href="https://miru.nordstud.io/docs/configuration#email-verification" target="_blank">
+						<Link href="https://miru.nordstud.io/docs/configuration#email" target="_blank">
 							<HelpCircle className="size-4 text-neutral-500 dark:text-neutral-400" />
 						</Link>
 					</div>
@@ -110,7 +110,7 @@ export default function InstanceConfigForm({ config }: { config: MiruConfig }) {
 						<h3 className="font-semibold font-display">
 							Auto Incidents
 						</h3>
-						<Link href="https://miru.nordstud.io/docs/configuration#auto-incidents" target="_blank">
+						<Link href="https://miru.nordstud.io/docs/configuration#incidentsauto" target="_blank">
 							<HelpCircle className="size-4 text-neutral-500 dark:text-neutral-400" />
 						</Link>
 					</div>
@@ -127,7 +127,7 @@ export default function InstanceConfigForm({ config }: { config: MiruConfig }) {
 							<h3 className="font-semibold font-display">
 								Pings Threshold
 							</h3>
-							<Link href="https://miru.nordstud.io/docs/configuration#pings-threshold" target="_blank">
+							<Link href="https://miru.nordstud.io/docs/configuration#incidentsauto" target="_blank">
 								<HelpCircle className="size-4 text-neutral-500 dark:text-neutral-400" />
 							</Link>
 						</div>
@@ -144,7 +144,7 @@ export default function InstanceConfigForm({ config }: { config: MiruConfig }) {
 						<h3 className="font-semibold font-display">
 							Max Storage Size
 						</h3>
-						<Link href="https://miru.nordstud.io/docs/configuration#max-storage-size" target="_blank">
+						<Link href="https://miru.nordstud.io/docs/configuration#incidentsauto" target="_blank">
 							<HelpCircle className="size-4 text-neutral-500 dark:text-neutral-400" />
 						</Link>
 					</div>
@@ -160,7 +160,7 @@ export default function InstanceConfigForm({ config }: { config: MiruConfig }) {
 						<h3 className="font-semibold font-display">
 							Workspace Creation
 						</h3>
-						<Link href="https://miru.nordstud.io/docs/configuration#workspace-creation" target="_blank">
+						<Link href="https://miru.nordstud.io/docs/configuration#workspace" target="_blank">
 							<HelpCircle className="size-4 text-neutral-500 dark:text-neutral-400" />
 						</Link>
 					</div>
@@ -176,7 +176,7 @@ export default function InstanceConfigForm({ config }: { config: MiruConfig }) {
 						<h3 className="font-semibold font-display">
 							Auto Delete Users
 						</h3>
-						<Link href="https://miru.nordstud.io/docs/configuration#max-storage-size" target="_blank">
+						<Link href="https://miru.nordstud.io/docs/configuration#users" target="_blank">
 							<HelpCircle className="size-4 text-neutral-500 dark:text-neutral-400" />
 						</Link>
 					</div>

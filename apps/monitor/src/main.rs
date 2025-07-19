@@ -1,3 +1,4 @@
+mod config;
 mod cron;
 mod email;
 mod events;
@@ -8,17 +9,14 @@ mod routes;
 
 use std::{
     env,
-    sync::{Arc, OnceLock},
-    thread,
-    time::Duration,
+    sync::{Arc, OnceLock, RwLock},
 };
 
 use actix_cors::Cors;
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{web, App, HttpServer};
 use cron::worker::MonitorJobMetadata;
 use dotenvy::dotenv;
-use log::info;
-use monitor::{read_config, MiruConfig};
+use log::{info, warn};
 use monitors::health::TrackedIncident;
 use once_cell::sync::Lazy;
 use routes::{
@@ -29,9 +27,10 @@ use tokio::sync::Mutex;
 use tokio_cron_scheduler::JobScheduler;
 
 use crate::{
+    config::{read_config_from_file, start_watcher, MiruConfig},
     cron::worker::EventJobMetadata,
     routes::{
-        create_event_job_service, create_monitor_job_service,
+        config_service, create_event_job_service, create_monitor_job_service,
         cron::events::update_event_job_service, remove_monitor_job_service,
         update_monitor_job_service,
     },
@@ -50,21 +49,7 @@ pub static SCHED: OnceLock<Arc<Mutex<JobScheduler>>> = OnceLock::new();
 pub static MON_REGISTRY: OnceLock<Arc<Mutex<Vec<MonitorJobMetadata>>>> = OnceLock::new();
 pub static EVENT_REGISTRY: OnceLock<Arc<Mutex<Vec<EventJobMetadata>>>> = OnceLock::new();
 pub static INCID_REGISTRY: OnceLock<Arc<Mutex<Vec<TrackedIncident>>>> = OnceLock::new();
-pub static MIRU_CONFIG: OnceLock<MiruConfig> = OnceLock::new();
-
-// Kill the current process, hopefully Docker will restart it
-async fn restart() -> impl Responder {
-    // Spawn a thread to delay restart so we can return an HTTP response first
-    thread::spawn(move || {
-        // Give Actix some time to finish the response
-        thread::sleep(Duration::from_secs(1));
-
-        // Exit the current process
-        std::process::exit(0);
-    });
-
-    HttpResponse::Ok().body("Killing current process...")
-}
+pub static MIRU_CONFIG: OnceLock<RwLock<MiruConfig>> = OnceLock::new();
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -82,13 +67,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Starting monitor...");
     info!("Loading config...");
 
-    let config = read_config();
+    let config = read_config_from_file();
 
     MIRU_CONFIG
-        .set(config)
+        .set(RwLock::new(config))
         .unwrap_or_else(|_| panic!("Failed to set config"));
 
     info!("Successfully loaded config.");
+
+    info!("Starting config watcher...");
+
+    match start_watcher() {
+        Ok(_) => info!("Successfully started watching config"),
+        Err(e) => warn!("{}", e),
+    }
+
     info!("Connecting to database...");
 
     let pool = POOL.clone();
@@ -127,7 +120,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .service(create_event_job_service)
             .service(update_event_job_service)
             .service(registry_service)
-            .route("/restart", web::get().to(restart))
+            .service(config_service)
             .default_service(web::to(not_found_service))
     })
     .bind(("0.0.0.0", 8080))?
