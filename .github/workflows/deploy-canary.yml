@@ -51,9 +51,9 @@ jobs:
                   tags: |
                       type=semver,pattern={{version}}
                       type=sha
+                      type=raw,value=canary
                   flavor: |
                       latest=false
-                      type=raw,value=canary
 
             - name: Build @miru/web by digest
               id: build-web
@@ -88,9 +88,9 @@ jobs:
                   tags: |
                       type=semver,pattern={{version}}
                       type=sha
+                      type=raw,value=canary
                   flavor: |
                       latest=false
-                      type=raw,value=canary
 
             - name: Build @miru/monitor by digest
               id: build-monitor
@@ -148,9 +148,9 @@ jobs:
                   tags: |
                       type=semver,pattern={{version}}
                       type=sha
+                      type=raw,value=canary
                   flavor: |
                       latest=false
-                      type=raw,value=canary
 
             - name: Create @miru/web manifest list and push
               working-directory: ${{ runner.temp }}/digests-web
@@ -178,9 +178,9 @@ jobs:
                   tags: |
                       type=semver,pattern={{version}}
                       type=sha
+                      type=raw,value=canary
                   flavor: |
                       latest=false
-                      type=raw,value=canary
 
             - name: Create @miru/monitor manifest list and push
               working-directory: ${{ runner.temp }}/digests-monitor
