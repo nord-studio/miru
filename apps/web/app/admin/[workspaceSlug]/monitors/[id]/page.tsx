@@ -57,7 +57,7 @@ export default async function MonitorSingletonPage({
 
 	return (
 		<>
-			<div className="grid grid-flow-row grid-cols-6 gap-4">
+			<div className="grid grid-flow-row grid-cols-3 lg:grid-cols-6 gap-4">
 				<StatChip
 					title="Uptime"
 					value={uptime.uptime_percentage.toString()}

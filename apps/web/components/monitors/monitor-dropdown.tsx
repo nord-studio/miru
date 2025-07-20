@@ -64,7 +64,7 @@ export default function MonitorActionsDropdown({
 						<DeleteMonitor
 							open={deleteOpen}
 							setOpen={setDeleteOpen}
-							id={monitor.id}
+							monitors={[monitor]}
 						/>
 						<EditMonitor
 							monitor={monitor}

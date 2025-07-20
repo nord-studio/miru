@@ -16,6 +16,7 @@ import { editMonitor, testMonitor } from "@/components/monitors/actions";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
 import Alert from "@/components/ui/alert";
+import { testUrl } from "@/components/monitors/utils";
 
 export default function MonitorSingletonSettingsForm({
 	monitor,
@@ -74,18 +75,19 @@ export default function MonitorSingletonSettingsForm({
 
 	function handleMonitorTest() {
 		if (!url || url.length < 1) {
-			toast.error("Please enter a domain before testing.");
+			toast.error("Please enter a domain.");
 			return;
 		}
 
 		if (!type || type.length < 1) {
-			toast.error("Please select a monitor type before testing.");
+			toast.error("Please select a monitor type.");
 			return;
 		}
 
-		toast.promise(testMonitor({ method: type, url }), {
+		toast.promise(testUrl(type, url), {
 			loading: `Test Pinging ${url}...`,
-
+			success: `Connection established to ${url}!`,
+			error: `Failed to ping ${url}. Is the domain correct?`,
 		});
 	}
 

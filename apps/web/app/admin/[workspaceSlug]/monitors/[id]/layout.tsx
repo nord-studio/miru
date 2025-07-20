@@ -50,15 +50,16 @@ export default async function MonitorSingletonLayout({
 						<h1 className="text-3xl font-black font-display">
 							{monitor.name}
 						</h1>
-						<p className="text-neutral-500 dark:text-neutral-400">
+						<p className="text-neutral-500 dark:text-neutral-400 px-0.5">
 							<Link
 								href={`https://${monitor.url}`}
 								target="_blank"
+								className="hidden md:inline"
 							>
 								{monitor.type === "http" && "https://"}
-								{monitor.url}
-							</Link>{" "}
-							• {monitor.type.toUpperCase()} • every{" "}
+								{monitor.url} {" "}• {" "}
+							</Link>
+							{monitor.type.toUpperCase()} • every{" "}
 							{monitor.interval}m
 						</p>
 					</div>

@@ -12,7 +12,9 @@ export async function register() {
 	}
 
 	if (typeof process.env.BETTER_AUTH_SECRET === "undefined" || process.env.BETTER_AUTH_SECRET === "") {
-		throw new Error("The required environment variable BETTER_AUTH_SECRET is not set or is empty.");
+		if (typeof process.env.AUTH_SECRET === "undefined" || process.env.AUTH_SECRET === "") {
+			throw new Error("The required environment variable BETTER_AUTH_SECRET or AUTH_SECRET is not set or is empty.");
+		}
 	}
 
 	if (process.env.NEXT_RUNTIME === 'nodejs') {

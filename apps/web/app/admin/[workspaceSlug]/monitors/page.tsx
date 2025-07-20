@@ -11,6 +11,7 @@ import { RankedRoles, WorkspaceMember } from "@miru/types";
 import { getCurrentMember } from "@/components/workspace/actions";
 import { redirect } from "next/navigation";
 import { MonitorIcon } from "lucide-react";
+import { MonitorDataTable } from "@/app/admin/[workspaceSlug]/monitors/table";
 
 export interface MonitorRow extends Monitor {
 	uptime: number;
@@ -97,7 +98,7 @@ export default async function MonitorsPage({
 					</div>
 				</div>
 				<div className="mt-4">
-					<DataTable columns={columns} data={data} emptyComponent={<EmptyState currentMember={currentMember} />} />
+					<MonitorDataTable columns={columns} data={data} emptyComponent={<EmptyState currentMember={currentMember} />} />
 				</div>
 			</div>
 		</>

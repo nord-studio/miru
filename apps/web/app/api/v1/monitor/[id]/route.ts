@@ -184,7 +184,7 @@ export async function DELETE(request: Request, {
 		});
 	}
 
-	const res = await deleteMonitor(id);
+	const res = await deleteMonitor([id]);
 
 	if (res?.data?.error) {
 		return NextResponse.json({

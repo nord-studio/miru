@@ -3,7 +3,7 @@
 import { monitors } from "@/lib/db/schema/monitors";
 import db from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { generateId } from "@/lib/utils";
 import { workspaces } from "@/lib/db/schema";
 import { actionClient } from "@/lib/safe-action";
@@ -218,17 +218,20 @@ export const editMonitor = actionClient.inputSchema(z.object({
 	return { error: false, message: "Monitor updated successfully" };
 });
 
-export const deleteMonitor = actionClient.inputSchema(z.string().nonempty()).outputSchema(z.object({
+export const deleteMonitor = actionClient.inputSchema(z.array(z.string().nonempty())).outputSchema(z.object({
 	error: z.boolean(),
 	message: z.string(),
-})).action(async ({ parsedInput: id }) => {
-	await db.delete(monitors).where(eq(monitors.id, id)).then(async () => {
-		await fetch(`${process.env.MONITOR_URL}/cron/monitors/remove/${id}`, {
+})).action(async ({ parsedInput: ids }) => {
+	await db.delete(monitors).where(inArray(monitors.id, ids)).then(async () => {
+		await fetch(`${process.env.MONITOR_URL}/cron/monitors/remove`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 				"Access-Control-Allow-Origin": "*",
-			}
+			},
+			body: JSON.stringify({
+				ids: ids
+			})
 		}).then(async (res) => {
 			if (res.status === 200) {
 				revalidatePath("/admin/[workspaceSlug]/monitors", "layout");

@@ -21,7 +21,7 @@ export default function PingDetails({ ping }: { ping: Ping }) {
 							Response
 						</TabsTrigger>
 					</TabsList>
-					<TabsContent value="headers" className="max-w-[877px]">
+					<TabsContent value="headers">
 						<table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-800">
 							<thead className="bg-neutral-100 dark:bg-neutral-900">
 								<tr>
@@ -55,8 +55,8 @@ export default function PingDetails({ ping }: { ping: Ping }) {
 							</tbody>
 						</table>
 					</TabsContent>
-					<TabsContent value="body" className="w-full max-w-[877px]">
-						<pre className="text-sm text-neutral-500 dark:text-neutral-400 p-4 whitespace-pre-wrap">
+					<TabsContent value="body" className="grid grid-cols-1">
+						<pre className="p-4 text-sm text-neutral-500 dark:text-neutral-400 whitespace-pre-wrap break-words">
 							{ping.body ?? "No response body."}
 						</pre>
 					</TabsContent>

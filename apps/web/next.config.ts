@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 import { config } from "dotenv"
 
-if (process.env.NODE_ENV === "development") config({ path: "./../../.env" });
+if (process.env.NODE_ENV === "development") config({ path: "./../../.env", quiet: true });
 
 const nextConfig: NextConfig = {
   output: "standalone",

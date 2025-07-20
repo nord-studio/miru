@@ -61,6 +61,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 # Copy the migrations and drizzle.config.ts file
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/lib/db/migrations ./apps/web/lib/db/migrations
 
+# Copy the default config.toml file
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/config.toml ./apps/web/config.toml
+
 EXPOSE 3000
 
 ENV HOSTNAME=0.0.0.0

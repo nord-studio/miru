@@ -1,14 +1,19 @@
-# Required to build the app, this file is not used in the app
+# Required to build the app and provides a default for the docker image
+# DO NOT DELETE!
+
 [email]
-# Whether to enable emails
 enabled = false
-# If enabled, users will need to verify their email address before they can log in
 verification = false
 
 [incidents.auto]
-# Whether to automatically create incidents when a monitor goes down
 enabled = true
+pings_threshold = 3
 
 [storage]
-# The maximum size of the file that can be uploaded in bytes
 max_size = 12582912
+
+[users]
+delete_on_empty = false
+
+[workspace]
+creation = true

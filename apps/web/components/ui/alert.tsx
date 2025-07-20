@@ -58,7 +58,7 @@ export default function Alert({
 				<Dialog open={open} onOpenChange={cancel}>
 					<DialogContent className="gap-0 p-0 sm:max-w-[425px]">
 						<DialogHeader className="p-6">
-							<DialogTitle>{title}</DialogTitle>
+							<DialogTitle className="leading-5.5">{title}</DialogTitle>
 							<DialogDescription>{description}</DialogDescription>
 						</DialogHeader>
 						<div className="flex flex-row items-center justify-between gap-4 border-t bg-neutral-200/50 dark:bg-neutral-900/50 p-4 rounded-b-lg">

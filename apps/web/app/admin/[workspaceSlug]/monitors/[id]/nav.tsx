@@ -12,7 +12,7 @@ export default function MonitorSingletonNavbar({ currentMember }: { currentMembe
 
 	return (
 		<>
-			<div className="flex w-full md:max-w-[200px] flex-col gap-2">
+			<div className="flex w-full md:min-w-[200px] md:max-w-[200px] flex-col gap-2">
 				<Link
 					href={`/admin/${params.workspaceSlug}/monitors/${params.id}`}
 					className="w-full"
