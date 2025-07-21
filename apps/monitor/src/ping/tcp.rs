@@ -24,7 +24,7 @@ pub async fn tcp_ping(url: String) -> Result<TcpPingResponse, TcpPingErrorRespon
                 .unwrap_or(i32::MAX),
         }),
         Err(err) => Err(TcpPingErrorResponse {
-            error: format!("TCP Error: {}", err),
+            error: format!("TCP Error: {err}"),
             response: TcpPingResponse {
                 success: false,
                 latency: (chrono::Utc::now() - now)

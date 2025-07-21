@@ -18,14 +18,12 @@ import {
 } from "@/components/ui/table";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Bell, FlaskConical, Trash } from "lucide-react";
+import { ExternalLink, Trash } from "lucide-react";
 import * as motion from "motion/react-client";
 import { AnimatePresence } from "motion/react"
-import DeleteMonitor from "@/components/monitors/delete-monitor";
-import { MonitorRow } from "@/app/admin/[workspaceSlug]/events/page";
-import { testUrl } from "@/components/monitors/utils";
+import { StatusPageWithMonitorsExtended } from "@miru/types";
+import DeleteStatusPages from "@/components/status-pages/delete-status-page";
 import { toast } from "sonner";
-import { pingMonitor } from "@/components/monitors/actions";
 
 interface DataTableProps<T> {
 	columns: ColumnDef<T>[];
@@ -33,12 +31,11 @@ interface DataTableProps<T> {
 	emptyComponent?: React.ReactNode;
 }
 
-export function MonitorDataTable({
+export function StatusPageDataTable({
 	columns,
 	data,
 	emptyComponent,
-}: DataTableProps<MonitorRow>) {
-	const [loading, setLoading] = React.useState(false);
+}: DataTableProps<StatusPageWithMonitorsExtended>) {
 	const [deleteOpen, setDeleteOpen] = React.useState(false);
 	const [rowSelection, setRowSelection] = React.useState({})
 
@@ -116,10 +113,10 @@ export function MonitorDataTable({
 			<AnimatePresence>
 				{table.getFilteredSelectedRowModel().rows.length >= 1 && (
 					<>
-						<DeleteMonitor
+						<DeleteStatusPages
 							open={deleteOpen}
 							setOpen={setDeleteOpen}
-							monitors={table.getFilteredSelectedRowModel().rows.map((row) => row.original)}
+							pages={table.getFilteredSelectedRowModel().rows.map((page) => page.original)}
 						/>
 						<motion.div
 							initial={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -128,50 +125,33 @@ export function MonitorDataTable({
 							transition={{ type: "spring", stiffness: 350, damping: 24 }}
 							className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-row w-fit gap-3 bg-card text-popover-foreground border shadow-lg rounded-md px-3 py-3"
 						>
-							<Button variant="secondary" disabled={loading} onClick={async () => {
-								const monitors = table.getFilteredSelectedRowModel().rows.map((monitor) => monitor.original);
-
-								toast.promise(async () => {
-									setLoading(true);
-									for (const monitor of monitors) {
-										await pingMonitor(monitor.id);
-									}
-								}, {
-									loading: `Pinging ${monitors.length} monitors...`,
-									success: () => {
-										setLoading(false);
-										return "All monitors successfully pinged!"
-									},
-									error: (data: Error) => {
-										return data.message;
-									}
-								});
-							}}>
-								<Bell /> <span>Ping</span>
-							</Button>
-							<Button variant="secondary" disabled={loading} onClick={async () => {
-								const monitors = table.getFilteredSelectedRowModel().rows.map((monitor) => monitor.original);
-
-								toast.promise(async () => {
-									setLoading(true)
-									for (const monitor of monitors) {
-										await testUrl(monitor.type, monitor.url);
-									}
-								}, {
-									loading: `Testing ${monitors.length} monitors...`,
-									success: () => {
-										setLoading(false);
-										return "All monitors tested successful!"
-									},
-									error: (data: Error) => {
-										return data.message;
-									}
-								});
-							}}>
-								<FlaskConical /> <span>Test</span>
-							</Button>
-							<Button variant="destructive" disabled={loading} onClick={() => setDeleteOpen(!deleteOpen)}>
+							<Button variant="destructive" onClick={() => setDeleteOpen(!deleteOpen)}>
 								<Trash /> <span>Delete</span>
+							</Button>
+							<Button variant="secondary" onClick={() => {
+								if (window === undefined) {
+									toast.error("Something went wrong!", {
+										description: "Failed to get window context."
+									})
+								} else {
+									const pages = table.getFilteredSelectedRowModel().rows.map((page) => page.original);
+
+									for (const page of pages) {
+										const newWin = window.open(page.root ? `${window.location.href.split(":")[0]}://${window.location.href.split("/")[2]}` : `https://${page.domain!}`, '_blank');
+										if (!newWin || newWin.closed || typeof newWin.closed == 'undefined') {
+											toast.info("A quick word", {
+												description: "Please enable pop ups for the page for this feature to work.",
+												action: {
+													label: "Learn More",
+													onClick: () => window.open("https://miru.nordstud.io/docs/guides/enable-pop-ups", "_blank")
+												},
+												duration: 10000
+											})
+										}
+									}
+								}
+							}}>
+								<ExternalLink /> <span>Open</span>
 							</Button>
 						</motion.div>
 					</>

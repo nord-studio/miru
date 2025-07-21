@@ -1,6 +1,5 @@
 import { columns } from "@/app/admin/[workspaceSlug]/monitors/columns";
 import { CreateMonitorButton } from "@/components/monitors/create-monitor";
-import { DataTable } from "@/components/ui/data-table";
 import { monitors } from "@/lib/db/schema/monitors";
 import db from "@/lib/db";
 import { getAllMonitorUptime } from "@/lib/db/utils";

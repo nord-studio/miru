@@ -26,7 +26,7 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
     {
         Ok(client) => client,
         Err(err) => {
-            error!("Failed to create reqwest client: {:?}", err);
+            error!("Failed to create reqwest client: {err:?}");
             return Err(HttpPingErrorResponse {
                 response: HttpPingResponse {
                     status: 503,
@@ -38,7 +38,7 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                     headers: std::collections::HashMap::new(),
                     body: None,
                 },
-                error: format!("{}", err),
+                error: format!("{err}"),
             });
         }
     };
@@ -48,7 +48,7 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
         .trim_start_matches("https://")
         .to_string();
 
-    let url = format!("https://{}", url);
+    let url = format!("https://{url}");
     let resp = client.get(&url).send().await;
 
     match resp {
@@ -67,10 +67,7 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                 })
                 .collect::<std::collections::HashMap<String, String>>();
 
-            let body = match resp.text().await {
-                Ok(body) => Some(body),
-                Err(_) => None,
-            };
+            let body = (resp.text().await).ok();
 
             Ok(HttpPingResponse {
                 status,
@@ -84,7 +81,7 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
             })
         }
         Err(err) => {
-            error!("[HTTPS] Failed to ping {}: {:?}", url, err);
+            error!("[HTTPS] Failed to ping {url}: {err:?}");
             let url = url.replace("https://", "http://");
             let resp = client.get(&url).send().await;
             match resp {
@@ -102,10 +99,7 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                             )
                         })
                         .collect::<std::collections::HashMap<String, String>>();
-                    let body = match resp.text().await {
-                        Ok(body) => Some(body),
-                        Err(_) => None,
-                    };
+                    let body = (resp.text().await).ok();
 
                     Ok(HttpPingResponse {
                         status: status.as_u16() as i32,
@@ -119,7 +113,7 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                     })
                 }
                 Err(err) => {
-                    error!("[HTTP] Failed to ping {}: {:?}", url, err);
+                    error!("[HTTP] Failed to ping {url}: {err:?}");
                     Err(HttpPingErrorResponse {
                         response: HttpPingResponse {
                             // Set default status code to 503 if it's not available
@@ -132,7 +126,7 @@ pub async fn http_ping(url: String) -> Result<HttpPingResponse, HttpPingErrorRes
                             headers: std::collections::HashMap::new(),
                             body: None,
                         },
-                        error: format!("{}", err),
+                        error: format!("{err}"),
                     })
                 }
             }

@@ -31,12 +31,11 @@ pub async fn send_discord(
             let mut monitor_names = String::new();
             for m in mti {
                 monitor_names = format!("- {} ({})\n", m.monitor_name, m.monitor_url);
-                break;
             }
             monitor_names
         }
         Err(e) => {
-            return Err(format!("Failed to fetch monitors to incidents: {}", e));
+            return Err(format!("Failed to fetch monitors to incidents: {e}"));
         }
     };
 
@@ -63,12 +62,12 @@ pub async fn send_discord(
         "content": content
     });
 
-    Ok(for url in urls {
+    for url in urls {
         match client
             .post(&url)
             .body(
                 serde_json::to_string(&body)
-                    .map_err(|e| format!("Failed to serialize JSON body: {}", e))?,
+                    .map_err(|e| format!("Failed to serialize JSON body: {e}"))?,
             )
             .header("Content-Type", "application/json")
             .send()
@@ -84,8 +83,9 @@ pub async fn send_discord(
                 }
             }
             Err(_) => {
-                return Err(format!("Failed to send Discord notification to {}", url));
+                return Err(format!("Failed to send Discord notification to {url}"));
             }
         }
-    })
+    }
+    Ok(())
 }

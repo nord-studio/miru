@@ -116,12 +116,12 @@ pub async fn load_jobs() {
                 .await
                 {
                     Ok(_) => info!("Created monitor job"),
-                    Err(e) => error!("Failed to create monitor job: {:?}", e),
+                    Err(e) => error!("Failed to create monitor job: {e:?}"),
                 }
             })
         }),
         Err(e) => {
-            error!("Failed to fetch monitors: {:?}", e);
+            error!("Failed to fetch monitors: {e:?}");
             return;
         }
     };
@@ -141,12 +141,12 @@ pub async fn load_jobs() {
                     .await
                     {
                         Ok(_) => info!("Created event job"),
-                        Err(e) => error!("Failed to create event job: {:?}", e),
+                        Err(e) => error!("Failed to create event job: {e:?}"),
                     }
                 })
             }),
             Err(e) => {
-                error!("Failed to fetch events: {:?}", e);
+                error!("Failed to fetch events: {e:?}");
                 return;
             }
         };
@@ -154,14 +154,14 @@ pub async fn load_jobs() {
     for monitor_task in mon_tasks {
         monitor_task
             .await
-            .map_err(|e| error!("Failed to await cron task: {:?}", e))
+            .map_err(|e| error!("Failed to await cron task: {e:?}"))
             .ok();
     }
 
     for event_task in event_tasks {
         event_task
             .await
-            .map_err(|e| error!("Failed to await event task: {:?}", e))
+            .map_err(|e| error!("Failed to await event task: {e:?}"))
             .ok();
     }
 }

@@ -1,30 +1,31 @@
 "use client";
 
-import { deleteStatusPage } from "@/components/status-pages/actions";
+import { deleteStatusPages } from "@/components/status-pages/actions";
 import Alert from "@/components/ui/alert";
+import { StatusPageWithMonitorsExtended } from "@miru/types";
 import { usePathname, useRouter } from "next/navigation";
 
-export default function DeleteStatusPage({
+export default function DeleteStatusPages({
 	open,
 	setOpen,
-	id,
+	pages,
 }: {
 	open: boolean;
 	setOpen: (open: boolean) => void;
-	id: string;
+	pages: StatusPageWithMonitorsExtended[];
 }) {
 	const pathName = usePathname();
 	const router = useRouter();
 
 	return (
 		<Alert
-			title="Delete Status Page?"
-			description="Are you sure you want to delete this status page? This action cannot be undone."
+			title={pages.length > 1 ? "Delete Status Pages?" : "Delete Status Page?"}
+			description={`Are you sure you want to delete this ${pages.length > 1 ? "status pages?" : "status page?"} This action cannot be undone.`}
 			open={open}
 			setOpen={setOpen}
 			onCancel={() => setOpen(false)}
 			onSubmit={() => {
-				deleteStatusPage({ id });
+				deleteStatusPages(pages.map((page) => page.id));
 				if (pathName !== `/admin/${pathName.split("/")[2]}/status-pages`) {
 					router.push(`/admin/${pathName.split("/")[2]}/status-pages`);
 				}

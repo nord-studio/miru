@@ -1,6 +1,6 @@
 import { columns } from "@/app/admin/[workspaceSlug]/status-pages/columns";
+import { StatusPageDataTable } from "@/app/admin/[workspaceSlug]/status-pages/table";
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/ui/data-table";
 import { getCurrentMember } from "@/components/workspace/actions";
 import db from "@/lib/db";
 import { workspaces } from "@/lib/db/schema";
@@ -93,7 +93,7 @@ export default async function StatusPagesIndexPage({
 					</div>
 				</div>
 				<div className="mt-4">
-					<DataTable data={pages} columns={columns} emptyComponent={<EmptyState workspaceSlug={workspace.slug} currentMember={currentMember} />} />
+					<StatusPageDataTable data={pages} columns={columns} emptyComponent={<EmptyState workspaceSlug={workspace.slug} currentMember={currentMember} />} />
 				</div>
 			</div>
 		</>

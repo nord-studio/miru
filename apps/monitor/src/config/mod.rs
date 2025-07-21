@@ -119,13 +119,13 @@ pub fn read_config_from_file() -> MiruConfig {
         }
     };
 
-    return config;
+    config
 }
 
 pub fn get_config() -> MiruConfig {
     match MIRU_CONFIG.get() {
         Some(config) => match config.read() {
-            Ok(config) => config.clone(),
+            Ok(config) => *config,
             Err(_) => {
                 warn!("Failed to read config, falling back to defaults");
                 DEFAULT_CONFIG

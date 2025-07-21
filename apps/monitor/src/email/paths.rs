@@ -13,11 +13,11 @@ pub async fn get_paths() -> Result<Vec<PathBuf>, ()> {
                 .map(|entry| entry.path())
                 .collect::<Vec<_>>();
 
-            return Ok(paths);
+            Ok(paths)
         }
         Err(e) => {
-            info!("Error reading email templates: {}", e);
-            return Err(());
+            info!("Error reading email templates: {e}");
+            Err(())
         }
     }
 }
@@ -45,7 +45,7 @@ pub async fn find_template(name: &str) -> Option<String> {
                 }
             }
             // If the loop completes, no template was found.
-            info!("No email template found matching: {}", name);
+            info!("No email template found matching: {name}");
             None
         }
         Err(_) => {

@@ -6,7 +6,7 @@ import { statusPageMonitors, statusPages } from "@/lib/db/schema/status-pages";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
 import { StatusPage } from "@miru/types";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -240,14 +240,12 @@ export const editStatusPage = actionClient.inputSchema(z.object({
 	return { error: false, message: "Status page updated" };
 });
 
-export const deleteStatusPage = actionClient.inputSchema(z.object({
-	id: z.string(),
-}), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
+export const deleteStatusPages = actionClient.inputSchema(z.array(z.string().nonempty()), { handleValidationErrorsShape: async (ve) => flattenValidationErrors(ve).fieldErrors }).outputSchema(z.object({
 	error: z.boolean(),
 	message: z.string(),
-})).action(async ({ parsedInput: { id } }) => {
+})).action(async ({ parsedInput: ids }) => {
 	const statusPage = await db.query.statusPages.findMany({
-		where: () => and(eq(statusPages.id, id))
+		where: () => and(inArray(statusPages.id, ids))
 	});
 
 	if (!statusPage) {
@@ -255,7 +253,7 @@ export const deleteStatusPage = actionClient.inputSchema(z.object({
 	}
 
 	// We don't need to delete the monitors as they cascade delete
-	await db.delete(statusPages).where(eq(statusPages.id, id)).execute();
+	await db.delete(statusPages).where(inArray(statusPages.id, ids)).execute();
 
 	revalidatePath("/admin/[workspaceSlug]/status-pages", "layout");
 	return { error: false, message: "Successfully deleted status page" };

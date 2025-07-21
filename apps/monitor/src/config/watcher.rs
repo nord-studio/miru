@@ -67,7 +67,7 @@ pub async fn watch<P: AsRef<Path>>(path: P) -> notify::Result<()> {
                                 info!("Updated global Miru config")
                             }
                             Err(e) => {
-                                error!("Failed to get write lock for global Miru config: {:?}", e)
+                                error!("Failed to get write lock for global Miru config: {e:?}")
                             }
                         },
                         None => {
@@ -76,7 +76,7 @@ pub async fn watch<P: AsRef<Path>>(path: P) -> notify::Result<()> {
                     }
                 }
             }
-            Err(e) => println!("watch error: {:?}", e),
+            Err(e) => println!("watch error: {e:?}"),
         }
     }
 
@@ -101,7 +101,7 @@ pub fn start_watcher() -> Result<(), String> {
     let handle = tokio::spawn(async move {
         futures::executor::block_on(async {
             if let Err(e) = watch(config_path).await {
-                println!("error: {:?}", e)
+                println!("error: {e:?}")
             }
         });
     });

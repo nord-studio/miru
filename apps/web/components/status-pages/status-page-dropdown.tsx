@@ -55,15 +55,6 @@ export default function StatusPageDropdown({
 	return (
 		<>
 			<div className="w-full flex-row flex justify-end">
-				{RankedRoles[currentMember.role] >= RankedRoles.admin && (
-					<>
-						<DeleteStatusPage
-							open={deleteOpen}
-							setOpen={setDeleteOpen}
-							id={statusPage.id}
-						/>
-					</>
-				)}
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild className="">
 						<Button variant="ghost" {...props}>
@@ -90,6 +81,11 @@ export default function StatusPageDropdown({
 						</DropdownMenuItem>
 						{RankedRoles[currentMember.role] >= RankedRoles.admin && (
 							<>
+								<DeleteStatusPage
+									open={deleteOpen}
+									setOpen={setDeleteOpen}
+									pages={[statusPage]}
+								/>
 								<DropdownMenuSeparator />
 								<DropdownMenuItem
 									variant="destructive"

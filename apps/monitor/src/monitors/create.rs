@@ -23,7 +23,7 @@ pub async fn create_job<'a>(
     sched: MutexGuard<'a, JobScheduler>,
     mut registry: MutexGuard<'a, Vec<MonitorJobMetadata>>,
 ) -> Result<Uuid, Box<dyn std::error::Error>> {
-    info!("Creating monitor job with ID: {}", monitor_id);
+    info!("Creating monitor job with ID: {monitor_id}");
 
     let interval = match interval.to_string().as_str() {
         "1" => cron::ONE_MINUTE_CRON.to_string(),
@@ -35,8 +35,7 @@ pub async fn create_job<'a>(
     };
 
     info!(
-        "Creating job for {} with type {} and schedule {:?}",
-        url, r#type, interval
+        "Creating job for {url} with type {type} and schedule {interval:?}"
     );
 
     let url = Arc::new(url);
@@ -58,7 +57,7 @@ pub async fn create_job<'a>(
                             Ok(result) => {
                                 info!(
                                     "Successfully pinged {} at {} with status {} in {}ms",
-                                    url.to_string(),
+                                    url,
                                     chrono::Utc::now(),
                                     result.status,
                                     result.latency
@@ -75,11 +74,11 @@ pub async fn create_job<'a>(
                             Err(e) => {
                                 error!(
                                     "Failed to ping {} at {} with error {} in {}ms: {}",
-                                    url.to_string(),
+                                    url,
                                     chrono::Utc::now(),
                                     e.response.status,
                                     e.response.latency,
-                                    e.error.to_string()
+                                    e.error
                                 );
 
                                 let query = query!(
@@ -96,7 +95,7 @@ pub async fn create_job<'a>(
                                 .await;
 
                                 if let Err(e) = query {
-                                    error!("Error inserting failed ping: {}", e.to_string());
+                                    error!("Error inserting failed ping: {e}");
                                 }
 
                                 let config = get_config();
@@ -128,7 +127,7 @@ pub async fn create_job<'a>(
                         match query {
                             Ok(_) => {}
                             Err(e) => {
-                                error!("Error inserting successful ping: {}", e.to_string());
+                                error!("Error inserting successful ping: {e}");
                             }
                         }
                     }
@@ -137,7 +136,7 @@ pub async fn create_job<'a>(
                             Ok(result) => {
                                 info!(
                                     "Successfully pinged {} at {} with success {} in {}ms",
-                                    url.to_string(),
+                                    url,
                                     chrono::Utc::now(),
                                     result.success,
                                     result.latency
@@ -154,9 +153,9 @@ pub async fn create_job<'a>(
                             Err(e) => {
                                 error!(
                                     "Failed to ping {} at {}: {}",
-                                    url.to_string(),
+                                    url,
                                     chrono::Utc::now(),
-                                    e.error.to_string()
+                                    e.error
                                 );
 
                                 let query = query!(
@@ -171,7 +170,7 @@ pub async fn create_job<'a>(
                                 .await;
 
                                 if let Err(e) = query {
-                                    error!("Error inserting failed ping: {}", e.to_string());
+                                    error!("Error inserting failed ping: {e}");
                                 }
 
                                 let config = get_config();
@@ -196,12 +195,12 @@ pub async fn create_job<'a>(
                         match query {
                             Ok(_) => {}
                             Err(e) => {
-                                error!("Error inserting ping: {}", e.to_string());
+                                error!("Error inserting ping: {e}");
                             }
                         }
                     }
                     _ => {
-                        error!("Unknown type: {}", r#type);
+                        error!("Unknown type: {type}");
                     }
                 }
             }

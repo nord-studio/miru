@@ -67,7 +67,7 @@ pub async fn check_health(monitor_id: String, url: String) {
     {
         Ok(monitor) => monitor,
         Err(e) => {
-            error!("Error fetching monitor: {}", e.to_string());
+            error!("Error fetching monitor: {e}");
             return;
         }
     };
@@ -89,7 +89,7 @@ pub async fn check_health(monitor_id: String, url: String) {
                 .await;
 
             if let Err(e) = report_query {
-                error!("Error creating incident report: {}", e.to_string());
+                error!("Error creating incident report: {e}");
             }
 
             // Reset the success count
@@ -120,7 +120,7 @@ pub async fn check_health(monitor_id: String, url: String) {
     {
         Ok(pings) => pings,
         Err(e) => {
-            error!("Error fetching pings: {}", e.to_string());
+            error!("Error fetching pings: {e}");
             return;
         }
     };
@@ -137,7 +137,7 @@ pub async fn check_health(monitor_id: String, url: String) {
 
     if last_threshold_pings
         .iter()
-        .all(|ping| ping.success == false)
+        .all(|ping| !ping.success)
     {
         // If all previous pings have failed, create a new incident
         let incid_query = query!(
@@ -159,7 +159,7 @@ pub async fn check_health(monitor_id: String, url: String) {
                 auto_resolved: false,
             },
             Err(e) => {
-                error!("Error creating incident: {}", e.to_string());
+                error!("Error creating incident: {e}");
                 return;
             }
         };
@@ -175,7 +175,7 @@ pub async fn check_health(monitor_id: String, url: String) {
         .await;
 
         if let Err(e) = mti_query {
-            error!("Error linking monitor to incident: {}", e.to_string());
+            error!("Error linking monitor to incident: {e}");
         }
 
         let report_query = query!(
@@ -187,7 +187,7 @@ pub async fn check_health(monitor_id: String, url: String) {
             ).execute(&pool).await;
 
         if let Err(e) = report_query {
-            error!("Error creating incident report: {}", e.to_string());
+            error!("Error creating incident report: {e}");
         }
 
         // Add the incident to the registry
@@ -213,7 +213,7 @@ pub async fn check_health(monitor_id: String, url: String) {
         {
             Ok(ids) => ids.into_iter().map(|id| id.user_id).collect::<Vec<_>>(),
             Err(e) => {
-                error!("Error fetching workspace members: {}", e.to_string());
+                error!("Error fetching workspace members: {e}");
                 return;
             }
         };
@@ -231,7 +231,7 @@ pub async fn check_health(monitor_id: String, url: String) {
                 .map(|email| email.email)
                 .collect::<Vec<_>>(),
             Err(e) => {
-                error!("Error fetching user emails: {}", e.to_string());
+                error!("Error fetching user emails: {e}");
                 return;
             }
         };
@@ -250,7 +250,7 @@ pub async fn check_health(monitor_id: String, url: String) {
                 slug: workspace.slug,
             },
             Err(e) => {
-                error!("Error fetching workspace: {}", e.to_string());
+                error!("Error fetching workspace: {e}");
                 return;
             }
         };
@@ -267,8 +267,8 @@ pub async fn check_health(monitor_id: String, url: String) {
             )
             .await
             {
-                Ok(_) => info!("Sent incident creation email to {}", email),
-                Err(e) => error!("{}", e),
+                Ok(_) => info!("Sent incident creation email to {email}"),
+                Err(e) => error!("{e}"),
             }
         }
 
@@ -281,7 +281,7 @@ pub async fn check_health(monitor_id: String, url: String) {
         .await
         {
             Ok(_) => info!("Sent incident creation Discord notification(s)"),
-            Err(e) => error!("Failed to send Discord notification(s): {}", e),
+            Err(e) => error!("Failed to send Discord notification(s): {e}"),
         }
     }
 }
@@ -332,7 +332,7 @@ pub async fn resolve_incident(monitor_id: String) {
             auto_resolved: incid.auto_resolved,
         },
         Err(e) => {
-            error!("Error fetching incident: {}", e.to_string());
+            error!("Error fetching incident: {e}");
             return;
         }
     };
@@ -358,7 +358,7 @@ pub async fn resolve_incident(monitor_id: String) {
     let monitor = match monitor_query {
         Ok(monitor) => monitor,
         Err(e) => {
-            error!("Error fetching monitor: {}", e.to_string());
+            error!("Error fetching monitor: {e}");
             return;
         }
     };
@@ -375,7 +375,7 @@ pub async fn resolve_incident(monitor_id: String) {
             }
         }
     } else {
-        if tracked_incid.monitoring_created == false {
+        if !tracked_incid.monitoring_created {
             // This is the first successful ping after an incident, so we need to create a monitoring report
             let report_query = query!(
                 "INSERT INTO incident_reports (id, incident_id, message, status) VALUES ($1, $2, $3, $4)",
@@ -387,7 +387,7 @@ pub async fn resolve_incident(monitor_id: String) {
             let report_query = report_query.execute(&pool).await;
 
             if let Err(e) = report_query {
-                error!("Error creating incident report: {}", e.to_string());
+                error!("Error creating incident report: {e}");
             }
         }
 
@@ -422,7 +422,7 @@ pub async fn resolve_incident(monitor_id: String) {
         .await;
 
         if let Err(e) = report_query {
-            error!("Error creating incident report: {}", e.to_string());
+            error!("Error creating incident report: {e}");
         }
 
         // Update the incident in the database
@@ -434,7 +434,7 @@ pub async fn resolve_incident(monitor_id: String) {
         .execute(&pool)
         .await
         {
-            error!("Error resolving incident: {}", e.to_string());
+            error!("Error resolving incident: {e}");
         }
 
         // Remove the incident from the registry
@@ -464,7 +464,7 @@ pub async fn sync_registry(registry: MutexGuard<'_, Vec<TrackedIncident>>) {
     {
         Ok(incidents) => incidents,
         Err(e) => {
-            error!("Error fetching tracked incidents from the database: {}", e);
+            error!("Error fetching tracked incidents from the database: {e}");
             return;
         }
     };
@@ -496,7 +496,7 @@ pub async fn sync_registry(registry: MutexGuard<'_, Vec<TrackedIncident>>) {
         .await;
 
         if let Err(e) = query {
-            error!("Error syncing registry: {}", e.to_string());
+            error!("Error syncing registry: {e}");
         }
     }
 
@@ -519,7 +519,7 @@ pub async fn sync_registry(registry: MutexGuard<'_, Vec<TrackedIncident>>) {
             .await;
 
             if let Err(e) = query {
-                error!("Error removing incident from registry: {}", e.to_string());
+                error!("Error removing incident from registry: {e}");
             }
         }
     }
@@ -545,7 +545,7 @@ pub async fn load_registry() {
     {
         Ok(incidents) => incidents,
         Err(e) => {
-            error!("Error fetching tracked incidents: {}", e.to_string());
+            error!("Error fetching tracked incidents: {e}");
             return;
         }
     };
@@ -563,7 +563,7 @@ pub async fn load_registry() {
     {
         Ok(incidents) => incidents,
         Err(e) => {
-            error!("Error fetching incidents: {}", e.to_string());
+            error!("Error fetching incidents: {e}");
             return;
         }
     };

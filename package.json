@@ -1,6 +1,6 @@
 {
 	"name": "miru",
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"scripts": {
 		"dev": "pnpm drizzle migrate ; turbo dev",
 		"build": "turbo build",

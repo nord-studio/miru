@@ -1,6 +1,6 @@
 import { pageSchema } from "@/app/api/v1/page/schema";
 import validateKey from "@/app/api/utils";
-import { deleteStatusPage, editStatusPage } from "@/components/status-pages/actions";
+import { deleteStatusPages, editStatusPage } from "@/components/status-pages/actions";
 import db from "@/lib/db";
 import { statusPages, workspaces } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -238,7 +238,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 		});
 	}
 
-	const res = await deleteStatusPage({ id });
+	const res = await deleteStatusPages([id]);
 
 	if (typeof res?.serverError !== "undefined") {
 		return NextResponse.json({

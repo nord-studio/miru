@@ -8,7 +8,7 @@ import { monitors, monitorsToIncidents } from "@/lib/db/schema/monitors";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
 import { IncidentReportStatus } from "@miru/types";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -127,27 +127,25 @@ export const editIncident = actionClient.inputSchema(z.object({
 	return { error: false, message: "Incident edited successfully" };
 })
 
-export const deleteIncident = actionClient.inputSchema(z.object({
-	id: z.string()
-})).action(async ({ parsedInput: { id } }) => {
+export const deleteIncidents = actionClient.inputSchema(z.array(z.string().nonempty())).action(async ({ parsedInput: ids }) => {
 	// Delete incident
-	await db.delete(incidents).where(eq(incidents.id, id)).catch((err) => {
+	await db.delete(incidents).where(inArray(incidents.id, ids)).catch((err) => {
 		console.error(err);
-		return { error: true, message: "Failed to delete incident" };
+		return { error: true, message: "Failed to delete incident(s)" };
 	})
 
 	// Delete incident relations
-	await db.delete(monitorsToIncidents).where(eq(monitorsToIncidents.incidentId, id)).catch((err) => {
+	await db.delete(monitorsToIncidents).where(inArray(monitorsToIncidents.incidentId, ids)).catch((err) => {
 		console.error(err);
-		return { error: true, message: "Failed to delete incident" };
+		return { error: true, message: "Failed to delete incident(s)" };
 	})
 
 	// Delete incident reports
-	await db.delete(incidentReports).where(eq(incidentReports.incidentId, id)).catch((err) => {
+	await db.delete(incidentReports).where(inArray(incidentReports.incidentId, ids)).catch((err) => {
 		console.error(err);
-		return { error: true, message: "Failed to delete incident" };
+		return { error: true, message: "Failed to delete incident(s)" };
 	})
 
 	revalidatePath("/admin/[workspaceSlug]/incidents", "layout");
-	return { error: false, message: "Incident deleted successfully" };
+	return { error: false, message: "Incident(s) deleted successfully" };
 })

@@ -18,14 +18,11 @@ import {
 } from "@/components/ui/table";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Bell, FlaskConical, Trash } from "lucide-react";
+import { Trash } from "lucide-react";
 import * as motion from "motion/react-client";
 import { AnimatePresence } from "motion/react"
-import DeleteMonitor from "@/components/monitors/delete-monitor";
-import { MonitorRow } from "@/app/admin/[workspaceSlug]/events/page";
-import { testUrl } from "@/components/monitors/utils";
-import { toast } from "sonner";
-import { pingMonitor } from "@/components/monitors/actions";
+import { NotificationWithMonitors } from "@miru/types";
+import DeleteNotifications from "@/components/notifications/delete-channel";
 
 interface DataTableProps<T> {
 	columns: ColumnDef<T>[];
@@ -33,12 +30,11 @@ interface DataTableProps<T> {
 	emptyComponent?: React.ReactNode;
 }
 
-export function MonitorDataTable({
+export function NotificationDataTable({
 	columns,
 	data,
 	emptyComponent,
-}: DataTableProps<MonitorRow>) {
-	const [loading, setLoading] = React.useState(false);
+}: DataTableProps<NotificationWithMonitors>) {
 	const [deleteOpen, setDeleteOpen] = React.useState(false);
 	const [rowSelection, setRowSelection] = React.useState({})
 
@@ -116,10 +112,10 @@ export function MonitorDataTable({
 			<AnimatePresence>
 				{table.getFilteredSelectedRowModel().rows.length >= 1 && (
 					<>
-						<DeleteMonitor
+						<DeleteNotifications
 							open={deleteOpen}
 							setOpen={setDeleteOpen}
-							monitors={table.getFilteredSelectedRowModel().rows.map((row) => row.original)}
+							notifications={table.getFilteredSelectedRowModel().rows.map((page) => page.original)}
 						/>
 						<motion.div
 							initial={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -128,49 +124,7 @@ export function MonitorDataTable({
 							transition={{ type: "spring", stiffness: 350, damping: 24 }}
 							className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-row w-fit gap-3 bg-card text-popover-foreground border shadow-lg rounded-md px-3 py-3"
 						>
-							<Button variant="secondary" disabled={loading} onClick={async () => {
-								const monitors = table.getFilteredSelectedRowModel().rows.map((monitor) => monitor.original);
-
-								toast.promise(async () => {
-									setLoading(true);
-									for (const monitor of monitors) {
-										await pingMonitor(monitor.id);
-									}
-								}, {
-									loading: `Pinging ${monitors.length} monitors...`,
-									success: () => {
-										setLoading(false);
-										return "All monitors successfully pinged!"
-									},
-									error: (data: Error) => {
-										return data.message;
-									}
-								});
-							}}>
-								<Bell /> <span>Ping</span>
-							</Button>
-							<Button variant="secondary" disabled={loading} onClick={async () => {
-								const monitors = table.getFilteredSelectedRowModel().rows.map((monitor) => monitor.original);
-
-								toast.promise(async () => {
-									setLoading(true)
-									for (const monitor of monitors) {
-										await testUrl(monitor.type, monitor.url);
-									}
-								}, {
-									loading: `Testing ${monitors.length} monitors...`,
-									success: () => {
-										setLoading(false);
-										return "All monitors tested successful!"
-									},
-									error: (data: Error) => {
-										return data.message;
-									}
-								});
-							}}>
-								<FlaskConical /> <span>Test</span>
-							</Button>
-							<Button variant="destructive" disabled={loading} onClick={() => setDeleteOpen(!deleteOpen)}>
+							<Button variant="destructive" onClick={() => setDeleteOpen(!deleteOpen)}>
 								<Trash /> <span>Delete</span>
 							</Button>
 						</motion.div>

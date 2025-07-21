@@ -5,7 +5,7 @@ import db from "@/lib/db";
 import { monitors, notifications, notificationsToMonitors, workspaces } from "@/lib/db/schema";
 import { actionClient } from "@/lib/safe-action";
 import { generateId, isValidUrl } from "@/lib/utils";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -129,11 +129,9 @@ export async function testWebhook(url: string, provider: "discord" | "slack") {
 	}
 }
 
-export const deleteNotification = actionClient.inputSchema(z.object({
-	id: z.string()
-})).action(async ({ parsedInput: { id } }) => {
+export const deleteNotifications = actionClient.inputSchema(z.array(z.string().nonempty())).action(async ({ parsedInput: ids }) => {
 	// Delete notification
-	await db.delete(notifications).where(eq(notifications.id, id)).catch((err) => {
+	await db.delete(notifications).where(inArray(notifications.id, ids)).catch((err) => {
 		console.error(err);
 		return { error: true, message: "Failed to delete notification" };
 	})

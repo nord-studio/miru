@@ -55,7 +55,7 @@ export default function EventActionsDropdown({
 		<>
 			<div className="w-full flex-row flex justify-end">
 				<DeleteEvent
-					id={event.id}
+					events={[event]}
 					open={deleteOpen}
 					setOpen={setDeleteOpen}
 				/>

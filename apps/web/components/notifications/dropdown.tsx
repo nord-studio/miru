@@ -17,7 +17,7 @@ import { RankedRoles, WorkspaceMemberWithUser } from "@miru/types";
 import { getCurrentMember } from "@/components/workspace/actions";
 import Spinner from "@/components/ui/spinner";
 import { NotificationWithMonitors } from "@miru/types";
-import DeleteNotification from "@/components/notifications/delete-channel";
+import DeleteNotifications from "@/components/notifications/delete-channel";
 import EditNotification from "@/components/notifications/edit-channel";
 import { Monitor } from "@miru/types";
 import { getAllMonitors } from "@/components/monitors/actions";
@@ -73,10 +73,10 @@ export default function NotificationActionsDropdown({
 			<div className="w-full flex-row flex justify-end">
 				{RankedRoles[currentMember.role] >= RankedRoles.admin && (
 					<>
-						<DeleteNotification
+						<DeleteNotifications
 							open={deleteOpen}
 							setOpen={setDeleteOpen}
-							id={notification.id}
+							notifications={[notification]}
 						/>
 						<EditNotification
 							notification={notification}

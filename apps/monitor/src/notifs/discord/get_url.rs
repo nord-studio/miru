@@ -13,8 +13,7 @@ pub async fn get_discord_urls(workspace_id: String) -> Result<Vec<String>, Strin
         Ok(channels) => channels,
         Err(e) => {
             return Err(format!(
-                "Failed to fetch Discord channels for workspace {}: {}",
-                workspace_id, e
+                "Failed to fetch Discord channels for workspace {workspace_id}: {e}"
             ));
         }
     };

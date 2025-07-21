@@ -79,7 +79,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match start_watcher() {
         Ok(_) => info!("Successfully started watching config"),
-        Err(e) => warn!("{}", e),
+        Err(e) => warn!("{e}"),
     }
 
     info!("Connecting to database...");

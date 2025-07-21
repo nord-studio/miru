@@ -49,7 +49,7 @@ pub async fn ping_service(path: web::Path<String>) -> impl Responder {
                     match query {
                         Ok(_) => HttpResponse::Ok().finish(),
                         Err(e) => {
-                            error!("Error inserting failed ping: {}", e.to_string());
+                            error!("Error inserting failed ping: {e}");
                             HttpResponse::InternalServerError().json(
                                 json!({ "error": "Failed to insert failed ping".to_string() }),
                             )
@@ -77,7 +77,7 @@ pub async fn ping_service(path: web::Path<String>) -> impl Responder {
                     match query {
                         Ok(_) => HttpResponse::Ok().finish(),
                         Err(e) => {
-                            error!("Error inserting failed ping: {}", e.to_string());
+                            error!("Error inserting failed ping: {e}");
                             HttpResponse::InternalServerError().json(
                                 json!({ "error": "Failed to insert failed ping".to_string() }),
                             )

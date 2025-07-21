@@ -1,4 +1,3 @@
-import { DataTable } from "@/components/ui/data-table";
 import db from "@/lib/db";
 import { Monitor } from "@miru/types";
 import { eq } from "drizzle-orm";
@@ -10,6 +9,7 @@ import { CalendarOff } from "lucide-react";
 import { getAllEventsWithMonitors } from "@/components/events/actions";
 import { columns } from "@/app/admin/[workspaceSlug]/events/columns";
 import { CreateEventButton } from "@/components/events/create-event";
+import { EventDataTable } from "@/app/admin/[workspaceSlug]/events/table";
 
 export interface MonitorRow extends Monitor {
 	uptime: number;
@@ -85,7 +85,7 @@ export default async function EventsPage({
 					</div>
 				</div>
 				<div className="mt-4">
-					<DataTable columns={columns} data={data} emptyComponent={<EmptyState currentMember={currentMember} monitors={mons} />} />
+					<EventDataTable columns={columns} data={data} emptyComponent={<EmptyState currentMember={currentMember} monitors={mons} />} />
 				</div>
 			</div>
 		</>

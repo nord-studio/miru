@@ -1,5 +1,4 @@
 import CreateIncident from "@/components/incidents/create-incident";
-import { DataTable } from "@/components/ui/data-table";
 import db from "@/lib/db";
 import { monitors, workspaces } from "@/lib/db/schema";
 import { IncidentWithMonitor } from "@miru/types";
@@ -8,6 +7,7 @@ import React from "react";
 import { eq } from "drizzle-orm";
 import { TriangleDashedIcon } from "lucide-react";
 import { Monitor } from "@miru/types";
+import { IncidentDataTable } from "@/app/admin/[workspaceSlug]/incidents/table";
 
 function EmptyState({ mons }: { mons: Monitor[] }) {
 	return (
@@ -87,7 +87,7 @@ export default async function IncidentsPage({
 					</div>
 				</div>
 				<div className="mt-4">
-					<DataTable columns={columns} data={incids} emptyComponent={<EmptyState mons={mons} />} />
+					<IncidentDataTable columns={columns} data={incids} emptyComponent={<EmptyState mons={mons} />} />
 				</div>
 			</div>
 		</>

@@ -1,6 +1,6 @@
 import { columns } from "@/app/admin/[workspaceSlug]/notifications/columns";
+import { NotificationDataTable } from "@/app/admin/[workspaceSlug]/notifications/table";
 import { CreateChannelButton } from "@/components/notifications/create-channel";
-import { DataTable } from "@/components/ui/data-table";
 import { getCurrentMember } from "@/components/workspace/actions";
 import db from "@/lib/db";
 import { monitors, notifications, workspaces } from "@/lib/db/schema";
@@ -100,7 +100,7 @@ export default async function NotificationsPage({
 					</div>
 				</div>
 				<div className="mt-4">
-					<DataTable columns={columns} data={data} emptyComponent={<EmptyState mons={mons} workspace={workspace} currentMember={currentMember} />} />
+					<NotificationDataTable columns={columns} data={data} emptyComponent={<EmptyState mons={mons} workspace={workspace} currentMember={currentMember} />} />
 				</div>
 			</div>
 		</>

@@ -6,5 +6,5 @@ use crate::config::get_config;
 pub async fn config_service() -> impl Responder {
     let config = get_config();
 
-    HttpResponse::Ok().body(format!("{:?}", config))
+    HttpResponse::Ok().body(format!("{config:?}"))
 }

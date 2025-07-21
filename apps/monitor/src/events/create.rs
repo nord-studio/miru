@@ -14,7 +14,7 @@ pub async fn create_job<'a>(
     sched: MutexGuard<'a, JobScheduler>,
     mut registry: MutexGuard<'a, Vec<EventJobMetadata>>,
 ) -> Result<Uuid, Box<dyn std::error::Error>> {
-    info!("Creating event job with ID: {}", event_id);
+    info!("Creating event job with ID: {event_id}");
 
     let pool = POOL.clone();
 
@@ -24,7 +24,7 @@ pub async fn create_job<'a>(
     {
         Ok(event) => event,
         Err(e) => {
-            error!("Failed to fetch event: {}", e);
+            error!("Failed to fetch event: {e}");
             return Err(Box::new(e));
         }
     };
@@ -50,13 +50,12 @@ pub async fn create_job<'a>(
         {
             Ok(_) => {
                 return Err(format!(
-                    "Event {} marked as completed due to scheduled time",
-                    event_id
+                    "Event {event_id} marked as completed due to scheduled time"
                 )
                 .into());
             }
             Err(e) => {
-                error!("Failed to mark event as completed: {}", e);
+                error!("Failed to mark event as completed: {e}");
                 return Err(Box::new(e));
             }
         }
@@ -70,15 +69,15 @@ pub async fn create_job<'a>(
         let event_id: Arc<String> = Arc::clone(&event_id_clone);
         Box::pin({
             async move {
-                info!("Marking event {} as completed", event_id);
+                info!("Marking event {event_id} as completed");
                 let pool = POOL.clone();
                 let id = event_id.to_string();
                 match query!("UPDATE events SET completed = true WHERE id = $1", id)
                     .execute(&pool)
                     .await
                 {
-                    Ok(_) => info!("Event {} marked as completed", event_id),
-                    Err(e) => error!("Failed to mark event {} as completed: {}", event_id, e),
+                    Ok(_) => info!("Event {event_id} marked as completed"),
+                    Err(e) => error!("Failed to mark event {event_id} as completed: {e}"),
                 }
             }
         })

@@ -29,7 +29,7 @@ pub async fn test_service(path: web::Path<(String, String)>) -> impl Responder {
                     "latency": result.latency,
                 })),
                 Err(err) => {
-                    error!("Error pinging {}: {:?}", url, err);
+                    error!("Error pinging {url}: {err:?}");
                     HttpResponse::InternalServerError().json(json!({ "error": err }))
                 }
             }

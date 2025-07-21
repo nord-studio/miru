@@ -53,7 +53,7 @@ export default function IncidentActionsDropdown({
 				<DeleteIncident
 					open={deleteOpen}
 					setOpen={setDeleteOpen}
-					id={incident.id}
+					incidents={[incident]}
 				/>
 				<EditIncident
 					incident={incident}

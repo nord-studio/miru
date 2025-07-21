@@ -37,7 +37,7 @@ pub async fn remove_monitor_job_service(item: web::Json<MonitorRemovePayload>) -
             let reg = reg.lock().await;
             match reg
                 .iter()
-                .find(|jmd| jmd.monitor_id == monitor_id.to_owned())
+                .find(|jmd| jmd.monitor_id == *monitor_id)
             {
                 Some(jmd) => jmd.clone().id,
                 None => return HttpResponse::NotFound().json(json!({ "error": "Job not found" })),
@@ -51,7 +51,7 @@ pub async fn remove_monitor_job_service(item: web::Json<MonitorRemovePayload>) -
 
         reg.lock().await.retain(|job| job.id != id);
 
-        info!("Removed job {}", id);
+        info!("Removed job {id}");
     }
 
     HttpResponse::Ok().json(json!({ "message": "Job removed" }))

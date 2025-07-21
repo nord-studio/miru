@@ -5,7 +5,7 @@ import { events, monitors, monitorsToEvents } from "@/lib/db/schema";
 import { actionClient } from "@/lib/safe-action";
 import { generateId } from "@/lib/utils";
 import { EventWithMonitors } from "@miru/types";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { flattenValidationErrors } from "next-safe-action";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -190,17 +190,15 @@ export const editEvent = actionClient.inputSchema(z.object({
 	}
 })
 
-export const deleteEvent = actionClient.inputSchema(z.object({
-	id: z.string()
-})).action(async ({ parsedInput: { id } }) => {
+export const deleteEvents = actionClient.inputSchema(z.array(z.string().nonempty())).action(async ({ parsedInput: ids }) => {
 	// Delete event
-	await db.delete(events).where(eq(events.id, id)).catch((err) => {
+	await db.delete(events).where(inArray(events.id, ids)).catch((err) => {
 		console.error(err);
 		return { error: true, message: "Failed to delete event" };
 	})
 
 	// Delete event relations
-	await db.delete(monitorsToEvents).where(eq(monitorsToEvents.eventId, id)).catch((err) => {
+	await db.delete(monitorsToEvents).where(inArray(monitorsToEvents.eventId, ids)).catch((err) => {
 		console.error(err);
 		return { error: true, message: "Failed to delete event" };
 	})

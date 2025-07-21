@@ -1,26 +1,27 @@
 "use client";
 
-import { deleteEvent } from "@/components/events/actions";
+import { deleteEvents } from "@/components/events/actions";
 import Alert from "@/components/ui/alert";
+import { EventWithMonitors } from "@miru/types";
 
-export default function DeleteEvent({
+export default function DeleteEvents({
 	open,
 	setOpen,
-	id,
+	events,
 }: {
 	open: boolean;
 	setOpen: (open: boolean) => void;
-	id: string;
+	events: EventWithMonitors[];
 }) {
 	return (
 		<Alert
-			title="Delete Event?"
-			description="Are you sure you want to delete this event? This action cannot be undone."
+			title={events.length > 1 ? "Delete events?" : "Delete Event?"}
+			description={`Are you sure you want to delete ${events.length > 1 ? "these events" : "this event"}? This action cannot be undone.`}
 			open={open}
 			setOpen={setOpen}
 			onCancel={() => setOpen(false)}
 			onSubmit={() => {
-				deleteEvent({ id });
+				deleteEvents(events.map((event) => event.id));
 				return;
 			}}
 		/>

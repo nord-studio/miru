@@ -34,8 +34,7 @@ pub async fn send_email(
 
     if !config.email.enabled {
         return Err(format!(
-            "Failed to send {} email. Emails are not enabled in this instance.",
-            template_name,
+            "Failed to send {template_name} email. Emails are not enabled in this instance.",
         ));
     }
 
@@ -82,14 +81,14 @@ pub async fn send_email(
             let mut email_content = content;
             if let Some(values) = replace_values {
                 for (key, value) in values.as_object().unwrap_or(&serde_json::Map::new()).iter() {
-                    let placeholder = format!("{}", key);
+                    let placeholder = key.to_string();
                     email_content =
                         email_content.replace(&placeholder, value.as_str().unwrap_or(""));
                 }
             }
 
             let email = Message::builder()
-                .from(format!("Miru <{}>", from).parse().unwrap())
+                .from(format!("Miru <{from}>").parse().unwrap())
                 .to(to.parse().unwrap())
                 .subject(match template {
                     TemplateOptions::AutoIncidentCreate => "Some monitors are down!",
@@ -109,20 +108,20 @@ pub async fn send_email(
                             mailer
                         }
                         Err(e) => {
-                            return Err(format!("Failed to create SMTP transport: {}", e));
+                            return Err(format!("Failed to create SMTP transport: {e}"));
                         }
                     };
 
                     mailer
                 }
-                "false" | "0" | _ => {
+                _ => {
                     let mailer = match SmtpTransport::starttls_relay(&host) {
                         Ok(mailer) => {
                             info!("Using STARTTLS for SMTP transport");
                             mailer
                         }
                         Err(e) => {
-                            return Err(format!("Failed to create SMTP transport: {}", e));
+                            return Err(format!("Failed to create SMTP transport: {e}"));
                         }
                     };
 
@@ -137,15 +136,15 @@ pub async fn send_email(
 
             match mailer.send(&email) {
                 Ok(_) => {
-                    log::info!("Email sent successfully to {}", to);
+                    log::info!("Email sent successfully to {to}");
                 }
                 Err(e) => {
-                    return Err(format!("Failed to send email: {}", e));
+                    return Err(format!("Failed to send email: {e}"));
                 }
             }
 
             Ok(())
         }
-        None => Err(format!("Failed to find template for: {:?}", template_name)),
+        None => Err(format!("Failed to find template for: {template_name:?}")),
     }
 }

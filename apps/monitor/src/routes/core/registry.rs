@@ -21,7 +21,7 @@ pub async fn registry_service() -> impl Responder {
     match serde_json::to_value(&incids) {
         Ok(json_data) => HttpResponse::Ok().json(json_data),
         Err(e) => {
-            error!("Failed to serialize incident registry: {}", e);
+            error!("Failed to serialize incident registry: {e}");
             HttpResponse::InternalServerError().finish()
         }
     }

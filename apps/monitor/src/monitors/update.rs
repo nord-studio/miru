@@ -12,7 +12,7 @@ pub async fn update_job(
     sched: MutexGuard<'_, JobScheduler>,
     registry: MutexGuard<'_, Vec<MonitorJobMetadata>>,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    info!("Updating job with monitor id {}", monitor_id);
+    info!("Updating job with monitor id {monitor_id}");
 
     let pool = POOL.clone();
 
@@ -64,7 +64,7 @@ pub async fn update_job(
 
     reg.lock().await.retain(|job| job.id != id);
 
-    info!("Deleted old job {}", id);
+    info!("Deleted old job {id}");
 
     Ok(())
 }
